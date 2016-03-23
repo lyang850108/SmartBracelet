@@ -1,0 +1,73 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+
+    defaultConfig {
+        applicationId "com.smartbracelet.com.smartbracelet"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        debug {
+            buildConfigField "boolean", "LOG_DEBUG", "true"//是否输出LOG信息
+            buildConfigField "String", "SEVER_URL", "\"http://abroadeasy.com/APP/\""//API Host
+            minifyEnabled false
+            zipAlignEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.debug
+        }
+        release {
+            buildConfigField "String", "SEVER_URL", "\"http://abroadeasy.com/APP/\""//API Host
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        disable 'MissingTranslation', 'ExtraTranslation'
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile files('libs/locSDK_6.23.jar')
+    //API网络请求注解库    代码地址-----> https://github.com/square/retrofit
+    //网络请求库 代码地址-----> https://github.com/square/okhttp
+    //消息通知数据更新（类似Broadcast）  代码地址-----> https://github.com/greenrobot/EventBus
+    //圆形头像  代码地址-----> https://github.com/hdodenhof/CircleImageView
+    //解析JSON数据  代码地址-----> https://code.google.com/p/google-gson/
+    //弹出提示信息    代码地址-----> https://github.com/johnkil/Android-AppMsg
+    //图片加载  代码地址-----> https://github.com/square/picasso
+    // glide, image load library, need support-v4
+    compile files('libs/lite-orm-1.5.4.jar')
+    compile files('libs/baidumapapi_v3_5_0.jar')
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.squareup.okhttp:okhttp:2.2.0'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.2.0'
+    compile 'de.greenrobot:eventbus:2.4.0'
+    compile 'de.hdodenhof:circleimageview:1.2.1'
+    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.github.johnkil.android-appmsg:appmsg:1.2.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:multidex:1.0.0'
+    compile 'com.github.bumptech.glide:glide:3.6.1'
+    compile 'com.android.support:support-v4:23.1.1'
+}

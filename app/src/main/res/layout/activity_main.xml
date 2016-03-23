@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.MainActivity"
+    android:orientation="vertical"
+    android:gravity="bottom">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/fragment_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+
+    <RadioGroup
+        android:id="@+id/tab_bar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@android:color/black"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/tab_home"
+            style="@style/navigation_bottom_radio"
+            android:drawableTop="@drawable/button_home_selector"
+            android:text="@string/home" />
+        <RadioButton
+            android:id="@+id/tab_find"
+            android:drawableTop="@drawable/button_explore_selector"
+            style="@style/navigation_bottom_radio"
+            android:text="@string/statisc" />
+
+        <RadioButton
+            android:id="@+id/tab_blog"
+            android:drawableTop="@drawable/button_news_selector"
+            style="@style/navigation_bottom_radio"
+            android:text="@string/setting" />
+
+    </RadioGroup>
+</LinearLayout>
