@@ -36,13 +36,13 @@
             android:drawableTop="@drawable/button_home_selector"
             android:text="@string/home" />
         <RadioButton
-            android:id="@+id/tab_find"
+            android:id="@+id/tab_statis"
             android:drawableTop="@drawable/button_explore_selector"
             style="@style/navigation_bottom_radio"
             android:text="@string/statisc" />
 
         <RadioButton
-            android:id="@+id/tab_blog"
+            android:id="@+id/tab_setting"
             android:drawableTop="@drawable/button_news_selector"
             style="@style/navigation_bottom_radio"
             android:text="@string/setting" />

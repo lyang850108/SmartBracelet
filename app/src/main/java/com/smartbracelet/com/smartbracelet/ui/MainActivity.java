@@ -66,11 +66,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
-                    case ID_HOME:
+                    case R.id.tab_home:
+                        switchToFragment(ID_HOME);
                         break;
-                    case ID_STATISTICS:
+                    case R.id.tab_statis:
+                        switchToFragment(ID_STATISTICS);
                         break;
-                    case ID_SETTING:
+                    case R.id.tab_setting:
+                        switchToFragment(ID_SETTING);
                         break;
                 }
             }
@@ -198,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
                 message.what = 1;
                 message.obj = sbLatitude.toString();
-                ((HomeFragment)mCurrentFragment).mHomeHandler.sendMessage(message);
+                ((StatisFragment)mCurrentFragment).mStatisHandler.sendMessage(message);
 
                 LogUtil.d(sbLatitude.toString());
                 sbLongtitude.append("lontitude :\n");
@@ -206,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
 
                 message2.what = 2;
                 message2.obj = sbLongtitude.toString();
-                ((HomeFragment)mCurrentFragment).mHomeHandler.sendMessage(message2);
+                ((StatisFragment)mCurrentFragment).mStatisHandler.sendMessage(message2);
 
                 /*if (location.getLocType() == BDLocation.TypeGpsLocation) {// GPS定位结果
                     sb.append("\nspeed : ");
@@ -250,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
 
                     break;
                 case ID_STATISTICS:
-                    mCurrentFragment = new StatisticsFragment();
+                    mCurrentFragment = new StatisFragment(this, locationService);
 
                     break;
                 case ID_SETTING:
