@@ -249,11 +249,11 @@ public class MainActivity extends AppCompatActivity {
         if (mCurrentFragment == null) {
             switch (id) {
                 case ID_HOME:
-                    mCurrentFragment = new HomeFragment(this, locationService);
+                    mCurrentFragment = new HomeFragment();
 
                     break;
                 case ID_STATISTICS:
-                    mCurrentFragment = new StatisFragment(this, locationService);
+                    mCurrentFragment = new StatisFragment(locationService);
 
                     break;
                 case ID_SETTING:

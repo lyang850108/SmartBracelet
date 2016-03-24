@@ -28,9 +28,6 @@ import butterknife.OnClick;
  */
 public class StatisFragment extends BaseFragment {
 
-
-    private Context mContext;
-
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -47,41 +44,21 @@ public class StatisFragment extends BaseFragment {
     @Bind(R.id.longtitude)
     TextView postionlongtitude;
 
-    Handler homeHandler = new Handler();
-
-    public Handler mStatisHandler = new Handler(){
-
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    String pl = (String)msg.obj;
-                    if (null != postionlatitude) {
-                        postionlatitude.setText(pl);
-                    }
-                    break;
-                case 2:
-                    String ll = (String)msg.obj;
-                    if (null != postionlongtitude) {
-                        postionlongtitude.setText(ll);
-                    }
-                    break;
-            }
-        };
-    };
+    public StatisHandler mStatisHandler;
 
 
     public StatisFragment() {
         // Required empty public constructor
     }
 
-    public StatisFragment(Context context, LocationService ls) {
-        mContext = context;
+    public StatisFragment(LocationService ls) {
         locationService = ls;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mStatisHandler = new StatisHandler();
     }
 
     @Override
@@ -92,7 +69,7 @@ public class StatisFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_statis, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -147,6 +124,26 @@ public class StatisFragment extends BaseFragment {
     void onButtonClick (View view) {
         if (null != locationService) {
             locationService.start();
+        }
+    }
+
+    public class StatisHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    String pl = (String)msg.obj;
+                    if (null != postionlatitude) {
+                        postionlatitude.setText(pl);
+                    }
+                    break;
+                case 2:
+                    String ll = (String)msg.obj;
+                    if (null != postionlongtitude) {
+                        postionlongtitude.setText(ll);
+                    }
+                    break;
+            }
         }
     }
 }

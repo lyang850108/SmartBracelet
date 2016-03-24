@@ -56,7 +56,11 @@ dependencies {
     // glide, image load library, need support-v4
     compile files('libs/lite-orm-1.5.4.jar')
     compile files('libs/baidumapapi_v3_5_0.jar')
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.android.support:cardview-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
