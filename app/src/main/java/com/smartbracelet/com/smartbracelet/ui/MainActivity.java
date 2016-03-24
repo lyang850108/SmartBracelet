@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private final int SDK_PERMISSION_REQUEST = 127;
     private LocationService locationService;
 
+
     @Bind(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipRefreshLayout;
 
@@ -199,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                 Message message = new Message();
                 Message message2 = new Message();
 
-                message.what = 1;
+                message.what = StatisFragment.MSG_LOAD_LATITUDE;
                 message.obj = sbLatitude.toString();
                 ((StatisFragment)mCurrentFragment).mStatisHandler.sendMessage(message);
 
@@ -207,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 sbLongtitude.append("lontitude :\n");
                 sbLongtitude.append(location.getLongitude());
 
-                message2.what = 2;
+                message2.what = StatisFragment.MSG_LOAD_LOTITUDE;
                 message2.obj = sbLongtitude.toString();
                 ((StatisFragment)mCurrentFragment).mStatisHandler.sendMessage(message2);
 

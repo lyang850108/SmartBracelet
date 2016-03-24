@@ -46,20 +46,21 @@ public class StatisFragment extends BaseFragment {
 
     @Bind(R.id.longtitude)
     TextView postionlongtitude;
-
+    public static final int MSG_LOAD_LOTITUDE = 0;
+    public static final int MSG_LOAD_LATITUDE = 1;
     Handler homeHandler = new Handler();
 
     public Handler mStatisHandler = new Handler(){
 
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 1:
+                case MSG_LOAD_LATITUDE:
                     String pl = (String)msg.obj;
                     if (null != postionlatitude) {
                         postionlatitude.setText(pl);
                     }
                     break;
-                case 2:
+                case MSG_LOAD_LOTITUDE:
                     String ll = (String)msg.obj;
                     if (null != postionlongtitude) {
                         postionlongtitude.setText(ll);

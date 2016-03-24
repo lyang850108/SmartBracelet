@@ -64,18 +64,7 @@ public class HomeFragment extends BaseFragment {
 
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 1:
-                    String pl = (String)msg.obj;
-                    if (null != postionlatitude) {
-                        postionlatitude.setText(pl);
-                    }
-                    break;
-                case 2:
-                    String ll = (String)msg.obj;
-                    if (null != postionlongtitude) {
-                        postionlongtitude.setText(ll);
-                    }
-                    break;
+
             }
         };
     };
