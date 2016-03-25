@@ -12,6 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.adapter.HomeListAdapter;
@@ -36,7 +38,10 @@ public class HomeFragment extends BaseFragment {
     private View mView;
 
     @Bind(R.id.recycler_view)
-    RecyclerView mRecyclerView;
+    LinearLayout mRecyclerView;
+
+    @Bind(R.id.device_id_home)
+    TextView mDeviceIdTx;
 
     private static final int LOAD_MORE = 1;
     private static final int LOAD_NEW= 2;
@@ -64,6 +69,7 @@ public class HomeFragment extends BaseFragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }*/
         mHomeHandler = new HomeHandler();
+
     }
 
     @Override
@@ -84,7 +90,7 @@ public class HomeFragment extends BaseFragment {
 
     private void initData() {
         //Network check
-        if (NetworkUtil.isNetworkAvailable(mActivity)) {
+        if (!NetworkUtil.isNetworkAvailable(mActivity)) {
             return;
         }
 
@@ -133,7 +139,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     private LinearLayoutManager mLinearLayoutManager;
-    private HomeListAdapter mAdapter;
+    //private HomeListAdapter mAdapter;
     private List<ProgramItem> mDatas = new ArrayList<ProgramItem>();
 
     private void initView() {
@@ -141,16 +147,16 @@ public class HomeFragment extends BaseFragment {
 
         // init recyclerView.
         mLinearLayoutManager = new LinearLayoutManager(mActivity);
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mAdapter = new HomeListAdapter(this, mActivity.getLayoutInflater(), mDatas);
+        //mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        /*mAdapter = new HomeListAdapter(this, mActivity.getLayoutInflater(), mDatas);
         mAdapter.setOnItemClickListener(new HomeListAdapter.OnItemClickListener() {
             @Override
             public void onItemClicked(View view, int postion) {
 
             }
-        });
+        });*/
 
-        mRecyclerView.setAdapter(mAdapter);
+        //mRecyclerView.setAdapter(mAdapter);
     }
 
     private class LoadDataTask extends AsyncTask<Integer, Void, Void> {
@@ -209,9 +215,11 @@ public class HomeFragment extends BaseFragment {
                     mDatas.addAll(mNewPrograms);
                 }
                 mNewPrograms.clear();
-                mAdapter.notifyDataSetChanged();
+
+                //mAdapter.notifyDataSetChanged();
             }
             mHomeHandler.sendEmptyMessage(MSG_LOAD_DONE);
+            mDeviceIdTx.setText("11111DDSSDSSDSDS");
         }
     }
 
