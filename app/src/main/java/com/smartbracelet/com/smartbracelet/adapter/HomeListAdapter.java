@@ -22,7 +22,6 @@ import java.util.List;
 public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int ITEM_TYPE_NORMAL = 0;
-    private static final int ITME_TYPE_HEADER = 1;
     private Fragment mFragment;
     List<ProgramItem> mData;
     final LayoutInflater mLayoutInflater;
@@ -48,18 +47,16 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) {
-            return ITME_TYPE_HEADER;
-        } else {
+
             return ITEM_TYPE_NORMAL;
-        }
+
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         LogUtil.d("onCreateViewHolder:" + viewType);
 
-            return new MyViewHolder(mItemClickListener,
+        return new MyViewHolder(mItemClickListener,
                     mLayoutInflater.inflate(R.layout.home_item_view, parent, false));
 
     }
@@ -73,10 +70,10 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ProgramItem program = mData.get(position - 1);
             myHolder.bindTo(program, position);
             // TODO study about the cache strategy about Glide.
-            Glide.with(mFragment)
+            /*Glide.with(mFragment)
                     .load(program.image)
                     .centerCrop()
-                    .into(myHolder.mImage);
+                    .into(myHolder.mImage);*/
         }
     }
 
@@ -88,7 +85,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView mTitle;
+        private TextView mDeviceId;
         private TextView mLocation;
         private TextView mTime;
         public ImageView mImage;
@@ -99,7 +96,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public MyViewHolder(OnItemClickListener listener, View itemView) {
             super(itemView);
             mOnItemClickListener = listener;
-            //mTitle = (TextView) itemView.findViewById(R.id.title);
+            mDeviceId = (TextView) itemView.findViewById(R.id.device_id);
 
             itemView.setOnClickListener(this);
         }
@@ -107,7 +104,8 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public void bindTo(ProgramItem item, int postion) {
             mBoundItem = item;
             mPostion = postion;
-            mTitle.setText(item.name);
+            mDeviceId.setText("1111");
+            //mDeviceId.setText(item.id);
             //mImage.setImageDrawable(item.mPicture);
         }
 
@@ -115,6 +113,8 @@ public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public void onClick(View view) {
             mOnItemClickListener.onItemClicked(view, mPostion);
         }
+
+
     }
 
 

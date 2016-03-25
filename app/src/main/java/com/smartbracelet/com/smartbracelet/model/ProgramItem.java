@@ -8,11 +8,9 @@ import com.litesuits.orm.db.annotation.Table;
  */
 @Table("homeItems")
 public class ProgramItem extends BaseModel {
-    @Column("id") public int id;
-    @Column("name") public String name;
-    @Column("imageUri") public String image;
+    @Column("deviceid") public int id;
 
     public String toString() {
-        return id + "," + name + "," + image;
+        return id + "";
     }
 }

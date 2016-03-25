@@ -51,8 +51,6 @@ public class MainActivity extends AppCompatActivity {
     private final int SDK_PERMISSION_REQUEST = 127;
     private LocationService locationService;
 
-    @Bind(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout mSwipRefreshLayout;
 
 
     @Override
@@ -78,13 +76,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        mSwipRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mCurrentFragment.onRefresh();
-            }
-        });
-        mSwipRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.ae_theme_color));
 
         getPersimmions();
 

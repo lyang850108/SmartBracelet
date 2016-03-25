@@ -45,6 +45,9 @@ public class HomeFragment extends BaseFragment {
     private int mLoadIndex = 0;
     private LoadDataTask mLoadTask;
 
+    private final int MSG_REFRESH = 0;
+    private final int MSG_LOAD_DONE = 1;
+
     private OnFragmentInteractionListener mListener;
 
     public HomeFragment() {
@@ -208,14 +211,21 @@ public class HomeFragment extends BaseFragment {
                 mNewPrograms.clear();
                 mAdapter.notifyDataSetChanged();
             }
-            //mHomeHandler.sendEmptyMessage(MSG_LOAD_DONE);
+            mHomeHandler.sendEmptyMessage(MSG_LOAD_DONE);
         }
     }
 
     private class HomeHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+            switch (msg.what) {
+                case MSG_LOAD_DONE:
+
+                    break;
+                case MSG_REFRESH:
+                    loadNew();
+                    break;
+            }
         }
     }
 
