@@ -14,14 +14,14 @@ android {
     buildTypes {
         debug {
             buildConfigField "boolean", "LOG_DEBUG", "true"//是否输出LOG信息
-            buildConfigField "String", "SEVER_URL", "\"http://abroadeasy.com/APP/\""//API Host
+            buildConfigField "String", "SEVER_URL", "\"http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=good\""//API Host
             minifyEnabled false
             zipAlignEnabled true
             shrinkResources true
             signingConfig signingConfigs.debug
         }
         release {
-            buildConfigField "String", "SEVER_URL", "\"http://abroadeasy.com/APP/\""//API Host
+            buildConfigField "String", "SEVER_URL", "\"http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=good\""//API Host
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

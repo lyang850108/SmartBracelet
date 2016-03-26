@@ -8,9 +8,12 @@ import com.litesuits.orm.db.annotation.Table;
  */
 @Table("homeItems")
 public class ProgramItem extends BaseModel {
-    @Column("deviceid") public int id;
+    @Column("query") public String query;
+    @Column("translation") public String translation;
+    @Column("basic") public String basic;
+    @Column("web") public String web;
 
     public String toString() {
-        return id + "";
+        return errorCode + "," + query + "," + translation+ "," + basic+ "," + web;
     }
 }

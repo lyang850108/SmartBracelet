@@ -21,12 +21,22 @@ import com.smartbracelet.com.smartbracelet.model.BaseFragment;
 import com.smartbracelet.com.smartbracelet.model.ProgramItem;
 import com.smartbracelet.com.smartbracelet.network.NetworkUtil;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
+import com.squareup.okhttp.OkHttpClient;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,6 +70,8 @@ public class HomeFragment extends BaseFragment {
     }
 
     public HomeHandler mHomeHandler;
+    String line;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -169,14 +181,35 @@ public class HomeFragment extends BaseFragment {
         @Override
         protected Void doInBackground(Integer... params) {
             int index = 0;
-            if (params != null && params.length > 0) {
+            /*if (params != null && params.length > 0) {
                 index = params[0];
-            }
+            }*/
             try {
                 mNewPrograms = App.getRetrofitService().getProgramList(index);
+                LogUtil.e("doInBackground, yangli:" + mNewPrograms.get(0).toString());
             } catch (Exception e) {
                 LogUtil.e("doInBackground, Exception:" + e.toString());
             }
+            //Test
+            /*try {
+                URL url =  new URL("http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=good");
+                URLConnection connection = url.openConnection();
+                InputStream is = connection.getInputStream();
+                InputStreamReader inputStreamReader = new InputStreamReader(is, "utf-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                while (null != (line = bufferedReader.readLine())){
+                    LogUtil.e("doInBackground, yangli:" + line);
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
+
+
+
             return null;
         }
 
@@ -200,7 +233,7 @@ public class HomeFragment extends BaseFragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if (mNewPrograms != null && mNewPrograms.size() > 0) {
+            /*if (mNewPrograms != null && mNewPrograms.size() > 0) {
                 if (mLoadType == LOAD_NEW && mDatas.size() > 0) {
                     int oldFirstId = mDatas.get(0).id;
                     for (ProgramItem item : mNewPrograms) {
@@ -218,8 +251,8 @@ public class HomeFragment extends BaseFragment {
 
                 //mAdapter.notifyDataSetChanged();
             }
-            mHomeHandler.sendEmptyMessage(MSG_LOAD_DONE);
-            mDeviceIdTx.setText("11111DDSSDSSDSDS");
+            mHomeHandler.sendEmptyMessage(MSG_LOAD_DONE);*/
+            mDeviceIdTx.setText(line);
         }
     }
 
@@ -254,4 +287,5 @@ public class HomeFragment extends BaseFragment {
             mPendLoadType = LOAD_NEW;
         }
     }
+
 }
