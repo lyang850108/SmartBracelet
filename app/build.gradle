@@ -27,18 +27,18 @@ android {
         }
     }
 
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
     lintOptions {
         disable 'MissingTranslation', 'ExtraTranslation'
     }
 
     lintOptions {
         abortOnError false
-    }
-
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
-        }
     }
 }
 

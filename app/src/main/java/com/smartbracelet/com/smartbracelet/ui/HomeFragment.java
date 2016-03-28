@@ -12,6 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,6 +24,9 @@ import com.smartbracelet.com.smartbracelet.model.ProgramItem;
 import com.smartbracelet.com.smartbracelet.network.NetworkUtil;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
 import com.squareup.okhttp.OkHttpClient;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,7 +40,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-
+import butterknife.OnClick;
 
 
 /**
@@ -53,6 +58,12 @@ public class HomeFragment extends BaseFragment {
     @Bind(R.id.device_id_home)
     TextView mDeviceIdTx;
 
+    @Bind(R.id.edit_text_home)
+    EditText mEditText;
+
+    @Bind(R.id.get_trams_button)
+    Button mButton;
+
     private static final int LOAD_MORE = 1;
     private static final int LOAD_NEW= 2;
     private int mPendLoadType = 0;
@@ -62,6 +73,7 @@ public class HomeFragment extends BaseFragment {
 
     private final int MSG_REFRESH = 0;
     private final int MSG_LOAD_DONE = 1;
+    private String translation;
 
     private OnFragmentInteractionListener mListener;
 
@@ -107,8 +119,8 @@ public class HomeFragment extends BaseFragment {
         }
 
         //Task begin
-        mLoadTask = new LoadDataTask(LOAD_MORE);
-        mLoadTask.execute(mLoadIndex);
+        /*mLoadTask = new LoadDataTask(LOAD_MORE);
+        mLoadTask.execute(mLoadIndex);*/
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -173,9 +185,9 @@ public class HomeFragment extends BaseFragment {
 
     private class LoadDataTask extends AsyncTask<Integer, Void, Void> {
 
-        private int mLoadType;
-        LoadDataTask(int type) {
-            mLoadType = type;
+        private String mWord;
+        LoadDataTask(String type) {
+            mWord = type;
         }
 
         @Override
@@ -184,15 +196,15 @@ public class HomeFragment extends BaseFragment {
             /*if (params != null && params.length > 0) {
                 index = params[0];
             }*/
-            try {
+            /*try {
                 mNewPrograms = App.getRetrofitService().getProgramList(index);
                 LogUtil.e("doInBackground, yangli:" + mNewPrograms.get(0).toString());
             } catch (Exception e) {
                 LogUtil.e("doInBackground, Exception:" + e.toString());
-            }
+            }*/
             //Test
-            /*try {
-                URL url =  new URL("http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=good");
+            try {
+                URL url =  new URL("http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord);
                 URLConnection connection = url.openConnection();
                 InputStream is = connection.getInputStream();
                 InputStreamReader inputStreamReader = new InputStreamReader(is, "utf-8");
@@ -200,14 +212,18 @@ public class HomeFragment extends BaseFragment {
 
                 while (null != (line = bufferedReader.readLine())){
                     LogUtil.e("doInBackground, yangli:" + line);
+                    JSONObject jsonObject = new JSONObject(line);
+                    translation = jsonObject.getString("translation");
+                    LogUtil.e("doInBackground, str:" + translation);
                 }
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-            }*/
-
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
 
             return null;
@@ -252,7 +268,7 @@ public class HomeFragment extends BaseFragment {
                 //mAdapter.notifyDataSetChanged();
             }
             mHomeHandler.sendEmptyMessage(MSG_LOAD_DONE);*/
-            mDeviceIdTx.setText(line);
+            mDeviceIdTx.setText(translation);
         }
     }
 
@@ -271,21 +287,28 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void loadMore() {
-        if (mLoadTask == null) {
+        /*if (mLoadTask == null) {
             mLoadTask = new LoadDataTask(LOAD_MORE);
             mLoadTask.execute(mLoadIndex);
         } else {
             mPendLoadType = LOAD_MORE;
-        }
+        }*/
     }
 
     private void loadNew() {
-        if (mLoadTask == null) {
+        /*if (mLoadTask == null) {
             mLoadTask = new LoadDataTask(LOAD_NEW);
             mLoadTask.execute(0);
         } else {
             mPendLoadType = LOAD_NEW;
-        }
+        }*/
+    }
+
+    @OnClick(R.id.get_trams_button)
+    void onButtonClick (View view) {
+        String inputStr = mEditText.getText().toString();
+        mLoadTask = new LoadDataTask(inputStr);
+        mLoadTask.execute(mLoadIndex);
     }
 
 }
