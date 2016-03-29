@@ -25,6 +25,7 @@ import com.smartbracelet.com.smartbracelet.network.NetworkUtil;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
 import com.squareup.okhttp.OkHttpClient;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -58,6 +59,9 @@ public class HomeFragment extends BaseFragment {
     @Bind(R.id.device_id_home)
     TextView mDeviceIdTx;
 
+    @Bind(R.id.expalin_home)
+    TextView mExplainTx;
+
     @Bind(R.id.edit_text_home)
     EditText mEditText;
 
@@ -73,7 +77,6 @@ public class HomeFragment extends BaseFragment {
 
     private final int MSG_REFRESH = 0;
     private final int MSG_LOAD_DONE = 1;
-    private String translation;
 
     private OnFragmentInteractionListener mListener;
 
@@ -186,6 +189,8 @@ public class HomeFragment extends BaseFragment {
     private class LoadDataTask extends AsyncTask<Integer, Void, Void> {
 
         private String mWord;
+        private String translationStr;
+        private String explainsStr;
         LoadDataTask(String type) {
             mWord = type;
         }
@@ -213,8 +218,11 @@ public class HomeFragment extends BaseFragment {
                 while (null != (line = bufferedReader.readLine())){
                     LogUtil.e("doInBackground, yangli:" + line);
                     JSONObject jsonObject = new JSONObject(line);
-                    translation = jsonObject.getString("translation");
-                    LogUtil.e("doInBackground, str:" + translation);
+                    translationStr = jsonObject.getString("translation");
+                    JSONObject jsonBasic = jsonObject.getJSONObject("basic");
+                    explainsStr = jsonBasic.getString("explains");
+                    LogUtil.e("doInBackground, str:" + translationStr);
+                    LogUtil.e("doInBackground, str:" + explainsStr);
                 }
 
             } catch (MalformedURLException e) {
@@ -268,7 +276,8 @@ public class HomeFragment extends BaseFragment {
                 //mAdapter.notifyDataSetChanged();
             }
             mHomeHandler.sendEmptyMessage(MSG_LOAD_DONE);*/
-            mDeviceIdTx.setText(translation);
+            mDeviceIdTx.setText(translationStr);
+            mExplainTx.setText(explainsStr);
         }
     }
 
