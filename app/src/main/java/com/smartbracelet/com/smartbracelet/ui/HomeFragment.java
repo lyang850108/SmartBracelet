@@ -30,9 +30,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -205,12 +209,13 @@ public class HomeFragment extends BaseFragment {
                 mNewPrograms = App.getRetrofitService().getProgramList(index);
                 LogUtil.e("doInBackground, yangli:" + mNewPrograms.get(0).toString());
             } catch (Exception e) {
-                LogUtil.e("doInBackground, Exception:" + e.toString());
+                LogUtil.e("doInBackgroun
+                d, Exception:" + e.toString());
             }*/
             //Test
             try {
                 URL url =  new URL("http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord);
-                URLConnection connection = url.openConnection();
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 InputStream is = connection.getInputStream();
                 InputStreamReader inputStreamReader = new InputStreamReader(is, "utf-8");
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
@@ -276,6 +281,53 @@ public class HomeFragment extends BaseFragment {
                 //mAdapter.notifyDataSetChanged();
             }
             mHomeHandler.sendEmptyMessage(MSG_LOAD_DONE);*/
+            mDeviceIdTx.setText(translationStr);
+            mExplainTx.setText(explainsStr);
+        }
+    }
+
+    private class PostDataTask extends AsyncTask<Integer, Void, Void> {
+
+        private String mWord;
+        private String translationStr;
+        private String explainsStr;
+        PostDataTask(String type) {
+            mWord = type;
+        }
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            int index = 0;
+            
+            try {
+                URL url =  new URL("http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.setRequestMethod("POST");
+
+                OutputStream outputStream = connection.getOutputStream();
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
+                BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
+                bufferedWriter.write("");
+                bufferedWriter.flush();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
             mDeviceIdTx.setText(translationStr);
             mExplainTx.setText(explainsStr);
         }
