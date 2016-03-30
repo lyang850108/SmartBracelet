@@ -25,6 +25,13 @@ import com.smartbracelet.com.smartbracelet.network.NetworkUtil;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
 import com.squareup.okhttp.OkHttpClient;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,6 +70,9 @@ public class HomeFragment extends BaseFragment {
     @Bind(R.id.device_id_home)
     TextView mDeviceIdTx;
 
+    @Bind(R.id.send_sentence_home)
+    TextView mPostBackTx;
+
     @Bind(R.id.expalin_home)
     TextView mExplainTx;
 
@@ -72,12 +82,16 @@ public class HomeFragment extends BaseFragment {
     @Bind(R.id.get_trams_button)
     Button mButton;
 
+    @Bind(R.id.set_trams_button)
+    Button mPostButton;
+
     private static final int LOAD_MORE = 1;
     private static final int LOAD_NEW= 2;
     private int mPendLoadType = 0;
     private List<ProgramItem> mNewPrograms;
     private int mLoadIndex = 0;
     private LoadDataTask mLoadTask;
+    private PostDataTask mPostDataTask;
 
     private final int MSG_REFRESH = 0;
     private final int MSG_LOAD_DONE = 1;
@@ -289,8 +303,9 @@ public class HomeFragment extends BaseFragment {
     private class PostDataTask extends AsyncTask<Integer, Void, Void> {
 
         private String mWord;
-        private String translationStr;
-        private String explainsStr;
+        private String postRTR;
+
+        HttpResponse httpResponse;
         PostDataTask(String type) {
             mWord = type;
         }
@@ -298,8 +313,8 @@ public class HomeFragment extends BaseFragment {
         @Override
         protected Void doInBackground(Integer... params) {
             int index = 0;
-            
-            try {
+
+            /*try {
                 URL url =  new URL("http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setDoInput(true);
@@ -315,9 +330,44 @@ public class HomeFragment extends BaseFragment {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            }*/
+
+            //Test
+            String username="username";
+            String password="password";
+            String httpUrl = "http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q="+password;
+            //创建httpRequest对象
+            HttpGet httpRequest = new HttpGet(httpUrl);
+            try
+            {
+                //取得HttpClient对象
+                HttpClient httpclient = new DefaultHttpClient();
+                //请求HttpClient，取得HttpResponse
+                HttpResponse httpResponse = httpclient.execute(httpRequest);
+                //请求成功
+                if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
+                {
+                    //取得返回的字符串
+                    String strResult = EntityUtils.toString(httpResponse.getEntity());
+                    postRTR = strResult;
+                }
+                else
+                {
+                    postRTR= "请求错误!";
+                }
             }
-
-
+            catch (ClientProtocolException e)
+            {
+                e.printStackTrace();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
             return null;
         }
 
@@ -328,8 +378,7 @@ public class HomeFragment extends BaseFragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            mDeviceIdTx.setText(translationStr);
-            mExplainTx.setText(explainsStr);
+            mPostBackTx.setText(postRTR);
         }
     }
 
@@ -366,10 +415,16 @@ public class HomeFragment extends BaseFragment {
     }
 
     @OnClick(R.id.get_trams_button)
-    void onButtonClick (View view) {
+     void onGetButtonClick (View view) {
         String inputStr = mEditText.getText().toString();
         mLoadTask = new LoadDataTask(inputStr);
         mLoadTask.execute(mLoadIndex);
+    }
+
+    @OnClick(R.id.set_trams_button)
+    void onPostButtonClick (View view) {
+        mPostDataTask = new PostDataTask("");
+        mPostDataTask.execute(mLoadIndex);
     }
 
 }

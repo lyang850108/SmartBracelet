@@ -6,11 +6,20 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/title_text_size"
+        android:textStyle="bold"
+        android:layout_marginTop="60dp"
+        android:text="Get 方法演示"/>
+
     <EditText
         android:id="@+id/edit_text_home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"/>
+        android:layout_marginTop="10dp"
+        android:hint="请输入英文单词"/>
 
     <Button
         android:id="@+id/get_trams_button"
@@ -28,6 +37,28 @@
 
     <TextView
         android:id="@+id/expalin_home"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/title_text_size"
+        android:textStyle="bold"
+        android:textColor="@android:color/holo_red_light"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/title_text_size"
+        android:textStyle="bold"
+        android:layout_marginTop="60dp"
+        android:text="Post 方法演示"/>
+
+    <Button
+        android:id="@+id/set_trams_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send"/>
+
+    <TextView
+        android:id="@+id/send_sentence_home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/title_text_size"
