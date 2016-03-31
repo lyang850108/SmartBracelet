@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,35 +17,25 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.smartbracelet.com.smartbracelet.R;
-import com.smartbracelet.com.smartbracelet.adapter.HomeListAdapter;
 import com.smartbracelet.com.smartbracelet.model.BaseFragment;
 import com.smartbracelet.com.smartbracelet.model.ProgramItem;
 import com.smartbracelet.com.smartbracelet.network.NetworkUtil;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
-import com.squareup.okhttp.OkHttpClient;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,14 +56,17 @@ public class HomeFragment extends BaseFragment {
     @Bind(R.id.recycler_view)
     LinearLayout mRecyclerView;
 
-    @Bind(R.id.device_id_home)
+    @Bind(R.id.method_get_home)
+    TextView mMethodTx;
+
+    @Bind(R.id.device_id_get_home)
     TextView mDeviceIdTx;
 
     @Bind(R.id.send_sentence_home)
     TextView mPostBackTx;
 
-    @Bind(R.id.expalin_home)
-    TextView mExplainTx;
+    @Bind(R.id.status_get_home)
+    TextView mStatusTx;
 
     @Bind(R.id.edit_text_home)
     EditText mEditText;
@@ -82,7 +74,7 @@ public class HomeFragment extends BaseFragment {
     @Bind(R.id.get_trams_button)
     Button mButton;
 
-    @Bind(R.id.set_trams_button)
+    @Bind(R.id.update_number_button)
     Button mPostButton;
 
     private static final int LOAD_MORE = 1;
@@ -103,7 +95,6 @@ public class HomeFragment extends BaseFragment {
     }
 
     public HomeHandler mHomeHandler;
-    String line;
 
 
     @Override
@@ -207,8 +198,9 @@ public class HomeFragment extends BaseFragment {
     private class LoadDataTask extends AsyncTask<Integer, Void, Void> {
 
         private String mWord;
-        private String translationStr;
-        private String explainsStr;
+        private String methodStr;
+        private String statusStr;
+        private String deviceidStr;
         LoadDataTask(String type) {
             mWord = type;
         }
@@ -227,28 +219,47 @@ public class HomeFragment extends BaseFragment {
                 d, Exception:" + e.toString());
             }*/
             //Test
+            String httpUrl = "http://"+mWord;
+            LogUtil.e("doInBackground, httpUrl:" + httpUrl);
+            String strResult;
             try {
-                URL url =  new URL("http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord);
+                /*URL url =  new URL("http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 InputStream is = connection.getInputStream();
                 InputStreamReader inputStreamReader = new InputStreamReader(is, "utf-8");
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-                while (null != (line = bufferedReader.readLine())){
-                    LogUtil.e("doInBackground, yangli:" + line);
-                    JSONObject jsonObject = new JSONObject(line);
-                    translationStr = jsonObject.getString("translation");
-                    JSONObject jsonBasic = jsonObject.getJSONObject("basic");
-                    explainsStr = jsonBasic.getString("explains");
-                    LogUtil.e("doInBackground, str:" + translationStr);
-                    LogUtil.e("doInBackground, str:" + explainsStr);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);*/
+                //创建httpRequest对象
+                HttpGet httpRequest = new HttpGet(httpUrl);
+                //取得HttpClient对象
+                HttpClient httpclient = new DefaultHttpClient();
+                //请求HttpClient，取得HttpResponse
+                HttpResponse httpResponse = httpclient.execute(httpRequest);
+                //请求成功
+                if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
+                {
+                    //取得返回的字符串
+                    strResult = EntityUtils.toString(httpResponse.getEntity());
+                }
+                else
+                {
+                    strResult= "请求错误!";
                 }
 
+                LogUtil.e("doInBackground, yangli:" + strResult);
+                JSONObject jsonObject = new JSONObject(strResult);
+                methodStr = jsonObject.getString("method");
+                JSONObject jsonBasic = jsonObject.getJSONObject("params");
+                statusStr = jsonBasic.getString("status");
+                deviceidStr = jsonBasic.getString("deviceid");
+                LogUtil.e("doInBackground, str:" + methodStr);
+                LogUtil.e("doInBackground, str:" + statusStr);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
 
@@ -295,8 +306,9 @@ public class HomeFragment extends BaseFragment {
                 //mAdapter.notifyDataSetChanged();
             }
             mHomeHandler.sendEmptyMessage(MSG_LOAD_DONE);*/
-            mDeviceIdTx.setText(translationStr);
-            mExplainTx.setText(explainsStr);
+            mMethodTx.setText("Method = " + methodStr);
+            mStatusTx.setText("Status = " +statusStr);
+            mDeviceIdTx.setText("DeviceID = " + deviceidStr);
         }
     }
 
@@ -333,39 +345,39 @@ public class HomeFragment extends BaseFragment {
             }*/
 
             //Test
-            String username="username";
-            String password="password";
-            String httpUrl = "http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q="+password;
+            //String subitJson="{\"language\":\"zh_CN\",\"vid\":[\"32\",\"39\",\"32\",\"51\",\"64\",\"68\"]}";
+            String httpUrl = "http://apk.wandoujia.com/e/48/39fc27d28bc0099ebe8e3001e1f3848e.apk";
             //创建httpRequest对象
-            HttpGet httpRequest = new HttpGet(httpUrl);
-            try
-            {
-                //取得HttpClient对象
+            HttpPost httpRequest = new HttpPost(httpUrl);
+
+            try{
+                //设置字符集
+                //LogUtil.e("post, yangli:" + subitJson);
+                //StringEntity se = new StringEntity(subitJson, "utf-8");
+                //请求httpRequest
+                //httpRequest.setEntity(se);
+                //取得默认的HttpClient
                 HttpClient httpclient = new DefaultHttpClient();
-                //请求HttpClient，取得HttpResponse
+                //取得HttpResponse
                 HttpResponse httpResponse = httpclient.execute(httpRequest);
-                //请求成功
-                if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
-                {
+                //HttpStatus.SC_OK表示连接成功
+                LogUtil.e("post, yangli:" + httpResponse.getStatusLine().getStatusCode());
+                if (httpResponse.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_OK){
                     //取得返回的字符串
-                    String strResult = EntityUtils.toString(httpResponse.getEntity());
-                    postRTR = strResult;
+                    //String strResult = EntityUtils.toString(httpResponse.getEntity());
+                    postRTR = "请求成功!";
+                }else{
+                    postRTR = "请求错误!";
+                    LogUtil.e("post, yangli:" + "请求错误");
                 }
-                else
-                {
-                    postRTR= "请求错误!";
-                }
-            }
-            catch (ClientProtocolException e)
-            {
+            }catch (ClientProtocolException e){
+                LogUtil.e("post, yangli:" + "ClientProtocolException");
                 e.printStackTrace();
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e){
+                LogUtil.e("post, yangli:" + "IOException");
                 e.printStackTrace();
-            }
-            catch (Exception e)
-            {
+            }catch (Exception e){
+                LogUtil.e("post, yangli:" + "Exception");
                 e.printStackTrace();
             }
             return null;
@@ -421,7 +433,7 @@ public class HomeFragment extends BaseFragment {
         mLoadTask.execute(mLoadIndex);
     }
 
-    @OnClick(R.id.set_trams_button)
+    @OnClick(R.id.update_number_button)
     void onPostButtonClick (View view) {
         mPostDataTask = new PostDataTask("");
         mPostDataTask.execute(mLoadIndex);

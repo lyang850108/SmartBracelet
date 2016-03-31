@@ -12,50 +12,77 @@
         android:textSize="@dimen/title_text_size"
         android:textStyle="bold"
         android:layout_marginTop="60dp"
-        android:text="Get 方法演示"/>
+        android:text="服务器交互方法验证演示"/>
 
     <EditText
         android:id="@+id/edit_text_home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:hint="请输入英文单词"/>
+        android:hint="请输入服务器地址"/>
 
-    <Button
-        android:id="@+id/get_trams_button"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Translation"/>
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/get_trams_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取硬件"/>
+        <Button
+            android:id="@+id/update_number_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="更新号码"/>
+        <Button
+            android:id="@+id/upload_gps_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="上传坐标"/>
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/device_id_home"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/title_text_size"
-        android:textStyle="bold"
-        android:textColor="@android:color/holo_red_light"/>
-
-    <TextView
-        android:id="@+id/expalin_home"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/title_text_size"
-        android:textStyle="bold"
-        android:textColor="@android:color/holo_red_light"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/title_text_size"
-        android:textStyle="bold"
-        android:layout_marginTop="60dp"
-        android:text="Post 方法演示"/>
-
-    <Button
-        android:id="@+id/set_trams_button"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send"/>
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/upload_notify_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="上报告警"/>
+        <Button
+            android:id="@+id/push_message_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="消息推送"/>
+    </LinearLayout>
+
+
+
+    <TextView
+        android:id="@+id/method_get_home"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/title_text_size"
+        android:textStyle="bold"
+        android:textColor="@android:color/holo_orange_dark"/>
+
+    <TextView
+        android:id="@+id/status_get_home"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/title_text_size"
+        android:textStyle="bold"
+        android:textColor="@android:color/holo_orange_dark"/>
+
+    <TextView
+        android:id="@+id/device_id_get_home"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/title_text_size"
+        android:textStyle="bold"
+        android:textColor="@android:color/holo_orange_dark"/>
 
     <TextView
         android:id="@+id/send_sentence_home"
@@ -63,6 +90,6 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/title_text_size"
         android:textStyle="bold"
-        android:textColor="@android:color/holo_red_light"/>
+        android:textColor="@android:color/holo_orange_dark"/>
 
 </LinearLayout>
