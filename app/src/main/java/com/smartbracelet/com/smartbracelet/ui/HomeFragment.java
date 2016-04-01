@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.smartbracelet.com.smartbracelet.R;
@@ -53,14 +54,14 @@ import butterknife.OnClick;
 public class HomeFragment extends BaseFragment {
     private View mView;
 
-    @Bind(R.id.recycler_view)
-    LinearLayout mRecyclerView;
-
     @Bind(R.id.method_get_home)
     TextView mMethodTx;
 
     @Bind(R.id.device_id_get_home)
     TextView mDeviceIdTx;
+
+    @Bind(R.id.get_content_home)
+    TextView mGetContentTx;
 
     @Bind(R.id.send_sentence_home)
     TextView mPostBackTx;
@@ -201,6 +202,8 @@ public class HomeFragment extends BaseFragment {
         private String methodStr;
         private String statusStr;
         private String deviceidStr;
+        String strResult;
+
         LoadDataTask(String type) {
             mWord = type;
         }
@@ -221,7 +224,7 @@ public class HomeFragment extends BaseFragment {
             //Test
             String httpUrl = "http://"+mWord;
             LogUtil.e("doInBackground, httpUrl:" + httpUrl);
-            String strResult;
+            //String httpUrl =  "http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord;
             try {
                 /*URL url =  new URL("http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -269,43 +272,12 @@ public class HomeFragment extends BaseFragment {
 
         @Override
         protected void onPreExecute() {
-            /*if (mLoadType == LOAD_MORE) {
-                if (mFirstLoad) {
-                    // trigger SwipeRefreshLayout to show or wait onMeasure called.
-//                    mSwipeRefreshLayout.setProgressViewOffset(false, -26 * 3, 64 * 3);
-                    mSwipeRefreshLayout.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            setRefreshing(true);
-                        }
-                    }, 100);
-                } else {
-                    setRefreshing(true);
-                }
-            }*/
+
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            /*if (mNewPrograms != null && mNewPrograms.size() > 0) {
-                if (mLoadType == LOAD_NEW && mDatas.size() > 0) {
-                    int oldFirstId = mDatas.get(0).id;
-                    for (ProgramItem item : mNewPrograms) {
-                        if (item.id < oldFirstId) {
-                            // add new items at head
-                            mDatas.add(0, item);
-                            mLoadIndex++;
-                        }
-                    }
-                } else {
-                    mLoadIndex += mNewPrograms.size();
-                    mDatas.addAll(mNewPrograms);
-                }
-                mNewPrograms.clear();
-
-                //mAdapter.notifyDataSetChanged();
-            }
-            mHomeHandler.sendEmptyMessage(MSG_LOAD_DONE);*/
+            mGetContentTx.setText(strResult);
             mMethodTx.setText("Method = " + methodStr);
             mStatusTx.setText("Status = " +statusStr);
             mDeviceIdTx.setText("DeviceID = " + deviceidStr);
