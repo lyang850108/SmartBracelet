@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private String permissionInfo;
     private final int SDK_PERMISSION_REQUEST = 127;
     private LocationService locationService;
+    public static double latitude;
+    public static double longtitude;
 
 
 
@@ -185,18 +187,21 @@ public class MainActivity extends AppCompatActivity {
                  * location.getTime() 是指服务端出本次结果的时间，如果位置不发生变化，则时间不变
                  */
                 //sb.append(location.getTime());
+                latitude = location.getLatitude();
                 sbLatitude.append("latitude :\n ");
-                sbLatitude.append(location.getLatitude());
+                sbLatitude.append(latitude);
                 Message message = new Message();
                 Message message2 = new Message();
 
                 message.what = 1;
+
                 message.obj = sbLatitude.toString();
                 ((StatisFragment)mCurrentFragment).mStatisHandler.sendMessage(message);
 
                 LogUtil.d(sbLatitude.toString());
+                longtitude = location.getLongitude();
                 sbLongtitude.append("lontitude :\n");
-                sbLongtitude.append(location.getLongitude());
+                sbLongtitude.append(longtitude);
 
                 message2.what = 2;
                 message2.obj = sbLongtitude.toString();

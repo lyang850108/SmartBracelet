@@ -1,12 +1,18 @@
 package com.smartbracelet.com.smartbracelet.util;
 
 import android.content.Context;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.smartbracelet.com.smartbracelet.ui.App;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Created by zengjinlong on 15-10-28.
+ * Created by Yangli on 16-04-05.
  */
 public class Utils {
     public static final boolean DEBUG = true;
@@ -29,5 +35,62 @@ public class Utils {
         if (imm != null) {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+
+    public static JSONObject bindJOGps(double latitude, double longtitude) {
+        JSONObject subJsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            subJsonObject.put("deviceid", "686c0888-34a9-43b1-86da-9bb7feb90122");
+            subJsonObject.put("x", latitude);
+            subJsonObject.put("Y", longtitude);
+            subJsonObject.put("imei", getImei());
+            subJsonObject.put("phonenum", getTelNum());
+            subJsonObject.put("time", getTime());
+            jsonObject.put("method", 101);
+            jsonObject.put("params", subJsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
+    public static JSONObject bindJOTel(double latitude, double longtitude) {
+        JSONObject subJsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            subJsonObject.put("deviceid", "686c0888-34a9-43b1-86da-9bb7feb90122");
+            subJsonObject.put("x", latitude);
+            subJsonObject.put("Y", longtitude);
+            subJsonObject.put("imei", getImei());
+            subJsonObject.put("phonenum", "18576625591");
+            subJsonObject.put("time", "20160321142336");
+            jsonObject.put("method", 101);
+            jsonObject.put("params", subJsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
+    public static String getTelNum() {
+        TelephonyManager telephonyManager = (TelephonyManager) App.getsContext().getSystemService(Context.TELEPHONY_SERVICE);
+        String num = telephonyManager.getLine1Number();
+        LogUtil.d(num);
+        return num;
+    }
+
+    public static String getImei() {
+        TelephonyManager telephonyManager = (TelephonyManager) App.getsContext().getSystemService(Context.TELEPHONY_SERVICE);
+        //GSM IMEI; CDMA MEID
+        String imei = telephonyManager.getDeviceId();
+        LogUtil.d(imei);
+        return imei;
+    }
+
+    public static long getTime() {
+        long time=System.currentTimeMillis();
+        return time;
     }
 }

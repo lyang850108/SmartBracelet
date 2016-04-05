@@ -22,6 +22,7 @@ import com.smartbracelet.com.smartbracelet.model.BaseFragment;
 import com.smartbracelet.com.smartbracelet.model.ProgramItem;
 import com.smartbracelet.com.smartbracelet.network.NetworkUtil;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
+import com.smartbracelet.com.smartbracelet.util.Utils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -29,6 +30,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
@@ -73,18 +75,40 @@ public class HomeFragment extends BaseFragment {
     EditText mEditText;
 
     @Bind(R.id.get_trams_button)
-    Button mButton;
+    Button mGetTramsButton;
 
     @Bind(R.id.update_number_button)
+    Button mUpdateNumButton;
+
+    @Bind(R.id.upload_gps_button)
     Button mPostButton;
+
+    @Bind(R.id.upload_notify_button)
+    Button mUploadNotifyButton;
+
+    @Bind(R.id.push_message_button)
+    Button mPushMsgButton;
 
     private static final int LOAD_MORE = 1;
     private static final int LOAD_NEW= 2;
+
+    private static final int TYPE_GET_DEVICE_PARM = 0;
+    private static final int TYPE_GET_NUM_PARM = 1;
+    private static final int TYPE_UPLOAD_LOCATION = 2;
+    private static final int TYPE_UPLOAD_NOTIFY = 3;
+    private static final int TYPE_PUSH_MSG = 4;
     private int mPendLoadType = 0;
     private List<ProgramItem> mNewPrograms;
     private int mLoadIndex = 0;
     private LoadDataTask mLoadTask;
     private PostDataTask mPostDataTask;
+
+    private String methodStr;
+    private String statusStr;
+    private String deviceidStr;
+
+    private String postRTR;
+    String strResult;
 
     private final int MSG_REFRESH = 0;
     private final int MSG_LOAD_DONE = 1;
@@ -198,14 +222,11 @@ public class HomeFragment extends BaseFragment {
 
     private class LoadDataTask extends AsyncTask<Integer, Void, Void> {
 
+        private int mType;
         private String mWord;
-        private String methodStr;
-        private String statusStr;
-        private String deviceidStr;
-        String strResult;
-
-        LoadDataTask(String type) {
-            mWord = type;
+        LoadDataTask(String url, int type) {
+            mType = type;
+            mWord = url;
         }
 
         @Override
@@ -224,47 +245,9 @@ public class HomeFragment extends BaseFragment {
             //Test
             String httpUrl = "http://"+mWord;
             LogUtil.e("doInBackground, httpUrl:" + httpUrl);
-            //String httpUrl =  "http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord;
-            try {
-                /*URL url =  new URL("http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                InputStream is = connection.getInputStream();
-                InputStreamReader inputStreamReader = new InputStreamReader(is, "utf-8");
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);*/
-                //创建httpRequest对象
-                HttpGet httpRequest = new HttpGet(httpUrl);
-                //取得HttpClient对象
-                HttpClient httpclient = new DefaultHttpClient();
-                //请求HttpClient，取得HttpResponse
-                HttpResponse httpResponse = httpclient.execute(httpRequest);
-                //请求成功
-                if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
-                {
-                    //取得返回的字符串
-                    strResult = EntityUtils.toString(httpResponse.getEntity());
-                }
-                else
-                {
-                    strResult= "请求错误!";
-                }
 
-                LogUtil.e("doInBackground, yangli:" + strResult);
-                JSONObject jsonObject = new JSONObject(strResult);
-                methodStr = jsonObject.getString("method");
-                JSONObject jsonBasic = jsonObject.getJSONObject("params");
-                statusStr = jsonBasic.getString("status");
-                deviceidStr = jsonBasic.getString("deviceid");
-                LogUtil.e("doInBackground, str:" + methodStr);
-                LogUtil.e("doInBackground, str:" + statusStr);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
+            httpGetParams(httpUrl, mType);
+
 
 
             return null;
@@ -284,50 +267,20 @@ public class HomeFragment extends BaseFragment {
         }
     }
 
-    private class PostDataTask extends AsyncTask<Integer, Void, Void> {
+    private void httpPostParams(String url, int mPostType) {
+        String httpUrl = url;
+        //创建httpRequest对象
+        HttpPost httpRequest = new HttpPost(httpUrl);
 
-        private String mWord;
-        private String postRTR;
-
-        HttpResponse httpResponse;
-        PostDataTask(String type) {
-            mWord = type;
-        }
-
-        @Override
-        protected Void doInBackground(Integer... params) {
-            int index = 0;
-
-            /*try {
-                URL url =  new URL("http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
-                connection.setRequestMethod("POST");
-
-                OutputStream outputStream = connection.getOutputStream();
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
-                BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
-                bufferedWriter.write("");
-                bufferedWriter.flush();
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
-
-            //Test
-            //String subitJson="{\"language\":\"zh_CN\",\"vid\":[\"32\",\"39\",\"32\",\"51\",\"64\",\"68\"]}";
-            String httpUrl = "http://apk.wandoujia.com/e/48/39fc27d28bc0099ebe8e3001e1f3848e.apk";
-            //创建httpRequest对象
-            HttpPost httpRequest = new HttpPost(httpUrl);
-
+        if (mPostType == TYPE_UPLOAD_LOCATION) {
             try{
                 //设置字符集
                 //LogUtil.e("post, yangli:" + subitJson);
-                //StringEntity se = new StringEntity(subitJson, "utf-8");
+                String subitJson= Utils.bindJOGps(MainActivity.latitude, MainActivity.longtitude).toString();
+                LogUtil.e("doInBackground, Post subitJson:" + subitJson);
+                StringEntity se = new StringEntity(subitJson, "utf-8");
                 //请求httpRequest
-                //httpRequest.setEntity(se);
+                httpRequest.setEntity(se);
                 //取得默认的HttpClient
                 HttpClient httpclient = new DefaultHttpClient();
                 //取得HttpResponse
@@ -352,8 +305,76 @@ public class HomeFragment extends BaseFragment {
                 LogUtil.e("post, yangli:" + "Exception");
                 e.printStackTrace();
             }
+        }
+
+    }
+
+    private void httpGetParams(String httpUrl, int type) {
+        //String httpUrl =  "http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord;
+        try {
+                /*URL url =  new URL("http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                InputStream is = connection.getInputStream();
+                InputStreamReader inputStreamReader = new InputStreamReader(is, "utf-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);*/
+            //创建httpRequest对象
+            HttpGet httpRequest = new HttpGet(httpUrl);
+            //取得HttpClient对象
+            HttpClient httpclient = new DefaultHttpClient();
+            //请求HttpClient，取得HttpResponse
+            HttpResponse httpResponse = httpclient.execute(httpRequest);
+            //请求成功
+            if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
+            {
+                //取得返回的字符串
+                strResult = EntityUtils.toString(httpResponse.getEntity());
+            }
+            else
+            {
+                strResult= "请求错误!";
+            }
+
+            LogUtil.e("doInBackground, yangli:" + strResult);
+            JSONObject jsonObject = new JSONObject(strResult);
+            methodStr = jsonObject.getString("method");
+            JSONObject jsonBasic = jsonObject.getJSONObject("params");
+            statusStr = jsonBasic.getString("status");
+            deviceidStr = jsonBasic.getString("deviceid");
+            LogUtil.e("doInBackground, str:" + methodStr);
+            LogUtil.e("doInBackground, str:" + statusStr);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class PostDataTask extends AsyncTask<Integer, Void, Void> {
+
+        private String mPostWord;
+        private int mPostType;
+
+        HttpResponse httpResponse;
+        PostDataTask(String url, int type) {
+            mPostWord = url;
+            mPostType = type;
+        }
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            int index = 0;
+
+            String httpUrl = "http://"+ mPostWord;
+            LogUtil.e("doInBackground, Post httpUrl:" + httpUrl);
+            httpPostParams(mPostWord, mPostType);
             return null;
         }
+
+
 
         @Override
         protected void onPreExecute() {
@@ -399,15 +420,37 @@ public class HomeFragment extends BaseFragment {
     }
 
     @OnClick(R.id.get_trams_button)
-     void onGetButtonClick (View view) {
+     void onGetTramsButtonClick (View view) {
         String inputStr = mEditText.getText().toString();
-        mLoadTask = new LoadDataTask(inputStr);
+        mLoadTask = new LoadDataTask(inputStr, TYPE_GET_DEVICE_PARM);
         mLoadTask.execute(mLoadIndex);
     }
 
     @OnClick(R.id.update_number_button)
+    void onUpdateNumButtonClick (View view) {
+        String inputStr = mEditText.getText().toString();
+        mLoadTask = new LoadDataTask(inputStr, TYPE_GET_NUM_PARM);
+        mLoadTask.execute(mLoadIndex);
+    }
+
+    @OnClick(R.id.upload_gps_button)
     void onPostButtonClick (View view) {
-        mPostDataTask = new PostDataTask("");
+        String inputStr = mEditText.getText().toString();
+        mPostDataTask = new PostDataTask(inputStr, TYPE_UPLOAD_LOCATION);
+        mPostDataTask.execute(mLoadIndex);
+    }
+
+    @OnClick(R.id.upload_notify_button)
+    void onUplaodNotifyButtonClick (View view) {
+        String inputStr = mEditText.getText().toString();
+        mPostDataTask = new PostDataTask(inputStr, TYPE_UPLOAD_NOTIFY);
+        mPostDataTask.execute(mLoadIndex);
+    }
+
+    @OnClick(R.id.push_message_button)
+    void onPushMsgButtonClick (View view) {
+        String inputStr = mEditText.getText().toString();
+        mPostDataTask = new PostDataTask(inputStr, TYPE_PUSH_MSG);
         mPostDataTask.execute(mLoadIndex);
     }
 
