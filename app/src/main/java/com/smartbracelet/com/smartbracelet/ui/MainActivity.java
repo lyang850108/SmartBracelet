@@ -52,7 +52,10 @@ public class MainActivity extends AppCompatActivity {
     private LocationService locationService;
     public static double latitude;
     public static double longtitude;
-
+    private int currentIndexFragment = 0;
+    private final  int INDEX_FRAGMENT_HOME = 0;
+    private final  int INDEX_FRAGMENT_STAT = 1;
+    private final  int INDEX_FRAGMENT_SETT = 2;
 
 
     @Override
@@ -67,12 +70,15 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.tab_home:
+                        currentIndexFragment = INDEX_FRAGMENT_HOME;
                         switchToFragment(ID_HOME);
                         break;
                     case R.id.tab_statis:
+                        currentIndexFragment = INDEX_FRAGMENT_STAT;
                         switchToFragment(ID_STATISTICS);
                         break;
                     case R.id.tab_setting:
+                        currentIndexFragment = INDEX_FRAGMENT_SETT;
                         switchToFragment(ID_SETTING);
                         break;
                 }
@@ -193,19 +199,24 @@ public class MainActivity extends AppCompatActivity {
                 Message message = new Message();
                 Message message2 = new Message();
 
-                message.what = 1;
+                if (INDEX_FRAGMENT_STAT == currentIndexFragment) {
+                    message.what = 1;
 
-                message.obj = sbLatitude.toString();
-                ((StatisFragment)mCurrentFragment).mStatisHandler.sendMessage(message);
+                    message.obj = sbLatitude.toString();
+                    ((StatisFragment)mCurrentFragment).mStatisHandler.sendMessage(message);
+                }
 
                 LogUtil.d(sbLatitude.toString());
                 longtitude = location.getLongitude();
                 sbLongtitude.append("lontitude :\n");
                 sbLongtitude.append(longtitude);
 
-                message2.what = 2;
-                message2.obj = sbLongtitude.toString();
-                ((StatisFragment)mCurrentFragment).mStatisHandler.sendMessage(message2);
+                if (INDEX_FRAGMENT_STAT == currentIndexFragment) {
+                    message2.what = 2;
+                    message2.obj = sbLongtitude.toString();
+                    ((StatisFragment)mCurrentFragment).mStatisHandler.sendMessage(message2);
+                }
+
 
                 /*if (location.getLocType() == BDLocation.TypeGpsLocation) {// GPS定位结果
                     sb.append("\nspeed : ");

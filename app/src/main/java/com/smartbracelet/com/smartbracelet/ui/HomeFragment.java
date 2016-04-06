@@ -203,10 +203,8 @@ public class HomeFragment extends BaseFragment {
                 d, Exception:" + e.toString());
             }*/
             //Test
-            String httpUrl = "http://"+mWord;
-            LogUtil.e("doInBackground, httpUrl:" + httpUrl);
 
-            httpGetParams(httpUrl, mType);
+            httpGetParams(mWord, mType);
 
 
 
@@ -228,9 +226,13 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void httpPostParams(String url, int mPostType) {
-        String httpUrl = url;
+        String tempPostUrl = Utils.convertUrl(url);
+        String httpUrl = "http://"+ tempPostUrl;
+        LogUtil.e("doInBackground, Post httpUrl:" + httpUrl);
         //创建httpRequest对象
-
+        if (null == httpUrl) {
+            return;
+        }
 
         if (mPostType == TYPE_UPLOAD_LOCATION) {
             try{
@@ -275,7 +277,14 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void httpGetParams(String httpUrl, int type) {
-        //String httpUrl =  "http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord;
+
+        //httpUrl =  "http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + "fuck";
+        String tempUrl = Utils.convertUrl(httpUrl);
+        String url = "http://"+ tempUrl;
+        LogUtil.e("doInBackground, httpUrl:" + url);
+        if (null == url) {
+            return;
+        }
         try {
                 /*URL url =  new URL("http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + mWord);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -283,7 +292,8 @@ public class HomeFragment extends BaseFragment {
                 InputStreamReader inputStreamReader = new InputStreamReader(is, "utf-8");
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);*/
             //创建httpRequest对象
-            HttpGet httpRequest = new HttpGet(httpUrl);
+
+            HttpGet httpRequest = new HttpGet(url);
             //取得HttpClient对象
             HttpClient httpclient = new DefaultHttpClient();
             //请求HttpClient，取得HttpResponse
@@ -315,6 +325,8 @@ public class HomeFragment extends BaseFragment {
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -333,10 +345,9 @@ public class HomeFragment extends BaseFragment {
         protected Void doInBackground(Integer... params) {
             int index = 0;
 
-            String httpUrl = "http://api.gigaset.com/cn/mobile/v1/demovideo/querydemo";
-            //String httpUrl = "http://"+ mPostWord;
-            LogUtil.e("doInBackground, Post httpUrl:" + httpUrl);
-            httpPostParams(httpUrl, mPostType);
+            //String httpUrl = "http://api.gigaset.com/cn/mobile/v1/demovideo/querydemo";
+
+            httpPostParams(mPostWord, mPostType);
             return null;
         }
 

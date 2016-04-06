@@ -11,6 +11,9 @@ import com.smartbracelet.com.smartbracelet.ui.App;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /**
  * Created by Yangli on 16-04-05.
  */
@@ -62,7 +65,7 @@ public class Utils {
         try {
             subJsonObject.put("deviceid", "686c0888-34a9-43b1-86da-9bb7feb90122");
             subJsonObject.put("x", latitude);
-            subJsonObject.put("Y", longtitude);
+            subJsonObject.put("y", longtitude);
             subJsonObject.put("imei", getImei());
             subJsonObject.put("phonenum", "18576625591");
             subJsonObject.put("time", "20160321142336");
@@ -98,5 +101,17 @@ public class Utils {
     public static long getTime() {
         long time=System.currentTimeMillis();
         return time;
+    }
+
+    public static String convertUrl (String url) {
+        String rtn = null;
+        try {
+            rtn = URLEncoder.encode(url, "GBK");
+            LogUtil.d(rtn);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return rtn;
     }
 }
