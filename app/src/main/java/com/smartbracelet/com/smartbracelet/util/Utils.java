@@ -77,6 +77,9 @@ public class Utils {
     public static String getTelNum() {
         TelephonyManager telephonyManager = (TelephonyManager) App.getsContext().getSystemService(Context.TELEPHONY_SERVICE);
         String num = telephonyManager.getLine1Number();
+        if (null == num) {
+            num = "13823209476";
+        }
         LogUtil.d(num);
         return num;
     }
@@ -85,6 +88,9 @@ public class Utils {
         TelephonyManager telephonyManager = (TelephonyManager) App.getsContext().getSystemService(Context.TELEPHONY_SERVICE);
         //GSM IMEI; CDMA MEID
         String imei = telephonyManager.getDeviceId();
+        if (null == imei) {
+            imei = "351672070095881";
+        }
         LogUtil.d(imei);
         return imei;
     }

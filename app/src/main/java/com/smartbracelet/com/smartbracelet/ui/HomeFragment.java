@@ -46,13 +46,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link HomeFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- */
 public class HomeFragment extends BaseFragment {
     private View mView;
 
@@ -65,8 +58,14 @@ public class HomeFragment extends BaseFragment {
     @Bind(R.id.get_content_home)
     TextView mGetContentTx;
 
+    @Bind(R.id.post_content_home)
+    TextView mPostContentTx;
+
     @Bind(R.id.send_sentence_home)
     TextView mPostBackTx;
+
+    @Bind(R.id.post_result_home)
+    TextView mPostRtrTx;
 
     @Bind(R.id.status_get_home)
     TextView mStatusTx;
@@ -107,13 +106,13 @@ public class HomeFragment extends BaseFragment {
     private String statusStr;
     private String deviceidStr;
 
+    String subitJson;
+
     private String postRTR;
     String strResult;
 
     private final int MSG_REFRESH = 0;
     private final int MSG_LOAD_DONE = 1;
-
-    private OnFragmentInteractionListener mListener;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -158,45 +157,6 @@ public class HomeFragment extends BaseFragment {
         //Task begin
         /*mLoadTask = new LoadDataTask(LOAD_MORE);
         mLoadTask.execute(mLoadIndex);*/
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
     private LinearLayoutManager mLinearLayoutManager;
@@ -270,14 +230,16 @@ public class HomeFragment extends BaseFragment {
     private void httpPostParams(String url, int mPostType) {
         String httpUrl = url;
         //创建httpRequest对象
-        HttpPost httpRequest = new HttpPost(httpUrl);
+
 
         if (mPostType == TYPE_UPLOAD_LOCATION) {
             try{
+                HttpPost httpRequest = new HttpPost(httpUrl);
                 //设置字符集
                 //LogUtil.e("post, yangli:" + subitJson);
-                String subitJson= Utils.bindJOGps(MainActivity.latitude, MainActivity.longtitude).toString();
+                subitJson= Utils.bindJOGps(MainActivity.latitude, MainActivity.longtitude).toString();
                 LogUtil.e("doInBackground, Post subitJson:" + subitJson);
+
                 StringEntity se = new StringEntity(subitJson, "utf-8");
                 //请求httpRequest
                 httpRequest.setEntity(se);
@@ -292,16 +254,19 @@ public class HomeFragment extends BaseFragment {
                     //String strResult = EntityUtils.toString(httpResponse.getEntity());
                     postRTR = "请求成功!";
                 }else{
-                    postRTR = "请求错误!";
+                    postRTR = "请求错误! 错误码" +  httpResponse.getStatusLine().getStatusCode();
                     LogUtil.e("post, yangli:" + "请求错误");
                 }
             }catch (ClientProtocolException e){
+                postRTR = "ClientProtocolException!";
                 LogUtil.e("post, yangli:" + "ClientProtocolException");
                 e.printStackTrace();
             } catch (IOException e){
+                postRTR = "IOException!";
                 LogUtil.e("post, yangli:" + "IOException");
                 e.printStackTrace();
             }catch (Exception e){
+                postRTR = "Exception!";
                 LogUtil.e("post, yangli:" + "Exception");
                 e.printStackTrace();
             }
@@ -368,9 +333,10 @@ public class HomeFragment extends BaseFragment {
         protected Void doInBackground(Integer... params) {
             int index = 0;
 
-            String httpUrl = "http://"+ mPostWord;
+            String httpUrl = "http://api.gigaset.com/cn/mobile/v1/demovideo/querydemo";
+            //String httpUrl = "http://"+ mPostWord;
             LogUtil.e("doInBackground, Post httpUrl:" + httpUrl);
-            httpPostParams(mPostWord, mPostType);
+            httpPostParams(httpUrl, mPostType);
             return null;
         }
 
@@ -383,7 +349,10 @@ public class HomeFragment extends BaseFragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            mPostBackTx.setText(postRTR);
+            if (null != mPostContentTx) {
+                mPostContentTx.setText(subitJson);
+            }
+            mPostRtrTx.setText(postRTR);
         }
     }
 
