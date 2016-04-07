@@ -73,6 +73,9 @@ public class HomeFragment extends BaseFragment {
     @Bind(R.id.edit_text_home)
     EditText mEditText;
 
+    @Bind(R.id.edit_params_home)
+    EditText mEditParamsText;
+
     @Bind(R.id.get_trams_button)
     Button mGetTramsButton;
 
@@ -88,6 +91,9 @@ public class HomeFragment extends BaseFragment {
     @Bind(R.id.push_message_button)
     Button mPushMsgButton;
 
+    @Bind(R.id.params_post_button)
+    Button mParamsPostButton;
+
     private static final int LOAD_MORE = 1;
     private static final int LOAD_NEW= 2;
 
@@ -96,6 +102,7 @@ public class HomeFragment extends BaseFragment {
     private static final int TYPE_UPLOAD_LOCATION = 2;
     private static final int TYPE_UPLOAD_NOTIFY = 3;
     private static final int TYPE_PUSH_MSG = 4;
+    private static final int TYPE_PARAMS_POST = 5;
     private int mPendLoadType = 0;
     private List<ProgramItem> mNewPrograms;
     private int mLoadIndex = 0;
@@ -226,25 +233,29 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void httpPostParams(String url, int mPostType) {
-        String tempPostUrl = Utils.convertUrl(url);
-        String httpUrl = "http://"+ tempPostUrl;
-        LogUtil.e("doInBackground, Post httpUrl:" + httpUrl);
+        String httpUrl = url;
         //创建httpRequest对象
-        if (null == httpUrl) {
+        if (null == url) {
             return;
         }
 
-        if (mPostType == TYPE_UPLOAD_LOCATION) {
-            try{
-                HttpPost httpRequest = new HttpPost(httpUrl);
-                //设置字符集
-                //LogUtil.e("post, yangli:" + subitJson);
-                subitJson= Utils.bindJOGps(MainActivity.latitude, MainActivity.longtitude).toString();
-                LogUtil.e("doInBackground, Post subitJson:" + subitJson);
 
-                StringEntity se = new StringEntity(subitJson, "utf-8");
-                //请求httpRequest
-                httpRequest.setEntity(se);
+            try{
+                LogUtil.e("doInBackground, Post httpUrl:" + httpUrl);
+                HttpPost httpRequest = new HttpPost(httpUrl);
+                if (mPostType == TYPE_UPLOAD_LOCATION) {
+                    //设置字符集
+                    //LogUtil.e("post, yangli:" + subitJson);
+                    subitJson= Utils.bindJOGps(MainActivity.latitude, MainActivity.longtitude).toString();
+                    LogUtil.e("doInBackground, Post subitJson:" + subitJson);
+
+                    StringEntity se = new StringEntity(subitJson, "utf-8");
+                    //请求httpRequest
+                    httpRequest.setEntity(se);
+                } else {
+                    subitJson = httpUrl;
+                }
+
                 //取得默认的HttpClient
                 HttpClient httpclient = new DefaultHttpClient();
                 //取得HttpResponse
@@ -272,15 +283,14 @@ public class HomeFragment extends BaseFragment {
                 LogUtil.e("post, yangli:" + "Exception");
                 e.printStackTrace();
             }
-        }
 
     }
 
     private void httpGetParams(String httpUrl, int type) {
 
-        //httpUrl =  "http://fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + "fuck";
-        String tempUrl = Utils.convertUrl(httpUrl);
-        String url = "http://"+ tempUrl;
+        //httpUrl =  "fanyi.youdao.com/openapi.do?keyfrom=testSmarBarchet&key=2117934058&type=data&doctype=json&version=1.1&q=" + "fuck";
+        //String tempUrl = Utils.convertUrl(httpUrl);
+        String url = "http://"+ httpUrl;
         LogUtil.e("doInBackground, httpUrl:" + url);
         if (null == url) {
             return;
@@ -334,20 +344,30 @@ public class HomeFragment extends BaseFragment {
 
         private String mPostWord;
         private int mPostType;
+        private String mParamsPost;
 
         HttpResponse httpResponse;
-        PostDataTask(String url, int type) {
+
+        PostDataTask(String url, String params, int type) {
             mPostWord = url;
             mPostType = type;
+            mParamsPost = params;
         }
 
         @Override
         protected Void doInBackground(Integer... params) {
             int index = 0;
+            String url = "";
 
             //String httpUrl = "http://api.gigaset.com/cn/mobile/v1/demovideo/querydemo";
+            if (mPostType == TYPE_UPLOAD_LOCATION) {
+                url = "http://"+ mPostWord;
+            } else if (mPostType == TYPE_PARAMS_POST) {
+                String tempPostUrl = Utils.convertUrl(mParamsPost);
+                url = "http://"+ mPostWord + tempPostUrl;
+            }
 
-            httpPostParams(mPostWord, mPostType);
+            httpPostParams(url, mPostType);
             return null;
         }
 
@@ -416,21 +436,29 @@ public class HomeFragment extends BaseFragment {
     @OnClick(R.id.upload_gps_button)
     void onPostButtonClick (View view) {
         String inputStr = mEditText.getText().toString();
-        mPostDataTask = new PostDataTask(inputStr, TYPE_UPLOAD_LOCATION);
+        mPostDataTask = new PostDataTask(inputStr, null, TYPE_UPLOAD_LOCATION);
         mPostDataTask.execute(mLoadIndex);
     }
 
     @OnClick(R.id.upload_notify_button)
     void onUplaodNotifyButtonClick (View view) {
         String inputStr = mEditText.getText().toString();
-        mPostDataTask = new PostDataTask(inputStr, TYPE_UPLOAD_NOTIFY);
+        mPostDataTask = new PostDataTask(inputStr, null, TYPE_UPLOAD_NOTIFY);
         mPostDataTask.execute(mLoadIndex);
     }
 
     @OnClick(R.id.push_message_button)
     void onPushMsgButtonClick (View view) {
         String inputStr = mEditText.getText().toString();
-        mPostDataTask = new PostDataTask(inputStr, TYPE_PUSH_MSG);
+        mPostDataTask = new PostDataTask(inputStr, null, TYPE_PUSH_MSG);
+        mPostDataTask.execute(mLoadIndex);
+    }
+
+    @OnClick(R.id.params_post_button)
+    void onParamsPostButtonClick (View view) {
+        String inputStr = mEditText.getText().toString();
+        String inputParams = mEditParamsText.getText().toString();
+        mPostDataTask = new PostDataTask(inputStr, inputParams, TYPE_PARAMS_POST);
         mPostDataTask.execute(mLoadIndex);
     }
 

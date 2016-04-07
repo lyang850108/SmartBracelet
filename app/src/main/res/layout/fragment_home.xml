@@ -24,6 +24,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:hint="请输入服务器地址"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_params_home"
+            android:layout_gravity="center_horizontal"
+            android:hint="请输入JSON数据" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -60,6 +66,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="消息推送"/>
+        <Button
+            android:id="@+id/params_post_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="参数POST"/>
     </LinearLayout>
 
     <TextView
