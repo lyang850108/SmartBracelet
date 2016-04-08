@@ -49,15 +49,6 @@ import butterknife.OnClick;
 public class HomeFragment extends BaseFragment {
     private View mView;
 
-    @Bind(R.id.method_get_home)
-    TextView mMethodTx;
-
-    @Bind(R.id.device_id_get_home)
-    TextView mDeviceIdTx;
-
-    @Bind(R.id.get_content_home)
-    TextView mGetContentTx;
-
     @Bind(R.id.post_content_home)
     TextView mPostContentTx;
 
@@ -66,9 +57,6 @@ public class HomeFragment extends BaseFragment {
 
     @Bind(R.id.post_result_home)
     TextView mPostRtrTx;
-
-    @Bind(R.id.status_get_home)
-    TextView mStatusTx;
 
     @Bind(R.id.edit_text_home)
     EditText mEditText;
@@ -225,10 +213,10 @@ public class HomeFragment extends BaseFragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            mGetContentTx.setText(strResult);
+            /*mGetContentTx.setText(strResult);
             mMethodTx.setText("Method = " + methodStr);
             mStatusTx.setText("Status = " +statusStr);
-            mDeviceIdTx.setText("DeviceID = " + deviceidStr);
+            mDeviceIdTx.setText("DeviceID = " + deviceidStr);*/
         }
     }
 

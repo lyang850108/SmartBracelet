@@ -21,15 +21,13 @@
     <EditText
         android:id="@+id/edit_text_home"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
         android:layout_marginTop="10dp"
+        android:background="@drawable/edit_background"
         android:hint="请输入服务器地址"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/edit_params_home"
-            android:layout_gravity="center_horizontal"
-            android:hint="请输入JSON数据" />
+
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -74,46 +72,6 @@
     </LinearLayout>
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/title_text_size"
-        android:textStyle="bold"
-        android:layout_marginTop="10dp"
-        android:text="GET服务器返回数据包内容"/>
-
-    <TextView
-        android:id="@+id/get_content_home"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/title_text_size"
-        android:textStyle="bold"
-        android:textColor="@android:color/holo_orange_dark"/>
-
-    <TextView
-        android:id="@+id/method_get_home"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/title_text_size"
-        android:textStyle="bold"
-        android:textColor="@android:color/holo_orange_dark"/>
-
-    <TextView
-        android:id="@+id/status_get_home"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/title_text_size"
-        android:textStyle="bold"
-        android:textColor="@android:color/holo_orange_dark"/>
-
-    <TextView
-        android:id="@+id/device_id_get_home"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/title_text_size"
-        android:textStyle="bold"
-        android:textColor="@android:color/holo_orange_dark"/>
-
-    <TextView
         android:id="@+id/send_sentence_home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -121,14 +79,22 @@
         android:textStyle="bold"
         android:textColor="@android:color/holo_orange_dark"/>
 
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/title_text_size"
             android:textStyle="bold"
-            android:layout_marginTop="10dp"
             android:text="POST服务器数据包内容"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_params_home"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:background="@drawable/edit_background"
+            android:layout_marginTop="10dp" />
 
         <TextView
             android:id="@+id/post_content_home"
