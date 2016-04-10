@@ -64,11 +64,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="消息推送"/>
-        <Button
-            android:id="@+id/params_post_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="参数POST"/>
     </LinearLayout>
 
     <TextView
@@ -96,10 +91,73 @@
             android:background="@drawable/edit_background"
             android:layout_marginTop="10dp" />
 
-        <TextView
-            android:id="@+id/post_content_home"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="定时发送"
+                android:id="@+id/timer_checkBox" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:textStyle="bold"
+                android:text="发送时间间隔"/>
+
+            <EditText
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/timer_edit_text"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/edit_background" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:textStyle="bold"
+                android:text="ms"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="right">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="发送消息"
+                android:id="@+id/post_package_home" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="停止发送"
+                android:id="@+id/stop_post_package" />
+        </LinearLayout>
+
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/title_text_size"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:text="POST服务器返回结果"/>
+
+        <TextView
+            android:id="@+id/post_result_home"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:textSize="@dimen/title_text_size"
             android:textStyle="bold"
             android:textColor="@android:color/holo_orange_dark"/>
@@ -110,10 +168,10 @@
             android:textSize="@dimen/title_text_size"
             android:textStyle="bold"
             android:layout_marginTop="10dp"
-            android:text="POST服务器数据包返回值"/>
+            android:text="POST服务器返回数据包"/>
 
         <TextView
-            android:id="@+id/post_result_home"
+            android:id="@+id/post_result_details_home"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/title_text_size"

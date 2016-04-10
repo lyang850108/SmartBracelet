@@ -45,13 +45,13 @@ public class Utils {
         JSONObject subJsonObject = new JSONObject();
         JSONObject jsonObject = new JSONObject();
         try {
+            jsonObject.put("method", Integer.toString(101));
             subJsonObject.put("deviceid", "686c0888-34a9-43b1-86da-9bb7feb90122");
-            subJsonObject.put("x", latitude);
-            subJsonObject.put("Y", longtitude);
+            subJsonObject.put("x", "" + latitude);
+            subJsonObject.put("Y", "" + longtitude);
             subJsonObject.put("imei", getImei());
             subJsonObject.put("phonenum", getTelNum());
-            subJsonObject.put("time", getTime());
-            jsonObject.put("method", 101);
+            subJsonObject.put("time", "" + getTime());
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -59,17 +59,62 @@ public class Utils {
         return jsonObject;
     }
 
-    public static JSONObject bindJOTel(double latitude, double longtitude) {
+    public static JSONObject bindJOTel() {
         JSONObject subJsonObject = new JSONObject();
         JSONObject jsonObject = new JSONObject();
         try {
-            subJsonObject.put("deviceid", "686c0888-34a9-43b1-86da-9bb7feb90122");
-            subJsonObject.put("x", latitude);
-            subJsonObject.put("y", longtitude);
+            jsonObject.put("method", Integer.toString(105));
+            subJsonObject.put("deviceid", "");
+            subJsonObject.put("mac", "9E:33:44:12:90:66");
             subJsonObject.put("imei", getImei());
-            subJsonObject.put("phonenum", "18576625591");
-            subJsonObject.put("time", "20160321142336");
-            jsonObject.put("method", 101);
+            subJsonObject.put("phonenum", getTelNum());
+            subJsonObject.put("time", "" + getTime());
+            jsonObject.put("params", subJsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
+    public static JSONObject bindJOGetId() {
+        JSONObject subJsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("method", Integer.toString(104));
+            subJsonObject.put("deviceid", "");
+            subJsonObject.put("mac", "9E:33:44:12:90:66");
+            subJsonObject.put("imei", getImei());
+            subJsonObject.put("phonenum", getTelNum());
+            subJsonObject.put("time", "" + getTime());
+            jsonObject.put("params", subJsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
+
+    public static JSONObject bindJOWarning() {
+        JSONObject subJsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("method", Integer.toString(102));
+            subJsonObject.put("deviceid", "686c0888-34a9-43b1-86da-9bb7feb90122");
+            subJsonObject.put("type", "1");
+            subJsonObject.put("time", "" + getTime());
+            jsonObject.put("params", subJsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
+    public static JSONObject bindJOMsgPush() {
+        JSONObject subJsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("method", Integer.toString(103));
+            subJsonObject.put("deviceid", "686c0888-34a9-43b1-86da-9bb7feb90122");
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -106,7 +151,7 @@ public class Utils {
     public static String convertUrl (String url) {
         String rtn = null;
         try {
-            rtn = URLEncoder.encode(url, "GBK");
+            rtn = URLEncoder.encode(url, "UTF-8");
             LogUtil.d(rtn);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

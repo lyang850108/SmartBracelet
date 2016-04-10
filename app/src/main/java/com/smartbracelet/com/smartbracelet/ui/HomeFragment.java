@@ -1,20 +1,17 @@
 package com.smartbracelet.com.smartbracelet.ui;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.smartbracelet.com.smartbracelet.R;
@@ -41,6 +38,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -48,9 +47,8 @@ import butterknife.OnClick;
 
 public class HomeFragment extends BaseFragment {
     private View mView;
-
-    @Bind(R.id.post_content_home)
-    TextView mPostContentTx;
+    @Bind(R.id.timer_checkBox)
+    CheckBox mTimerCB;
 
     @Bind(R.id.send_sentence_home)
     TextView mPostBackTx;
@@ -58,11 +56,17 @@ public class HomeFragment extends BaseFragment {
     @Bind(R.id.post_result_home)
     TextView mPostRtrTx;
 
+    @Bind(R.id.post_result_details_home)
+    TextView mPostDetailsRtrTx;
+
     @Bind(R.id.edit_text_home)
     EditText mEditText;
 
     @Bind(R.id.edit_params_home)
     EditText mEditParamsText;
+
+    @Bind(R.id.timer_edit_text)
+    EditText mTimerParamsText;
 
     @Bind(R.id.get_trams_button)
     Button mGetTramsButton;
@@ -79,8 +83,11 @@ public class HomeFragment extends BaseFragment {
     @Bind(R.id.push_message_button)
     Button mPushMsgButton;
 
-    @Bind(R.id.params_post_button)
+    @Bind(R.id.post_package_home)
     Button mParamsPostButton;
+
+    @Bind(R.id.stop_post_package)
+    Button mSopPostParams;
 
     private static final int LOAD_MORE = 1;
     private static final int LOAD_NEW= 2;
@@ -91,6 +98,7 @@ public class HomeFragment extends BaseFragment {
     private static final int TYPE_UPLOAD_NOTIFY = 3;
     private static final int TYPE_PUSH_MSG = 4;
     private static final int TYPE_PARAMS_POST = 5;
+    private static int CURRENT_TYPE_POST = 9;
     private int mPendLoadType = 0;
     private List<ProgramItem> mNewPrograms;
     private int mLoadIndex = 0;
@@ -101,12 +109,15 @@ public class HomeFragment extends BaseFragment {
     private String statusStr;
     private String deviceidStr;
 
+    private boolean isTimerChecked =  false;
+
     String subitJson;
 
     private String postRTR;
+    private String postDetailRTR;
     String strResult;
 
-    private final int MSG_REFRESH = 0;
+    private final int MSG_HTTP_POST = 0;
     private final int MSG_LOAD_DONE = 1;
 
     public HomeFragment() {
@@ -115,7 +126,8 @@ public class HomeFragment extends BaseFragment {
 
     public HomeHandler mHomeHandler;
 
-
+    Timer timer = new Timer();
+    TimerTask timerTask;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,6 +184,17 @@ public class HomeFragment extends BaseFragment {
             }
         });*/
 
+        mTimerCB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (true == isChecked) {
+                    isTimerChecked = true;
+                } else {
+                    isTimerChecked = false;
+                }
+            }
+        });
+
         //mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -220,7 +243,7 @@ public class HomeFragment extends BaseFragment {
         }
     }
 
-    private void httpPostParams(String url, int mPostType) {
+    private void httpPostParams(String url, String params, int mPostType) {
         String httpUrl = url;
         //创建httpRequest对象
         if (null == url) {
@@ -231,18 +254,15 @@ public class HomeFragment extends BaseFragment {
             try{
                 LogUtil.e("doInBackground, Post httpUrl:" + httpUrl);
                 HttpPost httpRequest = new HttpPost(httpUrl);
-                if (mPostType == TYPE_UPLOAD_LOCATION) {
-                    //设置字符集
-                    //LogUtil.e("post, yangli:" + subitJson);
-                    subitJson= Utils.bindJOGps(MainActivity.latitude, MainActivity.longtitude).toString();
-                    LogUtil.e("doInBackground, Post subitJson:" + subitJson);
 
-                    StringEntity se = new StringEntity(subitJson, "utf-8");
-                    //请求httpRequest
-                    httpRequest.setEntity(se);
-                } else {
-                    subitJson = httpUrl;
-                }
+                //设置字符集
+                //LogUtil.e("post, yangli:" + subitJson);
+
+
+                StringEntity se = new StringEntity(params, "utf-8");
+                //请求httpRequest
+                httpRequest.setEntity(se);
+
 
                 //取得默认的HttpClient
                 HttpClient httpclient = new DefaultHttpClient();
@@ -254,6 +274,7 @@ public class HomeFragment extends BaseFragment {
                     //取得返回的字符串
                     //String strResult = EntityUtils.toString(httpResponse.getEntity());
                     postRTR = "请求成功!";
+                    postDetailRTR = httpResponse.getEntity().toString();
                 }else{
                     postRTR = "请求错误! 错误码" +  httpResponse.getStatusLine().getStatusCode();
                     LogUtil.e("post, yangli:" + "请求错误");
@@ -348,14 +369,11 @@ public class HomeFragment extends BaseFragment {
             String url = "";
 
             //String httpUrl = "http://api.gigaset.com/cn/mobile/v1/demovideo/querydemo";
-            if (mPostType == TYPE_UPLOAD_LOCATION) {
-                url = "http://"+ mPostWord;
-            } else if (mPostType == TYPE_PARAMS_POST) {
-                String tempPostUrl = Utils.convertUrl(mParamsPost);
-                url = "http://"+ mPostWord + tempPostUrl;
-            }
 
-            httpPostParams(url, mPostType);
+            url = "http://"+ mPostWord;
+
+
+            httpPostParams(url, mParamsPost, mPostType);
             return null;
         }
 
@@ -368,13 +386,15 @@ public class HomeFragment extends BaseFragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if (null != mPostContentTx) {
-                mPostContentTx.setText(subitJson);
+            if (null != mEditParamsText) {
+                mEditParamsText.setText(subitJson);
             }
             mPostRtrTx.setText(postRTR);
+            mPostDetailsRtrTx.setText(postDetailRTR);
         }
     }
 
+    int cnt = 0;
     private class HomeHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -382,8 +402,11 @@ public class HomeFragment extends BaseFragment {
                 case MSG_LOAD_DONE:
 
                     break;
-                case MSG_REFRESH:
-                    loadNew();
+                case MSG_HTTP_POST:
+                    cnt ++;
+                    LogUtil.d(Integer.toString(cnt));
+
+                    startPostTask();
                     break;
             }
         }
@@ -398,55 +421,87 @@ public class HomeFragment extends BaseFragment {
         }*/
     }
 
-    private void loadNew() {
-        /*if (mLoadTask == null) {
-            mLoadTask = new LoadDataTask(LOAD_NEW);
-            mLoadTask.execute(0);
-        } else {
-            mPendLoadType = LOAD_NEW;
-        }*/
-    }
 
     @OnClick(R.id.get_trams_button)
      void onGetTramsButtonClick (View view) {
-        String inputStr = mEditText.getText().toString();
-        mLoadTask = new LoadDataTask(inputStr, TYPE_GET_DEVICE_PARM);
-        mLoadTask.execute(mLoadIndex);
+        CURRENT_TYPE_POST = TYPE_GET_DEVICE_PARM;
+        subitJson= Utils.bindJOGetId().toString();
+        LogUtil.e("doInBackground, Post subitJson:" + subitJson);
+        mEditParamsText.setText(subitJson);
     }
 
     @OnClick(R.id.update_number_button)
     void onUpdateNumButtonClick (View view) {
-        String inputStr = mEditText.getText().toString();
-        mLoadTask = new LoadDataTask(inputStr, TYPE_GET_NUM_PARM);
-        mLoadTask.execute(mLoadIndex);
+        CURRENT_TYPE_POST = TYPE_UPLOAD_LOCATION;
+        subitJson= Utils.bindJOTel().toString();
+        LogUtil.e("doInBackground, Post subitJson:" + subitJson);
+        mEditParamsText.setText(subitJson);
     }
 
     @OnClick(R.id.upload_gps_button)
     void onPostButtonClick (View view) {
-        String inputStr = mEditText.getText().toString();
-        mPostDataTask = new PostDataTask(inputStr, null, TYPE_UPLOAD_LOCATION);
-        mPostDataTask.execute(mLoadIndex);
+        CURRENT_TYPE_POST = TYPE_UPLOAD_LOCATION;
+        subitJson= Utils.bindJOGps(MainActivity.latitude, MainActivity.longtitude).toString();
+        LogUtil.e("doInBackground, Post subitJson:" + subitJson);
+        mEditParamsText.setText(subitJson);
     }
 
     @OnClick(R.id.upload_notify_button)
     void onUplaodNotifyButtonClick (View view) {
-        String inputStr = mEditText.getText().toString();
-        mPostDataTask = new PostDataTask(inputStr, null, TYPE_UPLOAD_NOTIFY);
-        mPostDataTask.execute(mLoadIndex);
+        CURRENT_TYPE_POST = TYPE_UPLOAD_NOTIFY;
+        subitJson= Utils.bindJOWarning().toString();
+        LogUtil.e("doInBackground, Post subitJson:" + subitJson);
+        mEditParamsText.setText(subitJson);
     }
 
     @OnClick(R.id.push_message_button)
     void onPushMsgButtonClick (View view) {
-        String inputStr = mEditText.getText().toString();
-        mPostDataTask = new PostDataTask(inputStr, null, TYPE_PUSH_MSG);
-        mPostDataTask.execute(mLoadIndex);
+        CURRENT_TYPE_POST = TYPE_PUSH_MSG;
+        subitJson= Utils.bindJOMsgPush().toString();
+        LogUtil.e("doInBackground, Post subitJson:" + subitJson);
+        mEditParamsText.setText(subitJson);
     }
 
-    @OnClick(R.id.params_post_button)
+    @OnClick(R.id.post_package_home)
     void onParamsPostButtonClick (View view) {
+
+        if (isTimerChecked) {
+            int times = Integer.parseInt(mTimerParamsText.getText().toString());
+            //Must cancel first
+
+            timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    //SEND MESSAGE TIMER
+                    Message msg = new Message();
+                    msg.what = MSG_HTTP_POST;
+                    if (null != mHomeHandler) {
+                        mHomeHandler.sendMessage(msg);
+                    }
+                }
+            };
+            timer.schedule(timerTask, 0, times);
+
+
+
+        } else {
+            startPostTask();
+        }
+
+    }
+
+    @OnClick(R.id.stop_post_package)
+    void onStopPostButtonClick (View view) {
+        if (null != timerTask) {
+            LogUtil.d("stop_post_package");
+            timerTask.cancel();
+        }
+    }
+
+    private void startPostTask() {
         String inputStr = mEditText.getText().toString();
         String inputParams = mEditParamsText.getText().toString();
-        mPostDataTask = new PostDataTask(inputStr, inputParams, TYPE_PARAMS_POST);
+        mPostDataTask = new PostDataTask(inputStr, inputParams, CURRENT_TYPE_POST);
         mPostDataTask.execute(mLoadIndex);
     }
 
