@@ -48,7 +48,8 @@ public class Utils {
             jsonObject.put("method", Integer.toString(101));
             subJsonObject.put("deviceid", "686c0888-34a9-43b1-86da-9bb7feb90122");
             subJsonObject.put("x", "" + latitude);
-            subJsonObject.put("Y", "" + longtitude);
+            subJsonObject.put("y", "" + longtitude);
+            subJsonObject.put("mac", "9E:33:44:12:90:66");
             subJsonObject.put("imei", getImei());
             subJsonObject.put("phonenum", getTelNum());
             subJsonObject.put("time", "" + getTime());
