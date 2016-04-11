@@ -274,7 +274,8 @@ public class HomeFragment extends BaseFragment {
                     //取得返回的字符串
                     //String strResult = EntityUtils.toString(httpResponse.getEntity());
                     postRTR = "请求成功!";
-                    postDetailRTR = httpResponse.getEntity().toString();
+                    postDetailRTR = EntityUtils.toString(httpResponse.getEntity());
+                    //postDetailRTR = httpResponse.getEntity().toString();
                 }else{
                     postRTR = "请求错误! 错误码" +  httpResponse.getStatusLine().getStatusCode();
                     LogUtil.e("post, yangli:" + "请求错误");
@@ -386,9 +387,9 @@ public class HomeFragment extends BaseFragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if (null != mEditParamsText) {
+            /*if (null != mEditParamsText) {
                 mEditParamsText.setText(subitJson);
-            }
+            }*/
             mPostRtrTx.setText(postRTR);
             mPostDetailsRtrTx.setText(postDetailRTR);
         }

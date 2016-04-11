@@ -13,6 +13,8 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Yangli on 16-04-05.
@@ -52,7 +54,7 @@ public class Utils {
             subJsonObject.put("mac", "9E:33:44:12:90:66");
             subJsonObject.put("imei", getImei());
             subJsonObject.put("phonenum", getTelNum());
-            subJsonObject.put("time", "" + getTime());
+            subJsonObject.put("time", getTime());
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -69,7 +71,7 @@ public class Utils {
             subJsonObject.put("mac", "9E:33:44:12:90:66");
             subJsonObject.put("imei", getImei());
             subJsonObject.put("phonenum", getTelNum());
-            subJsonObject.put("time", "" + getTime());
+            subJsonObject.put("time", getTime());
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -86,7 +88,7 @@ public class Utils {
             subJsonObject.put("mac", "9E:33:44:12:90:66");
             subJsonObject.put("imei", getImei());
             subJsonObject.put("phonenum", getTelNum());
-            subJsonObject.put("time", "" + getTime());
+            subJsonObject.put("time", getTime());
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -102,7 +104,7 @@ public class Utils {
             jsonObject.put("method", Integer.toString(102));
             subJsonObject.put("deviceid", "686c0888-34a9-43b1-86da-9bb7feb90122");
             subJsonObject.put("type", "1");
-            subJsonObject.put("time", "" + getTime());
+            subJsonObject.put("time", getTime());
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -144,10 +146,10 @@ public class Utils {
         return imei;
     }
 
-    public static long getTime() {
+    /*public static long getTime() {
         long time=System.currentTimeMillis();
         return time;
-    }
+    }*/
 
     public static String convertUrl (String url) {
         String rtn = null;
@@ -159,5 +161,12 @@ public class Utils {
         }
 
         return rtn;
+    }
+
+    public static String getTime() {
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String timeFotmat = sdf.format(date);
+        return timeFotmat;
     }
 }
