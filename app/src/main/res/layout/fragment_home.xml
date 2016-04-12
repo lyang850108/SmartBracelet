@@ -8,7 +8,8 @@
         android:scrollbars="vertical">
     <LinearLayout android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="3dp">
 
     <TextView
         android:layout_width="match_parent"
