@@ -4,36 +4,23 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.FragmentTransaction;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 
 import android.os.Build;
 import android.os.Message;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.RadioGroup;
-import android.widget.TextView;
-import android.widget.Toast;
+
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
-import com.baidu.location.BDNotifyListener;//假如用到位置提醒功能，需要import该类
-import com.baidu.location.Poi;
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.model.BaseFragment;
 import com.smartbracelet.com.smartbracelet.service.LocationService;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by Yangli on 16-03-20.
@@ -264,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
 
                     break;
                 case ID_SETTING:
-                    mCurrentFragment = new SettingFragment();
+                    mCurrentFragment = new BlueToothFragment();
 
                     break;
 

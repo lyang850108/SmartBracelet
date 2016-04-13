@@ -1,37 +1,60 @@
 package com.smartbracelet.com.smartbracelet.ui;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.model.BaseFragment;
+import com.smartbracelet.com.smartbracelet.util.LogUtil;
+
+import java.io.BufferedWriter;
+import java.util.Set;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SettingFragment.OnFragmentInteractionListener} interface
+ * {@link BlueToothFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link SettingFragment#newInstance} factory method to
+ * Use the {@link BlueToothFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SettingFragment extends BaseFragment {
+public class BlueToothFragment extends BaseFragment {
+
+    @Bind(R.id.connect_bt_button)
+    Button mConnectButton;
+
+    @Bind(R.id.unconnect_bt_button)
+    Button mUnconnectButton;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private View mView;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
+    private BluetoothAdapter bluetoothAdapter;
+
     private OnFragmentInteractionListener mListener;
 
-    public SettingFragment() {
+    public BlueToothFragment() {
         // Required empty public constructor
     }
 
@@ -44,8 +67,8 @@ public class SettingFragment extends BaseFragment {
      * @return A new instance of fragment HomeFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SettingFragment newInstance(String param1, String param2) {
-        SettingFragment fragment = new SettingFragment();
+    public static BlueToothFragment newInstance(String param1, String param2) {
+        BlueToothFragment fragment = new BlueToothFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -60,13 +83,36 @@ public class SettingFragment extends BaseFragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        initBt();
+    }
+
+    private void initBt() {
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothAdapter.enable();
+
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice bluetoothDevice : pairedDevices) {
+                //Dispaly the searched devices
+            }
+        }
+
+        /*IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        getContext().registerReceiver(receiver, filter);
+
+        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        getContext().registerReceiver(receiver, filter);*/
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_bluetooth, container, false);
+        mView = inflater.inflate(R.layout.fragment_bluetooth, container, false);
+        ButterKnife.bind(this, mView);
+
+        return mView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -106,5 +152,15 @@ public class SettingFragment extends BaseFragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @OnClick(R.id.connect_bt_button)
+    void onConnectButtonClick (View view) {
+
+    }
+
+    @OnClick(R.id.unconnect_bt_button)
+    void onUnconnectButtonClick (View view) {
+
     }
 }
