@@ -3,6 +3,16 @@
     <string name="home">Home</string>
     <string name="statisc">Statisc</string>
     <string name="setting">Setting</string>
+    <string name="bluetooth">Btooth</string>
+    <string name="button_true">OK</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="tip_title">Tips</string>
+    <string name="boolth_tip_content">To use Click, Bluetooth must be activated. Activate Bluetooth?</string>
+    <string name="ble_not_supported">BLE Not Supported</string>
+    <string name="error_bluetooth_not_supported">Bluetooth Not Supported</string>
+    <string name="boolth_eable_tip">Bluetooth Enabled</string>
+    <string name="new_guid_searching">Searching for Click devices.</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

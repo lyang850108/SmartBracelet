@@ -2,14 +2,20 @@ package com.smartbracelet.com.smartbracelet.ui;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.pm.PackageManager;
 
 import android.os.Build;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -17,8 +23,12 @@ import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.model.BaseFragment;
 import com.smartbracelet.com.smartbracelet.service.LocationService;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
+import com.smartbracelet.com.smartbracelet.util.SharedPreferencesHelper;
+import com.smartbracelet.com.smartbracelet.util.ToastHelper;
+import com.smartbracelet.com.smartbracelet.view.AlertDialogCreator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 
@@ -44,11 +54,16 @@ public class MainActivity extends AppCompatActivity {
     private final  int INDEX_FRAGMENT_STAT = 1;
     private final  int INDEX_FRAGMENT_SETT = 2;
 
+    private MainActivity pThis;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        pThis = this;
 
         ButterKnife.bind(this);
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.tab_bar);
@@ -251,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
 
                     break;
                 case ID_SETTING:
-                    mCurrentFragment = new BlueToothFragment();
+                    mCurrentFragment = new BlueToothFragment(pThis);
 
                     break;
 
@@ -260,4 +275,6 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_layout, mCurrentFragment, FRAGMENT_TAGS[id]).commit();
     }
+
+
 }

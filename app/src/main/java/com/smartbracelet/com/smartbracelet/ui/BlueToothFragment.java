@@ -1,36 +1,42 @@
 package com.smartbracelet.com.smartbracelet.ui;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.model.BaseFragment;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
+import com.smartbracelet.com.smartbracelet.util.SharedPreferencesHelper;
+import com.smartbracelet.com.smartbracelet.util.ToastHelper;
+import com.smartbracelet.com.smartbracelet.view.AlertDialogCreator;
 
 import java.io.BufferedWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link BlueToothFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link BlueToothFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class BlueToothFragment extends BaseFragment {
 
     @Bind(R.id.connect_bt_button)
@@ -50,60 +56,132 @@ public class BlueToothFragment extends BaseFragment {
     private String mParam1;
     private String mParam2;
 
-    private BluetoothAdapter bluetoothAdapter;
+    private final int MSG_SEARCH_OUT = 0;
+    private final int MSG_SERCH_DONE = 1;
 
     private OnFragmentInteractionListener mListener;
 
+    private Activity mContext;
+
+    public BlueToothHandler mBTHandler;
+
+    private List<String> deviceNameList =  new ArrayList<String>();
+
+    private SharedPreferencesHelper sharedPreferencesHelper;
+
+    // 手机蓝牙地址(第一次获取到的)
+    String SP_PHONE_ADDRESS = "init_phone_address";
+
+    // Bluetooth
+    public static BluetoothManager mBluetoothManager;
+    public BluetoothAdapter mBtAdapter;
+
+    // 搜索重试次数
+    private int retySearchCount = 0;
+    // 连接重试三次
+    private int retyContactCount = 3;
+
     public BlueToothFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static BlueToothFragment newInstance(String param1, String param2) {
-        BlueToothFragment fragment = new BlueToothFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public BlueToothFragment(MainActivity mainActivity) {
+        // Required empty public constructor
+        mContext = mainActivity;
+    }
+
+    private class BlueToothHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_SEARCH_OUT:
+
+                    break;
+                case MSG_SERCH_DONE:
+
+                    break;
+            }
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+        /*if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        }*/
+        sharedPreferencesHelper = SharedPreferencesHelper.getInstance();
         initBt();
+        checkBTAvail();
     }
 
-    private void initBt() {
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        bluetoothAdapter.enable();
+    @Override
+    public void onStart() {
+        startScanningBT();
+        super.onStart();
+    }
 
-        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-
-        if (pairedDevices.size() > 0) {
-            for (BluetoothDevice bluetoothDevice : pairedDevices) {
-                //Dispaly the searched devices
-            }
+    // search Time out
+    private void addScanningTimeout() {
+        if (null != mBTHandler) {
+            Message msg = new Message();
+            msg.what = MSG_SEARCH_OUT;
+            mBTHandler.sendMessageDelayed(msg, 1000);
         }
-
-        /*IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        getContext().registerReceiver(receiver, filter);
-
-        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        getContext().registerReceiver(receiver, filter);*/
     }
+
+    private void startScanningBT() {
+        addScanningTimeout();
+
+        ToastHelper.showAlert(mContext, getString(R.string.new_guid_searching));
+
+        if (null != mBtAdapter && null != mLeScanCallback) {
+            deviceNameList.clear();
+            mBtAdapter.startLeScan(mLeScanCallback);
+        }
+    }
+
+    // stops current scanning
+    public void stopScanningBT() {
+        if (null != mBtAdapter && null != mLeScanCallback) {
+            mBtAdapter.stopLeScan(mLeScanCallback);
+        }
+    }
+
+    // ble search callback
+    public BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
+
+        public void onLeScan(final BluetoothDevice device, final int rssi,
+                             byte[] scanRecord) {
+
+            //if (BluetoothUtil.checkAutoContactDeviceFilter(device)) {
+
+            LogUtil.d( "new device name : " + device.getAddress());
+
+                // 防止同一个address多次链接
+                if (!deviceNameList.contains(device.getAddress())) {
+
+                    int connectionState = mBluetoothManager.getConnectionState(
+                            device, BluetoothProfile.GATT);
+
+                    if (connectionState == BluetoothProfile.STATE_DISCONNECTED) {
+                        // 添加
+                        if (rssi > -55) {
+                            if (null != mBTHandler)
+                                mBTHandler.sendEmptyMessage(1007);
+
+                            // 足够近情况下才做自动连接
+                            mBTHandler.sendMessageDelayed(
+                                    mBTHandler.obtainMessage(1006,
+                                            device.getAddress()), 2000);
+                            deviceNameList.add(device.getAddress());
+                            retySearchCount = 0;
+                        }
+                    }
+                }
+            }
+        //}
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -163,4 +241,81 @@ public class BlueToothFragment extends BaseFragment {
     void onUnconnectButtonClick (View view) {
 
     }
+
+    private void initBt() {
+        mBluetoothManager = (BluetoothManager)mContext.getSystemService(Context.BLUETOOTH_SERVICE);
+        mBtAdapter = mBluetoothManager.getAdapter();
+
+    }
+
+    private AlertDialog mAlertDialog;
+    private void checkBTAvail() {
+        if (null == mBtAdapter) {
+            mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+        }
+
+        if (!mBtAdapter.enable()) {
+            try {
+                if (null != mContext) {
+                    if (null != mAlertDialog) {
+                        mAlertDialog.dismiss();
+                        mAlertDialog = null;
+                    }
+                    AlertDialogCreator.getInstance().setmButtonOnClickListener(mDialogListener);
+                    mAlertDialog = AlertDialogCreator
+                            .getInstance()
+                            .createAlertDialog(
+                                    mContext,
+                                    getString(R.string.tip_title),
+                                    getString(R.string.boolth_tip_content));
+                    mAlertDialog.show();
+                }
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+        }
+    }
+
+    private boolean isEnabled = false;
+    private AlertDialogCreator.ButtonOnClickListener mDialogListener = new AlertDialogCreator.ButtonOnClickListener() {
+        @Override
+        public void buttonTrue() {
+            // check if bluetooth is supported
+            if (!mContext.getPackageManager().hasSystemFeature(
+                    PackageManager.FEATURE_BLUETOOTH_LE)) {
+                Toast.makeText(mContext, R.string.ble_not_supported,
+                        Toast.LENGTH_SHORT).show();
+                //finish();
+            }
+            if (!mBtAdapter.isEnabled()) {
+                mBtAdapter.enable();
+                // 只保留最原始的蓝牙地址
+
+                if (TextUtils.isEmpty(sharedPreferencesHelper.getString(SP_PHONE_ADDRESS))) {
+                    sharedPreferencesHelper.putString(SP_PHONE_ADDRESS, mBtAdapter.getAddress());
+                }
+
+                ToastHelper.showAlert(mContext, getString(R.string.boolth_eable_tip));
+                isEnabled = true;
+            }
+        }
+
+        @Override
+        public void buttonTrue(int ring_dis) {
+
+        }
+
+        @Override
+        public void buttonTrue(String valuekey, String name) {
+
+        }
+
+        @Override
+        public void buttonCancel() {
+            if (!isEnabled) {
+                ToastHelper.showAlert(mContext, getString(R.string.boolth_eable_tip));
+                //finish();
+            }
+        }
+    };
 }

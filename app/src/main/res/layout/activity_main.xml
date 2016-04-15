@@ -39,7 +39,7 @@
             android:id="@+id/tab_setting"
             android:drawableTop="@drawable/button_news_selector"
             style="@style/navigation_bottom_radio"
-            android:text="@string/setting" />
+            android:text="@string/bluetooth" />
 
     </RadioGroup>
 </LinearLayout>
