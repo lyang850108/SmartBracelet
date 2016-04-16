@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -18,7 +19,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.smartbracelet.com.smartbracelet.R;
@@ -29,9 +33,11 @@ import com.smartbracelet.com.smartbracelet.util.ToastHelper;
 import com.smartbracelet.com.smartbracelet.view.AlertDialogCreator;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,11 +45,20 @@ import butterknife.OnClick;
 
 public class BlueToothFragment extends BaseFragment {
 
+    @Bind(R.id.search_bt_button)
+    Button mSearchButton;
+
+    @Bind(R.id.stop_search_bt_button)
+    Button mStopSearchButton;
+
     @Bind(R.id.connect_bt_button)
     Button mConnectButton;
 
     @Bind(R.id.unconnect_bt_button)
     Button mUnconnectButton;
+
+    @Bind(R.id.device_list_id)
+    ListView mListDevices;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -55,6 +70,8 @@ public class BlueToothFragment extends BaseFragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+
 
     private final int MSG_SEARCH_OUT = 0;
     private final int MSG_SERCH_DONE = 1;
@@ -69,12 +86,22 @@ public class BlueToothFragment extends BaseFragment {
 
     private SharedPreferencesHelper sharedPreferencesHelper;
 
+    private ArrayAdapter<String> arrayAdapter;
+
+    private final UUID MY_UUID = UUID.randomUUID();
+
+    private final String NAME = "BlueTooth";
+
+    private BluetoothSocket bluetoothSocket;
+
     // 手机蓝牙地址(第一次获取到的)
     String SP_PHONE_ADDRESS = "init_phone_address";
 
     // Bluetooth
     public static BluetoothManager mBluetoothManager;
     public BluetoothAdapter mBtAdapter;
+
+    private BluetoothDevice bluetoothDevice;
 
     // 搜索重试次数
     private int retySearchCount = 0;
@@ -111,8 +138,7 @@ public class BlueToothFragment extends BaseFragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }*/
         sharedPreferencesHelper = SharedPreferencesHelper.getInstance();
-        initBt();
-        checkBTAvail();
+
     }
 
     @Override
@@ -131,14 +157,14 @@ public class BlueToothFragment extends BaseFragment {
     }
 
     private void startScanningBT() {
-        addScanningTimeout();
+        /*addScanningTimeout();
 
         ToastHelper.showAlert(mContext, getString(R.string.new_guid_searching));
 
         if (null != mBtAdapter && null != mLeScanCallback) {
             deviceNameList.clear();
             mBtAdapter.startLeScan(mLeScanCallback);
-        }
+        }*/
     }
 
     // stops current scanning
@@ -193,6 +219,13 @@ public class BlueToothFragment extends BaseFragment {
         return mView;
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initBt();
+        checkBTAvail();
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -242,9 +275,56 @@ public class BlueToothFragment extends BaseFragment {
 
     }
 
+    @OnClick(R.id.search_bt_button)
+    void onSearchButtonClick (View view) {
+
+    }
+
+    @OnClick(R.id.stop_search_bt_button)
+    void onStopSearchButtonClick (View view) {
+
+    }
+
     private void initBt() {
         mBluetoothManager = (BluetoothManager)mContext.getSystemService(Context.BLUETOOTH_SERVICE);
         mBtAdapter = mBluetoothManager.getAdapter();
+
+        Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device:pairedDevices) {
+                deviceNameList.add(device.getName() + ": " + device.getAddress());
+            }
+        }
+
+        arrayAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1, deviceNameList);
+        mListDevices.setAdapter(arrayAdapter);
+        mListDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String s = arrayAdapter.getItem(position);
+                String address = s.substring(s.indexOf(":") + 1).trim();
+
+                if (mBtAdapter.isDiscovering()) {
+                    mBtAdapter.cancelDiscovery();
+                }
+
+                if (null == bluetoothDevice) {
+                    bluetoothDevice = mBtAdapter.getRemoteDevice(address);
+                }
+                if (null == bluetoothSocket) {
+                    try {
+                        bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(MY_UUID);
+                        if(null != bluetoothSocket) {
+                            bluetoothSocket.connect();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+        });
 
     }
 

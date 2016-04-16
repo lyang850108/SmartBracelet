@@ -1,9 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_marginLeft="3dp"
-    android:layout_height="match_parent">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/recycler_bt_view"
+    tools:context=".MainActivity"
+    android:scrollbars="vertical">
+    <LinearLayout android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="3dp">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/title_text_size"
+        android:textStyle="bold"
+        android:layout_marginTop="60dp"
+        android:text="搜索设备"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/search_bt_button"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="搜索设备"/>
+        <Button
+            android:id="@+id/stop_search_bt_button"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="停止搜索"/>
+    </LinearLayout>
+    <ListView
+        android:id="@+id/device_list_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </ListView>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -119,4 +154,5 @@
         android:background="@drawable/edit_background"
         android:layout_marginTop="10dp" />
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>
