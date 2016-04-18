@@ -74,11 +74,17 @@ public class BlueToothFragment extends BaseFragment implements ConstDefine{
     @Bind(R.id.unconnect_bt_button)
     Button mUnconnectButton;
 
+    @Bind(R.id.read_bt_button)
+    Button mReadButton;
+
     @Bind(R.id.device_list_id)
     ListView mDeviceList;
 
     @Bind(R.id.uuid_text_bt)
     EditText mUuidET;
+
+    @Bind(R.id.content_get_bt)
+    EditText mConnectGetET;
 
     @Bind(R.id.connect_result_details_bt)
     TextView mConncetRrtTx;
@@ -120,6 +126,8 @@ public class BlueToothFragment extends BaseFragment implements ConstDefine{
     private List<ScanFilter> mFilters;
     private List<BluetoothDevice> mDevices;
 
+    private String bleAddress = null;
+
     // 手机蓝牙地址(第一次获取到的)
     String SP_PHONE_ADDRESS = "init_phone_address";
 
@@ -151,12 +159,20 @@ public class BlueToothFragment extends BaseFragment implements ConstDefine{
             switch (msg.what) {
                 case MSG_SEARCH_OUT:
                     break;
+
                 case MSG_SERCH_DONE:
                     int result = msg.arg1;
                     if (0 == result) {
                         mConncetRrtTx.setText("STATE_CONNECTED");
                     } else {
                         mConncetRrtTx.setText("STATE_DISCONNECTED");
+                    }
+                    break;
+
+                case MSG_CHA_READ:
+                    String readStr = msg.obj.toString();
+                    if (!TextUtils.isEmpty(readStr)) {
+                        mConnectGetET.setText(readStr);
                     }
                     break;
             }
@@ -264,6 +280,14 @@ public class BlueToothFragment extends BaseFragment implements ConstDefine{
     @OnClick(R.id.stop_search_bt_button)
     void onStopSearchButtonClick (View view) {
         scanLeDevice(false);
+    }
+
+    @OnClick(R.id.read_bt_button)
+    void onReadButtonClick (View view) {
+
+        if (null != bleAddress && !TextUtils.isEmpty(bleAddress)) {
+            startBleService(bleAddress, ACTION_READ_CMD);
+        }
     }
 
     @Override
@@ -474,7 +498,7 @@ public class BlueToothFragment extends BaseFragment implements ConstDefine{
                                      byte[] scanRecord) {
 
                     if (!deviceAddressList.contains(btDevice.getAddress())) {
-                        final String bleAddress = btDevice.getAddress();
+                        bleAddress = btDevice.getAddress();
                         mDevices.add(btDevice);
 
                         deviceAddressList.add(bleAddress);
@@ -489,16 +513,17 @@ public class BlueToothFragment extends BaseFragment implements ConstDefine{
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                 //connectDevice(mDevices.get(position));
-                                startBleService(bleAddress);
+                                startBleService(bleAddress , ACTION_CONNECTED_CMD);
                             }
                         });
                     }
                 }
             };
 
-    private void startBleService(String address) {
+    private void startBleService(String address, String action) {
         Intent startService = new Intent(mContext, BlueToothLoService.class);
-        startService.setAction(ACTION_CONNECTED_CMD);
+
+        startService.setAction(action);
         startService.putExtra(BLE_ADDRESS, address);
         mContext.startService(startService);
     }

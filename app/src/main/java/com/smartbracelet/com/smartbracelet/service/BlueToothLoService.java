@@ -56,13 +56,17 @@ public class BlueToothLoService extends Service implements ConstDefine{
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        LogUtil.d("onStartCommand :" + intent.getAction());
 
         if (null != intent) {
             String action = intent.getAction();
-            if (TextUtils.isEmpty(action)) {
+            if (!TextUtils.isEmpty(action)) {
                 String address = intent.getStringExtra(BLE_ADDRESS);
                 if (ACTION_CONNECTED_CMD.equals(action)) {
+                    LogUtil.d("onStartCommand address:" + address);
                     connectDevice(address);
+                } else if (ACTION_READ_CMD.equals(action)) {
+                    readDataFromDevice(address);
                 }
             }
         }
@@ -140,19 +144,26 @@ public class BlueToothLoService extends Service implements ConstDefine{
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            /*List<BluetoothGattService> services = gatt.getServices();
+            List<BluetoothGattService> services = gatt.getServices();
 
             gatt.readCharacteristic(services.get(1).getCharacteristics().get
-                    (0));*/
+                    (0));
 
-            dicoveredSetSerCha(gatt);
+            //dicoveredSetSerCha(gatt);
         }
 
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic
                                                  characteristic, int status) {
+            Message msg = new Message();
+            msg.what = MSG_CHA_READ;
+            msg.obj = characteristic.toString();
+            if (null != BlueToothFragment.mBTHandler) {
+                BlueToothFragment.mBTHandler.sendMessage(msg);
+            }
             LogUtil.d("onCharacteristicRead" + characteristic.toString());
+
             gatt.disconnect();
         }
     };
