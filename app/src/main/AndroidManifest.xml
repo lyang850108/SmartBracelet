@@ -61,6 +61,16 @@
             android:name=".service.BlueToothLoService"
             android:enabled="true"
             android:exported="true" >
+            <intent-filter>
+                <action android:name="ACTION_SERVICE_LESCAN_CMD" />
+                <action android:name="ACTION_SERVICE_CONNECTED_CMD" />
+                <action android:name="ACTION_SERVICE_DISCONNECTED_CMD" />
+                <action android:name="ACTION_SERVICE_WRITE_CMD" />
+                <action android:name="ACTION_SERVICE_READ_CMD" />
+                <action android:name="ACTION_SERVICE_NOTIFY_CMD" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </service>
     </application>
 

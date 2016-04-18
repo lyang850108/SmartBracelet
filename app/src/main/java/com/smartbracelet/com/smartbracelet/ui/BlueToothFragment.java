@@ -42,6 +42,8 @@ import android.widget.Toast;
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.adapter.DeviceAdapter;
 import com.smartbracelet.com.smartbracelet.model.BaseFragment;
+import com.smartbracelet.com.smartbracelet.service.BlueToothLoService;
+import com.smartbracelet.com.smartbracelet.util.ConstDefine;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
 import com.smartbracelet.com.smartbracelet.util.SharedPreferencesHelper;
 import com.smartbracelet.com.smartbracelet.util.ToastHelper;
@@ -58,7 +60,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class BlueToothFragment extends BaseFragment {
+public class BlueToothFragment extends BaseFragment implements ConstDefine{
 
     @Bind(R.id.search_bt_button)
     Button mSearchButton;
@@ -92,19 +94,14 @@ public class BlueToothFragment extends BaseFragment {
     private String mParam1;
     private String mParam2;
 
-
-
-    private final int MSG_SEARCH_OUT = 0;
-    private final int MSG_SERCH_DONE = 1;
-
     private OnFragmentInteractionListener mListener;
 
     private Activity mContext;
 
-    public BlueToothHandler mBTHandler;
+    public static Handler mBTHandler;
 
     private List<String> deviceNameList =  new ArrayList<String>();
-
+    private List<String> deviceAddressList =  new ArrayList<String>();
     private SharedPreferencesHelper sharedPreferencesHelper;
 
     private ArrayAdapter<String> arrayAdapter;
@@ -122,7 +119,6 @@ public class BlueToothFragment extends BaseFragment {
     private ScanSettings mSettings;
     private List<ScanFilter> mFilters;
     private List<BluetoothDevice> mDevices;
-    private BluetoothGatt mGatt;
 
     // 手机蓝牙地址(第一次获取到的)
     String SP_PHONE_ADDRESS = "init_phone_address";
@@ -349,15 +345,6 @@ public class BlueToothFragment extends BaseFragment {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mGatt == null) {
-           return;
-        }
-        mGatt.close();
-    }
-
     private AlertDialog mAlertDialog;
     private void checkBTAvail() {
         if (null == mBtAdapter) {
@@ -449,6 +436,10 @@ public class BlueToothFragment extends BaseFragment {
             mBluetoothLeScanner.stopScan(mScanCallback);
         }*/
 
+        if (null == mBluetoothAdapter && null == mLeScanCallback) {
+            return;
+        }
+
         if (enable) {
             // Stops scanning after a pre-defined scan period.
             mBTHandler.postDelayed(new Runnable() {
@@ -467,6 +458,7 @@ public class BlueToothFragment extends BaseFragment {
 
             }
             //mBluetoothAdapter.startLeScan(mLeScanCallback);
+            deviceAddressList.clear();
             mBluetoothAdapter.startLeScan(MY_UUID, mLeScanCallback);
         } else {
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
@@ -480,30 +472,36 @@ public class BlueToothFragment extends BaseFragment {
                 @Override
                 public void onLeScan(final BluetoothDevice btDevice, int rssi,
                                      byte[] scanRecord) {
-                    mDevices.add(btDevice);
 
+                    if (!deviceAddressList.contains(btDevice.getAddress())) {
+                        final String bleAddress = btDevice.getAddress();
+                        mDevices.add(btDevice);
 
-                    deviceNameList.add(btDevice.getName() + ": " + btDevice.getAddress());
+                        deviceAddressList.add(bleAddress);
+                        deviceNameList.add(btDevice.getName() + ": " +bleAddress);
 
-                    arrayAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1, deviceNameList);
+                        arrayAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1, deviceNameList);
 
-                    //DeviceAdapter adapter = new DeviceAdapter(mContext, android.R.layout.simple_list_item_1, mDevices);
-                    mDeviceList.setAdapter(arrayAdapter);
+                        //DeviceAdapter adapter = new DeviceAdapter(mContext, android.R.layout.simple_list_item_1, mDevices);
+                        mDeviceList.setAdapter(arrayAdapter);
 
-                    mDeviceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            try {
-                                connectDevice(mDevices.get(position));
-                            } catch (IndexOutOfBoundsException e) {
-
+                        mDeviceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                //connectDevice(mDevices.get(position));
+                                startBleService(bleAddress);
                             }
-
-                        }
-                    });
+                        });
+                    }
                 }
             };
 
+    private void startBleService(String address) {
+        Intent startService = new Intent(mContext, BlueToothLoService.class);
+        startService.setAction(ACTION_CONNECTED_CMD);
+        startService.putExtra(BLE_ADDRESS, address);
+        mContext.startService(startService);
+    }
     /*private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
@@ -543,56 +541,6 @@ public class BlueToothFragment extends BaseFragment {
             LogUtil.d("Scan Failed - Error Code:" + errorCode);
         }
     };*/
-
-    public void connectDevice(BluetoothDevice device) {
-        LogUtil.d("connectDevice" + device);
-        if (mGatt == null) {
-            mGatt = device.connectGatt(mContext, false, gattCallback);
-            scanLeDevice(false);// will stop after first device detection
-        }
-    }
-
-    private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
-        @Override
-        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            LogUtil.d("onConnectionStateChange" + "Status: " + status);
-            Message msg = new Message();
-            msg.what = MSG_SERCH_DONE;
-            switch (newState) {
-                case BluetoothProfile.STATE_CONNECTED:
-
-                    msg.arg1 = 0;
-                    mBTHandler.sendMessage(msg);
-                    LogUtil.d("gattCallback" + "STATE_CONNECTED");
-                    gatt.discoverServices();
-                    break;
-                case BluetoothProfile.STATE_DISCONNECTED:
-                    msg.arg1 = 1;
-                    mBTHandler.sendMessage(msg);
-                    LogUtil.e("gattCallback" + "STATE_DISCONNECTED");
-                    break;
-                default:
-                    LogUtil.e("gattCallback" + "STATE_OTHER");
-            }
-        }
-
-        @Override
-        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            List<BluetoothGattService> services = gatt.getServices();
-            LogUtil.d("onServicesDiscovered" + services.toString());
-            gatt.readCharacteristic(services.get(1).getCharacteristics().get
-                    (0));
-        }
-
-        @Override
-        public void onCharacteristicRead(BluetoothGatt gatt,
-                                         BluetoothGattCharacteristic
-                                                 characteristic, int status) {
-            LogUtil.d("onCharacteristicRead" + characteristic.toString());
-            gatt.disconnect();
-        }
-    };
-
 
     public void scan(View view) {
         scanLeDevice(true);
