@@ -18,6 +18,45 @@
         android:textStyle="bold"
         android:layout_marginTop="60dp"
         android:text="搜索设备"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/title_text_size"
+                android:textStyle="bold"
+                android:text="Handle: "/>
+
+            <EditText
+                android:id="@+id/handle_text_bt"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="30dp"
+                android:background="@drawable/edit_background" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/title_text_size"
+                android:textStyle="bold"
+                android:text="UUID: "/>
+
+            <EditText
+                android:id="@+id/uuid_text_bt"
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="48dp"
+                android:background="@drawable/edit_background" />
+        </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,7 +84,20 @@
         android:textSize="@dimen/title_text_size"
         android:textStyle="bold"
         android:layout_marginTop="60dp"
-        android:text="连接设备"/>
+        android:text="连接结果"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/title_text_size"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp" />
+    <TextView
+        android:id="@+id/connect_result_details_bt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/title_text_size"
+        android:textStyle="bold"
+        android:textColor="@android:color/holo_orange_dark"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -61,46 +113,6 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="断开"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/title_text_size"
-            android:textStyle="bold"
-            android:text="Handle: "/>
-
-        <EditText
-            android:id="@+id/handle_text_bt"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="30dp"
-            android:background="@drawable/edit_background" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/title_text_size"
-            android:textStyle="bold"
-            android:text="UUID: "/>
-
-        <EditText
-            android:id="@+id/uuid_text_bt"
-            android:layout_width="200dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="48dp"
-            android:background="@drawable/edit_background" />
     </LinearLayout>
 
     <LinearLayout
