@@ -77,6 +77,9 @@ public class BlueToothFragment extends BaseFragment implements ConstDefine{
     @Bind(R.id.read_bt_button)
     Button mReadButton;
 
+    @Bind(R.id.get_power_button)
+    Button mGetPowerButton;
+
     @Bind(R.id.device_list_id)
     ListView mDeviceList;
 
@@ -275,6 +278,13 @@ public class BlueToothFragment extends BaseFragment implements ConstDefine{
     void onSearchButtonClick (View view) {
         //Scan devices
         scan(view);
+    }
+
+    @OnClick(R.id.get_power_button)
+    void onGetPowerButtonClick (View view) {
+        if (null != bleAddress && !TextUtils.isEmpty(bleAddress)) {
+            startBleService(bleAddress, ACTION_READ_CMD);
+        }
     }
 
     @OnClick(R.id.stop_search_bt_button)
@@ -478,6 +488,8 @@ public class BlueToothFragment extends BaseFragment implements ConstDefine{
                     MY_UUID[0] = UUID.fromString(mUuidET.getText().toString());
                 } catch (IllegalArgumentException e) {
                     ToastHelper.showAlert(mContext, "无效的UUID");
+                } catch (Exception e) {
+                    ToastHelper.showAlert(mContext, "Exception" + e);
                 }
 
             }

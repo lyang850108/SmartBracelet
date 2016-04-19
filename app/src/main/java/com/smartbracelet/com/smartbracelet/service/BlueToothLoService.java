@@ -66,6 +66,7 @@ public class BlueToothLoService extends Service implements ConstDefine{
                     LogUtil.d("onStartCommand address:" + address);
                     connectDevice(address);
                 } else if (ACTION_READ_CMD.equals(action)) {
+                    LogUtil.d("ACTION_READ_CMD:" + address);
                     readDataFromDevice(address);
                 }
             }
@@ -144,25 +145,26 @@ public class BlueToothLoService extends Service implements ConstDefine{
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            List<BluetoothGattService> services = gatt.getServices();
+            /*List<BluetoothGattService> services = gatt.getServices();
 
             gatt.readCharacteristic(services.get(1).getCharacteristics().get
-                    (0));
+                    (0));*/
 
-            //dicoveredSetSerCha(gatt);
+            dicoveredSetSerCha(gatt);
         }
 
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic
                                                  characteristic, int status) {
+            String readStr = new String(characteristic.getValue());
             Message msg = new Message();
             msg.what = MSG_CHA_READ;
-            msg.obj = characteristic.toString();
+            msg.obj = readStr;
             if (null != BlueToothFragment.mBTHandler) {
                 BlueToothFragment.mBTHandler.sendMessage(msg);
             }
-            LogUtil.d("onCharacteristicRead" + characteristic.toString());
+            LogUtil.d("onCharacteristicRead" + readStr);
 
             gatt.disconnect();
         }
@@ -178,14 +180,22 @@ public class BlueToothLoService extends Service implements ConstDefine{
             boolean iswrite = false;
 
             for (BluetoothGattService bluetoothGattService : sListServices) {
-                if (null != bluetoothGattService && isread) {
-                    if (UUID_READ_SERVICE.equals(bluetoothGattService.getUuid())) {
+                if (null != bluetoothGattService) {
+                    if (UUID_READ_SERVICE.equals(bluetoothGattService.getUuid()) && isread) {
                         isread = true;
 
                         //INIT CHARACTER
-                        BluetoothGattCharacteristic bluetoothGattCharacteristic = bluetoothGattService.getCharacteristic(UUID_READ_SERVICE_CHARACTER);
-                        if (null != bluetoothGattCharacteristic) {
-                            mBGCread = bluetoothGattCharacteristic;
+                        BluetoothGattCharacteristic bluetoothGattCharacteristicRead = bluetoothGattService.getCharacteristic(UUID_READ_SERVICE_CHARACTER);
+                        if (null != bluetoothGattCharacteristicRead) {
+                            mBGCread = bluetoothGattCharacteristicRead;
+                        }
+                    } else if (UUID_WRITE_SERVICE.equals(bluetoothGattService.getUuid()) && iswrite) {
+                        iswrite = true;
+
+                        //INIT CHARACTER
+                        BluetoothGattCharacteristic bluetoothGattCharacteristicWrite = bluetoothGattService.getCharacteristic(UUID_WRITE_SERVICE_CHARACTER);
+                        if (null != bluetoothGattCharacteristicWrite) {
+                            mBGCwrite = bluetoothGattCharacteristicWrite;
                         }
                     }
                 }
@@ -204,6 +214,7 @@ public class BlueToothLoService extends Service implements ConstDefine{
     public void requestCharacteristicValue(BluetoothGattCharacteristic ch,
                                            BluetoothGatt mBluetoothGattTag) {
         if (null != ch && null != mBluetoothGattTag) {
+            LogUtil.d("requestCharacteristicValue......Begin");
             mBluetoothGattTag.readCharacteristic(ch);
         }
     }
