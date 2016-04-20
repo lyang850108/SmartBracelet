@@ -27,18 +27,13 @@
         android:layout_marginRight="3dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/edit_background"
-        android:hint="请输入服务器地址"/>
+        android:text="192.168.1.39/main.cgi"/>
 
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <Button
-            android:id="@+id/get_trams_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="获取硬件"/>
         <Button
             android:id="@+id/update_number_button"
             android:layout_width="wrap_content"

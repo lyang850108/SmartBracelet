@@ -68,9 +68,6 @@ public class HomeFragment extends BaseFragment {
     @Bind(R.id.timer_edit_text)
     EditText mTimerParamsText;
 
-    @Bind(R.id.get_trams_button)
-    Button mGetTramsButton;
-
     @Bind(R.id.update_number_button)
     Button mUpdateNumButton;
 
@@ -420,15 +417,6 @@ public class HomeFragment extends BaseFragment {
         } else {
             mPendLoadType = LOAD_MORE;
         }*/
-    }
-
-
-    @OnClick(R.id.get_trams_button)
-     void onGetTramsButtonClick (View view) {
-        CURRENT_TYPE_POST = TYPE_GET_DEVICE_PARM;
-        subitJson= Utils.bindJOGetId().toString();
-        LogUtil.e("doInBackground, Post subitJson:" + subitJson);
-        mEditParamsText.setText(subitJson);
     }
 
     @OnClick(R.id.update_number_button)

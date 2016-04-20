@@ -48,13 +48,13 @@ public class Utils {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("method", Integer.toString(101));
-            subJsonObject.put("deviceid", "686c0888-34a9-43b1-86da-9bb7feb90122");
-            subJsonObject.put("x", "" + latitude);
-            subJsonObject.put("y", "" + longtitude);
-            subJsonObject.put("mac", "9E:33:44:12:90:66");
-            subJsonObject.put("imei", getImei());
-            subJsonObject.put("phonenum", getTelNum());
-            subJsonObject.put("time", getTime());
+            subJsonObject.put("DeviceID", "086c8f9d11ff");
+            subJsonObject.put("Longitude", "" + longtitude);
+            subJsonObject.put("Latitude", "" + latitude);
+            subJsonObject.put("Mac", "9E:33:44:12:90:66");
+            subJsonObject.put("IMEI", getImei());
+            subJsonObject.put("PhoneNumber", getTelNum());
+            subJsonObject.put("CreateTime", getTime());
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -67,11 +67,11 @@ public class Utils {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("method", Integer.toString(105));
-            subJsonObject.put("deviceid", "");
-            subJsonObject.put("mac", "9E:33:44:12:90:66");
-            subJsonObject.put("imei", getImei());
-            subJsonObject.put("phonenum", getTelNum());
-            subJsonObject.put("time", getTime());
+            subJsonObject.put("DeviceID", "");
+            subJsonObject.put("Mac", "9E:33:44:12:90:66");
+            subJsonObject.put("IMEI", getImei());
+            subJsonObject.put("PhoneNumber", getTelNum());
+            subJsonObject.put("CreateTime", getTime());
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -84,11 +84,11 @@ public class Utils {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("method", Integer.toString(104));
-            subJsonObject.put("deviceid", "");
-            subJsonObject.put("mac", "9E:33:44:12:90:66");
-            subJsonObject.put("imei", getImei());
-            subJsonObject.put("phonenum", getTelNum());
-            subJsonObject.put("time", getTime());
+            subJsonObject.put("DeviceID", "");
+            subJsonObject.put("Mac", "9E:33:44:12:90:66");
+            subJsonObject.put("IMEI", getImei());
+            subJsonObject.put("PhoneNumber", getTelNum());
+            subJsonObject.put("CreateTime", getTime());
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -102,9 +102,9 @@ public class Utils {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("method", Integer.toString(102));
-            subJsonObject.put("deviceid", "686c0888-34a9-43b1-86da-9bb7feb90122");
-            subJsonObject.put("type", "1");
-            subJsonObject.put("time", getTime());
+            subJsonObject.put("DeviceID", "086c8f9d11ff");
+            subJsonObject.put("AlarmTypeID", "1");
+            subJsonObject.put("CreateTime", getTime());
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -117,7 +117,7 @@ public class Utils {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("method", Integer.toString(103));
-            subJsonObject.put("deviceid", "686c0888-34a9-43b1-86da-9bb7feb90122");
+            subJsonObject.put("DeviceID", "086c8f9d11ff");
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
