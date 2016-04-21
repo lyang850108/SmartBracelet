@@ -2,6 +2,7 @@ package com.smartbracelet.com.smartbracelet.ui;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
+        switchToFragment(ID_HOME);
         getPersimmions();
 
     }
@@ -106,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
         } else if (type == 1) {
             locationService.setLocationOption(locationService.getOption());
         }
-        switchToFragment(ID_HOME);
     }
 
     @Override
@@ -175,6 +175,11 @@ public class MainActivity extends AppCompatActivity {
         // TODO Auto-generated method stub
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     /*****
