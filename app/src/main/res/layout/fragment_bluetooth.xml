@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:id="@+id/recycler_bt_view"
-    tools:context=".MainActivity"
-    android:scrollbars="vertical">
-    <LinearLayout android:orientation="vertical"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginLeft="3dp">
@@ -79,5 +74,4 @@
 
     </ListView>
 
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>

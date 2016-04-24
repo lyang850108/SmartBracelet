@@ -11,6 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.smartbracelet.com.smartbracelet.R;
+import com.smartbracelet.com.smartbracelet.util.LogUtil;
 
 public class DeviceListAdapter extends BaseAdapter {
 	
@@ -29,6 +30,7 @@ public class DeviceListAdapter extends BaseAdapter {
 	
 	public void addDevice(BluetoothDevice device, int rssi, byte[] scanRecord) {
 		if(mDevices.contains(device) == false) {
+			LogUtil.d("addDevice device = " + device.getName() + " getAddress = " + device.getAddress());
 			mDevices.add(device);
 			mRSSIs.add(rssi);
 			mRecords.add(scanRecord);

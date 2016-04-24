@@ -446,8 +446,10 @@ public class BlueToothFragment extends BaseFragment implements ConstDefine{
         mContext.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mDevicesListAdapter.addDevice(device, rssi, scanRecord);
-                mDevicesListAdapter.notifyDataSetChanged();
+                if (!TextUtils.isEmpty(device.getName())) {
+                    mDevicesListAdapter.addDevice(device, rssi, scanRecord);
+                    mDevicesListAdapter.notifyDataSetChanged();
+                }
             }
         });
     }

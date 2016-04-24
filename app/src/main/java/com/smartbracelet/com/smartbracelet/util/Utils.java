@@ -66,7 +66,7 @@ public class Utils {
         JSONObject subJsonObject = new JSONObject();
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("method", Integer.toString(105));
+            jsonObject.put("method", Integer.toString(106));
             subJsonObject.put("DeviceID", "");
             subJsonObject.put("Mac", "9E:33:44:12:90:66");
             subJsonObject.put("IMEI", getImei());
