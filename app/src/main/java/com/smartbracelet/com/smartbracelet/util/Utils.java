@@ -20,8 +20,9 @@ import java.util.Date;
 /**
  * Created by Yangli on 16-04-05.
  */
-public class Utils {
+public class Utils implements ConstDefine{
     public static final boolean DEBUG = true;
+    private static String mPhoneAddress = "";
     public static final long SWIPE_BEHAVIOR_ANIMATION_TIME = 200;
     public static void showShortToast(Context context, int resId) {
         Toast.makeText(context, resId, Toast.LENGTH_SHORT).show();
@@ -44,17 +45,17 @@ public class Utils {
     }
 
 
-    public static JSONObject bindJOGps(double latitude, double longtitude) {
+    public static JSONObject bindJOGps(double latitude, double longtitude, String address) {
         JSONObject subJsonObject = new JSONObject();
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("method", Integer.toString(101));
-            subJsonObject.put("DeviceID", "086c8f9d11ff");
+            subJsonObject.put("DeviceID", address);
             subJsonObject.put("Longitude", "" + longtitude);
             subJsonObject.put("Latitude", "" + latitude);
             subJsonObject.put("Mac", "9E:33:44:12:90:66");
             subJsonObject.put("IMEI", getImei());
-            subJsonObject.put("PhoneNumber", getTelNum());
+            subJsonObject.put("PhoneNumber", getTelNumber());
             subJsonObject.put("CreateTime", getTime());
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
@@ -71,7 +72,7 @@ public class Utils {
             subJsonObject.put("DeviceID", "");
             subJsonObject.put("Mac", "9E:33:44:12:90:66");
             subJsonObject.put("IMEI", getImei());
-            subJsonObject.put("PhoneNumber", getTelNum());
+            subJsonObject.put("PhoneNumber", getTelNumber());
             subJsonObject.put("CreateTime", getTime());
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
@@ -88,7 +89,7 @@ public class Utils {
             subJsonObject.put("DeviceID", macAddress);
             subJsonObject.put("Mac", "9E:33:44:12:90:66");
             subJsonObject.put("IMEI", getImei());
-            subJsonObject.put("PhoneNumber", getTelNum());
+            subJsonObject.put("PhoneNumber", getTelNumber());
             subJsonObject.put("CreateTime", getTime());
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
@@ -105,7 +106,7 @@ public class Utils {
             subJsonObject.put("DeviceID", "");
             subJsonObject.put("Mac", "9E:33:44:12:90:66");
             subJsonObject.put("IMEI", getImei());
-            subJsonObject.put("PhoneNumber", getTelNum());
+            subJsonObject.put("PhoneNumber", getTelNumber());
             subJsonObject.put("CreateTime", getTime());
             jsonObject.put("params", subJsonObject);
         } catch (JSONException e) {
@@ -156,15 +157,24 @@ public class Utils {
         return jsonObject;
     }
 
-    public static String getTelNum() {
+    public static String getTelNum(SharedPreferencesHelper sharedPreferencesHelper) {
         TelephonyManager telephonyManager = (TelephonyManager) App.getsContext().getSystemService(Context.TELEPHONY_SERVICE);
         String num = telephonyManager.getLine1Number();
         if (null == num || TextUtils.isEmpty(num)) {
-            num = "13823209476";
+
+            num = sharedPreferencesHelper.getString(SP_PHONE_NUMBER);
+            if (null == num || TextUtils.isEmpty(num)) {
+                return "";
+            } else {
+                mPhoneAddress = num;
+            }
+        } else {
+            mPhoneAddress = num;
         }
-        LogUtil.d(num);
+        LogUtil.d("getTelNum" + num);
         return num;
     }
+
 
     public static String getImei() {
         TelephonyManager telephonyManager = (TelephonyManager) App.getsContext().getSystemService(Context.TELEPHONY_SERVICE);
@@ -213,5 +223,9 @@ public class Utils {
             e.printStackTrace();
             return -1;
         }
+    }
+
+    public static String getTelNumber() {
+        return mPhoneAddress;
     }
 }

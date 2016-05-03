@@ -81,7 +81,7 @@ public class SharedPreferencesHelper {
         File mFolder = new File(filePath, DEFAULT_APP_IMAGE_DATA_DIRECTORY);
         if (!mFolder.exists()) {
             if (!mFolder.mkdirs()) {
-                Log.e("While creating save path",
+                LogUtil.d("While creating save path",
                         "Default Save Path Creation Error");
             }
         }

@@ -428,6 +428,11 @@ public class BlueToothFragment extends BaseFragment implements ConstDefine{
         }
 
         @Override
+        public void buttonTrue(String value) {
+
+        }
+
+        @Override
         public void buttonCancel() {
             if (!isEnabled) {
                 ToastHelper.showAlert(mContext, getString(R.string.boolth_eable_tip));

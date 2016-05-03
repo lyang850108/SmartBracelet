@@ -17,6 +17,7 @@ import com.smartbracelet.com.smartbracelet.service.LocationService;
 import com.smartbracelet.com.smartbracelet.util.LiteOrmDBUtil;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
 import com.smartbracelet.com.smartbracelet.util.PreferenceUtils;
+import com.smartbracelet.com.smartbracelet.util.SharedPreferencesHelper;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.util.Date;
@@ -41,7 +42,8 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        PreferenceUtils.init(this);
+        //PreferenceUtils.init(this);
+        setUpSharedPreferencesHelper(this);
         LiteOrmDBUtil.init(this);
 //        LiteOrmDBUtil.test();
         sContext = getApplicationContext();
@@ -54,6 +56,15 @@ public class App extends Application {
         mVibrator =(Vibrator)getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
         //SDKInitializer.initialize(getApplicationContext());
 
+    }
+
+    /**
+     * 初始化SharedPreferences
+     *
+     * @param context 上下文
+     */
+    private void setUpSharedPreferencesHelper(Context context) {
+        SharedPreferencesHelper.getInstance().Builder(context);
     }
 
 

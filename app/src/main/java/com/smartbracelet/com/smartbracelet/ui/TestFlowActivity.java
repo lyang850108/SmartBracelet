@@ -26,6 +26,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -168,7 +169,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
 
                 case MSG_CHA_SEND_LOCATION:
 
-                    mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOGps(latitude, longtitude).toString(), TYPE_UPLOAD_LOCATION);
+                    mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOGps(latitude, longtitude, bleAddress).toString(), TYPE_UPLOAD_LOCATION);
                     mPostDataTask.execute(0);
                     break;
             }
@@ -228,8 +229,34 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
         loadingDialog = new LoadingDialog(mContext);
 
         sharedPreferencesHelper = SharedPreferencesHelper.getInstance();
+        LogUtil.d("sharedPreferencesHelper" + sharedPreferencesHelper);
 
         getPersimmions();
+
+        if (null != sharedPreferencesHelper) {
+            checkPhomeNumerAvailble(sharedPreferencesHelper);
+        }
+    }
+
+    private void checkPhomeNumerAvailble(SharedPreferencesHelper sharedPreferencesHelper) {
+        if (TextUtils.isEmpty(Utils.getTelNum(sharedPreferencesHelper))) {
+            //ToDo
+            final EditText input = new EditText(this);
+            if (null != mContext) {
+                if (null != mAlertDialog) {
+                    mAlertDialog.dismiss();
+                    mAlertDialog = null;
+                }
+                AlertDialogCreator.getInstance().setmButtonOnClickListener(mDialogListener);
+                mAlertDialog = AlertDialogCreator
+                        .getInstance()
+                        .createAlertDialogEdit(
+                                mContext,
+                                getString(R.string.tip_title),
+                                getString(R.string.test_store_num_tip_content), input);
+                mAlertDialog.show();
+            }
+        }
     }
 
     private void handleDeviceConnected(final BluetoothGatt gatt, final BluetoothDevice device) {
@@ -245,7 +272,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
         mContext.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mTextView.append("\n " + device.getName() + " Disconnexted");
+                mTextView.append("\n " + device.getName() + " Disconnected");
             }
         });
     }
@@ -404,6 +431,18 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
     @OnClick(R.id.test_fab)
     public void onFabClick(View v) {
         // Automatically start scanning for devices
+        //Add demo begin
+        if (mBleWrapper.isConnected()) {
+            mBleWrapper.stopScanning();
+            mDevicesListAdapter.clearList();
+            //Add demo end
+
+            if (null != timerTask) {
+                LogUtil.d("stop_post_package");
+                timerTask.cancel();
+            }
+        }
+
         mScanning = true;
         // remember to add timeout for scanning to not run it forever and drain the battery
         addScanningTimeout();
@@ -651,7 +690,18 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
                     mBTHandler.sendMessageDelayed(message, 60000);
                 }
             } else if (TYPE_UPLOAD_LOCATION == CURRENT_TYPE_POST) {
-                mTextView.append("\n 坐标数据发送成功");
+                if (-1 == Utils.parseJsonResult(postDetailRTR)) {
+                    mTextView.append("\n 坐标数据服务器处理失败");
+                } else if (0 == Utils.parseJsonResult(postDetailRTR)) {
+                    mTextView.append("\n 坐标数据服务器处理成功，没有越界");
+                } else if (1 == Utils.parseJsonResult(postDetailRTR)) {
+                    mTextView.append("\n 坐标数据服务器处理成功，坐标越界");
+                } else if (2 == Utils.parseJsonResult(postDetailRTR)) {
+                    mTextView.append("\n 坐标数据服务器处理成功，设备未进行人员信息绑定");
+                } else {
+                    mTextView.append("\n 坐标数据服务器没有返回");
+                }
+
             }
 
         }
@@ -687,6 +737,13 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
         @Override
         public void buttonTrue(int ring_dis) {
 
+        }
+
+        @Override
+        public void buttonTrue(String value) {
+            if (null != value && null != sharedPreferencesHelper) {
+                sharedPreferencesHelper.putString(SP_PHONE_NUMBER, value);
+            }
         }
 
         @Override

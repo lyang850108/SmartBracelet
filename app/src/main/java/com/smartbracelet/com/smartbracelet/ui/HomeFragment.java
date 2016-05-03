@@ -425,10 +425,10 @@ public class HomeFragment extends BaseFragment implements ConstDefine{
 
     @OnClick(R.id.upload_gps_button)
     void onPostButtonClick (View view) {
-        CURRENT_TYPE_POST = TYPE_UPLOAD_LOCATION;
-        subitJson= Utils.bindJOGps(MainActivity.latitude, MainActivity.longtitude).toString();
+        /*CURRENT_TYPE_POST = TYPE_UPLOAD_LOCATION;
+        subitJson= Utils.bindJOGps(MainActivity.latitude, MainActivity.longtitude, "").toString();
         LogUtil.e("doInBackground, Post subitJson:" + subitJson);
-        mEditParamsText.setText(subitJson);
+        mEditParamsText.setText(subitJson);*/
     }
 
     @OnClick(R.id.upload_notify_button)

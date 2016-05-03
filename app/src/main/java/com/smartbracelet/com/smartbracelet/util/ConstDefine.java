@@ -30,6 +30,8 @@ public interface ConstDefine {
     final int MSG_CHA_READ = 2;
     final int MSG_CHA_SEND_LOCATION = 3;
 
+    String SP_PHONE_NUMBER = "init_phone_number";
+
     UUID UUID_READ_SERVICE = fromString("328B1CD1-F643-F7B5-A243-0C51CD3DEEAA");
 
     UUID UUID_READ_SERVICE_CHARACTER = fromString("EF716109-4F4D-1882-9842-7D95E5B7DF71");
