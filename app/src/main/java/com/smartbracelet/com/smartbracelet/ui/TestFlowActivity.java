@@ -656,7 +656,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
                 mTextView.append("\n http 后台结果  " + postRTR);
                 mTextView.append("\n http 后台返回数据    " + postDetailRTR);
                 //mPostDetailsRtrTx.setText(postDetailRTR);
-                if (postRTR.contains("请求成功") && 0 == Utils.parseJsonResult(postDetailRTR)) {
+                if (postRTR.contains("请求成功") && 1 == Utils.parseJsonResult(postDetailRTR)) {
                     loadingDialog.dismiss();
                     mTextView.append("\n 服务器处理成功 ");
                     if (null != mContext) {
@@ -741,7 +741,8 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
 
         @Override
         public void buttonTrue(String value) {
-            if (null != value && null != sharedPreferencesHelper) {
+            if (null != value && (!TextUtils.isEmpty(value)) && null != sharedPreferencesHelper) {
+                Utils.setTelNumber(value);
                 sharedPreferencesHelper.putString(SP_PHONE_NUMBER, value);
             }
         }

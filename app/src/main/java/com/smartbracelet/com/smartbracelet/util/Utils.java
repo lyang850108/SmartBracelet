@@ -89,6 +89,7 @@ public class Utils implements ConstDefine{
             subJsonObject.put("DeviceID", macAddress);
             subJsonObject.put("Mac", "9E:33:44:12:90:66");
             subJsonObject.put("IMEI", getImei());
+            LogUtil.d("bindJOTelTest telNumer: " + getTelNumber());
             subJsonObject.put("PhoneNumber", getTelNumber());
             subJsonObject.put("CreateTime", getTime());
             jsonObject.put("params", subJsonObject);
@@ -228,4 +229,9 @@ public class Utils implements ConstDefine{
     public static String getTelNumber() {
         return mPhoneAddress;
     }
+    public static String setTelNumber(String address) {
+        mPhoneAddress =  address;
+        return mPhoneAddress;
+    }
+
 }
