@@ -12,6 +12,7 @@
     <string name="error_bluetooth_not_supported">Bluetooth Not Supported</string>
     <string name="boolth_eable_tip">Bluetooth Enabled</string>
     <string name="new_guid_searching">Searching for Click devices.</string>
+    <string name="test_bind_tip_content">该手环可以绑定，请管理员进行人员信息绑定</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

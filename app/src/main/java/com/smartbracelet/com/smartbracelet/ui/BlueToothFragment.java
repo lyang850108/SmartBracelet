@@ -478,4 +478,10 @@ public class BlueToothFragment extends BaseFragment implements ConstDefine{
         mHandler.postDelayed(timeout, SCANNING_TIMEOUT);
     }
     //Add demo end
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
+    }
 }

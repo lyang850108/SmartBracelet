@@ -17,9 +17,18 @@ public interface ConstDefine {
 
     String BLE_RSSI = "mRssi";
 
+    int TYPE_GET_DEVICE_PARM = 0;
+    int TYPE_GET_NUM_PARM = 1;
+    int TYPE_UPLOAD_LOCATION = 2;
+    int TYPE_UPLOAD_NOTIFY = 3;
+    int TYPE_PUSH_MSG = 4;
+    int TYPE_PARAMS_POST = 5;
+
+
     final int MSG_SEARCH_OUT = 0;
     final int MSG_SERCH_DONE = 1;
     final int MSG_CHA_READ = 2;
+    final int MSG_CHA_SEND_LOCATION = 3;
 
     UUID UUID_READ_SERVICE = fromString("328B1CD1-F643-F7B5-A243-0C51CD3DEEAA");
 

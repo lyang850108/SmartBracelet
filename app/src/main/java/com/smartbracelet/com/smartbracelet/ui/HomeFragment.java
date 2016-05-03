@@ -18,6 +18,7 @@ import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.model.BaseFragment;
 import com.smartbracelet.com.smartbracelet.model.ProgramItem;
 import com.smartbracelet.com.smartbracelet.network.NetworkUtil;
+import com.smartbracelet.com.smartbracelet.util.ConstDefine;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
 import com.smartbracelet.com.smartbracelet.util.Utils;
 
@@ -45,7 +46,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class HomeFragment extends BaseFragment {
+public class HomeFragment extends BaseFragment implements ConstDefine{
     private View mView;
     @Bind(R.id.timer_checkBox)
     CheckBox mTimerCB;
@@ -89,13 +90,6 @@ public class HomeFragment extends BaseFragment {
     private static final int LOAD_MORE = 1;
     private static final int LOAD_NEW= 2;
 
-    private static final int TYPE_GET_DEVICE_PARM = 0;
-    private static final int TYPE_GET_NUM_PARM = 1;
-    private static final int TYPE_UPLOAD_LOCATION = 2;
-    private static final int TYPE_UPLOAD_NOTIFY = 3;
-    private static final int TYPE_PUSH_MSG = 4;
-    private static final int TYPE_PARAMS_POST = 5;
-    private static int CURRENT_TYPE_POST = 9;
     private int mPendLoadType = 0;
     private List<ProgramItem> mNewPrograms;
     private int mLoadIndex = 0;
@@ -116,6 +110,8 @@ public class HomeFragment extends BaseFragment {
 
     private final int MSG_HTTP_POST = 0;
     private final int MSG_LOAD_DONE = 1;
+
+    private static int CURRENT_TYPE_POST = 9;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -494,4 +490,9 @@ public class HomeFragment extends BaseFragment {
         mPostDataTask.execute(mLoadIndex);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
+    }
 }

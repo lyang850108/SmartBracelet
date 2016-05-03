@@ -2,6 +2,7 @@ package com.smartbracelet.com.smartbracelet.util;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -79,6 +80,23 @@ public class Utils {
         return jsonObject;
     }
 
+    public static JSONObject bindJOTelTest(String macAddress) {
+        JSONObject subJsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("method", Integer.toString(106));
+            subJsonObject.put("DeviceID", macAddress);
+            subJsonObject.put("Mac", "9E:33:44:12:90:66");
+            subJsonObject.put("IMEI", getImei());
+            subJsonObject.put("PhoneNumber", getTelNum());
+            subJsonObject.put("CreateTime", getTime());
+            jsonObject.put("params", subJsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
     public static JSONObject bindJOGetId() {
         JSONObject subJsonObject = new JSONObject();
         JSONObject jsonObject = new JSONObject();
@@ -125,10 +143,23 @@ public class Utils {
         return jsonObject;
     }
 
+    public static JSONObject bindJOMsgPushTest(String address) {
+        JSONObject subJsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("method", Integer.toString(103));
+            subJsonObject.put("DeviceID", address);
+            jsonObject.put("params", subJsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
     public static String getTelNum() {
         TelephonyManager telephonyManager = (TelephonyManager) App.getsContext().getSystemService(Context.TELEPHONY_SERVICE);
         String num = telephonyManager.getLine1Number();
-        if (null == num) {
+        if (null == num || TextUtils.isEmpty(num)) {
             num = "13823209476";
         }
         LogUtil.d(num);
@@ -168,5 +199,19 @@ public class Utils {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String timeFotmat = sdf.format(date);
         return timeFotmat;
+    }
+
+    public  static int parseJsonResult (String json) {
+        int result = 0;
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONObject params = jsonObject.getJSONObject("params");
+            result = params.getInt("Result");
+            LogUtil.d("parseJsonResult = " + result);
+            return result;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 }
