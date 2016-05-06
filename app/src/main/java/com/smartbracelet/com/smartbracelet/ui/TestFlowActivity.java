@@ -260,6 +260,13 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
     }
 
     private void handleDeviceConnected(final BluetoothGatt gatt, final BluetoothDevice device) {
+        // 只保留最原始的蓝牙地址
+
+        if (TextUtils.isEmpty(sharedPreferencesHelper.getString(SP_PHONE_ADDRESS))) {
+            sharedPreferencesHelper.putString(SP_PHONE_ADDRESS, device.getAddress());
+        }
+
+
         mContext.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -328,11 +335,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
         mBleWrapper.stopScanning();
         mDevicesListAdapter.clearList();
         //Add demo end
-
-        if (null != timerTask) {
-            LogUtil.d("stop_post_package");
-            timerTask.cancel();
-        }
     }
 
     //Add demo begin
@@ -350,28 +352,27 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
                     mDevicesListAdapter.notifyDataSetChanged();
                 }*/
                 //For test
+                String bindAddress = sharedPreferencesHelper.getString(SP_PHONE_ADDRESS);
 
-                if (!TextUtils.isEmpty(device.getName()) && device.getName().startsWith("utt")) {
-                    LogUtil.d("deviceName" + device.getName());
+                if (bindAddress.equals(device.getAddress())) {
+                    if (!TextUtils.isEmpty(device.getName()) && device.getName().startsWith("utt")) {
+                        LogUtil.d("existAddress" + bindAddress);
+                        String mName = device.getName();
+                        String mAddress = device.getAddress();
+                        int mRssi = rssi;
 
-                    String mName = device.getName();
-                    String mAddress = device.getAddress();
-                    int mRssi = rssi;
+                        if (mScanning) {
+                            mScanning = false;
+                            mBleWrapper.stopScanning();
+                        }
 
-                    if (mScanning) {
-                        mScanning = false;
-                        mBleWrapper.stopScanning();
+                        // start automatically connecting to the device
+                        mTextView.setText("connecting ...");
+                        bleAddress = mAddress;
+                        mBleWrapper.connect(mAddress);
                     }
-
-
-
-                    // start automatically connecting to the device
-                    mTextView.setText("connecting ...");
-                    bleAddress = mAddress;
-                    mBleWrapper.connect(mAddress);
-
-
                 }
+
 
             }
         });
@@ -656,8 +657,8 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
                 mTextView.append("\n http 后台结果  " + postRTR);
                 mTextView.append("\n http 后台返回数据    " + postDetailRTR);
                 //mPostDetailsRtrTx.setText(postDetailRTR);
-                if (postRTR.contains("请求成功") && 1 == Utils.parseJsonResult(postDetailRTR)) {
-                    loadingDialog.dismiss();
+                loadingDialog.dismiss();
+                if (postRTR.contains("请求成功") && 0 == Utils.parseJsonResult(postDetailRTR)) {
                     mTextView.append("\n 服务器处理成功 ");
                     if (null != mContext) {
                         if (null != mAlertDialog) {
@@ -675,8 +676,8 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
                     }
 
                 } else if (postRTR.contains("请求成功") && 1 == Utils.parseJsonResult(postDetailRTR)) {
-                    loadingDialog.dismiss();
                     mTextView.append("\n 该手环已被绑定过 ");
+                    sendGPGTimely();
                 } else {
                     //Limited retry counts are 3
                     if (2 == retryCnt) {
@@ -686,7 +687,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
                     retryCnt ++;
                     //Again
                     Message message = new Message();
-                    message.what = MSG_CHA_READ;
+                    message.what = MSG_SERCH_DONE;
                     mBTHandler.sendMessageDelayed(message, 60000);
                 }
             } else if (TYPE_UPLOAD_LOCATION == CURRENT_TYPE_POST) {
@@ -708,6 +709,11 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
     }
 
     private void sendGPGTimely() {
+
+        if (null != timerTask) {
+            LogUtil.d("stop_post_package");
+            timerTask.cancel();
+        }
 
         if (0 != longtitude && 0 != latitude) {
             int times = 60000;

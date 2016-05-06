@@ -46,10 +46,11 @@ public class AlertDialogCreator {
                         getmButtonOnClickListener().buttonTrue();
                     }
                 })
-                .setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
+                .setCancelable(false)
+                /*.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                /* User clicked No so do some stuff */
+                *//* User clicked No so do some stuff *//*
                         getmButtonOnClickListener().buttonCancel();
                     }
                 })
@@ -58,7 +59,7 @@ public class AlertDialogCreator {
                     public void onDismiss(DialogInterface dialog) {
                         getmButtonOnClickListener().buttonCancel();
                     }
-                }).create();
+                })*/.create();
 
         return localDialog;
     }
