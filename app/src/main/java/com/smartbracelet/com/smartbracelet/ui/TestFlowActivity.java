@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
@@ -39,7 +40,9 @@ import com.smartbracelet.com.smartbracelet.util.BleNamesResolver;
 import com.smartbracelet.com.smartbracelet.util.BleWrapper;
 import com.smartbracelet.com.smartbracelet.util.BleWrapperUiCallbacks;
 import com.smartbracelet.com.smartbracelet.util.ConstDefine;
+import com.smartbracelet.com.smartbracelet.util.Gps;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
+import com.smartbracelet.com.smartbracelet.util.PositionUtil;
 import com.smartbracelet.com.smartbracelet.util.SharedPreferencesHelper;
 import com.smartbracelet.com.smartbracelet.util.ToastHelper;
 import com.smartbracelet.com.smartbracelet.util.Utils;
@@ -79,6 +82,9 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
     @Bind(R.id.test_bt_tx)
     TextView mBatteryLevelTx;
+
+    @Bind(R.id.test_bt_im)
+    ImageView mBatteryLevelIm;
 
     @Bind(R.id.test_fab)
     android.support.design.widget.FloatingActionButton mFloatingActionBtn;
@@ -527,6 +533,13 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         //loadingDialog.show();
     }
 
+    @OnClick(R.id.test_bt_im)
+    public void onBattButtonClick() {
+        LogUtil.d("onBattButtonClick");
+        mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOWarningTest(bleAddress, 1).toString(), TYPE_WARNING_NOTIFY);
+        mPostDataTask.execute(0);
+    }
+
     public static double latitude = 0;
     public static double longtitude = 0;
 
@@ -548,12 +561,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                  */
                 //sb.append(location.getTime());
                 latitude = location.getLatitude();
-
-                LogUtil.d(sbLatitude.toString());
                 longtitude = location.getLongitude();
-
-                LogUtil.d(sbLongtitude.toString());
-
             }
         }
 
@@ -767,8 +775,20 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
             } else if (TYPE_PUSH_MSG == CURRENT_TYPE_POST) {
                 handlePushMsg();
+            } else if (TYPE_WARNING_NOTIFY == CURRENT_TYPE_POST) {
+                handleWarningMsg();
             }
 
+        }
+    }
+
+    private void handleWarningMsg() {
+        if (0 == Utils.parseMsgTypeStatus(postDetailRTR)) {
+            mTextView.append("\n 服务器处理告警成功");
+        } else if (1 == Utils.parseMsgTypeStatus(postDetailRTR)) {
+            mTextView.append("\n 服务器处理告警失败，要求app重新上报");
+        } else {
+            mTextView.append("\n 告警消息推送返回错误");
         }
     }
 
@@ -805,11 +825,11 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     }
 
     private void handlePushMsg() {
-        if (1 == Utils.parseJsonResult(postDetailRTR)) {
+        if (1 == Utils.parseMsgTypeResult(postDetailRTR)) {
             mTextView.append("\n 短消息");
-        } else if (2 == Utils.parseJsonResult(postDetailRTR)) {
+        } else if (2 == Utils.parseMsgTypeResult(postDetailRTR)) {
             mTextView.append("\n 设置GPS上报间隔时间");
-        } else if (3 == Utils.parseJsonResult(postDetailRTR)) {
+        } else if (3 == Utils.parseMsgTypeResult(postDetailRTR)) {
             mTextView.append("\n 设置手环扫描间隔");
         } else {
             mTextView.append("\n 消息推送返回错误");
@@ -823,8 +843,9 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             App.timerTask.cancel();
         }
 
-        if (0 != longtitude && 0 != latitude) {
-            int times = 60000;
+        if (0 != longtitude && 0 != latitude && null != sharedPreferencesHelper) {
+
+            int times = sharedPreferencesHelper.getInt(SP_POST_INTERNAL);
             //Must cancel first
 
             App.timerTask = new TimerTask() {

@@ -17,6 +17,8 @@
     <string name="test_store_num_tip_content">无法获取本机号码，请管理员手动输入</string>
     <string name="test_gps_bind_tip_content">该设备并未进行人员信息绑定，请管理员确认</string>
 
+    <string name="restore_default">"还原默认设置"</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -52,11 +54,11 @@
 
     <string name="pref_title_sync_frequency">消息同步频率</string>
     <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
+        <item>15 second</item>
+        <item>30 second</item>
+        <item>1 min</item>
+        <item>3 min</item>
+        <item>6 min</item>
         <item>Never</item>
     </string-array>
     <string-array name="pref_sync_frequency_values">

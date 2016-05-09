@@ -23,6 +23,7 @@ public interface ConstDefine {
     int TYPE_UPLOAD_NOTIFY = 3;
     int TYPE_PUSH_MSG = 4;
     int TYPE_PARAMS_POST = 5;
+    int TYPE_WARNING_NOTIFY = 6;
 
 
     final int MSG_SEARCH_OUT = 0;
@@ -37,6 +38,8 @@ public interface ConstDefine {
     String SP_PHONE_NUMBER = "init_phone_number";
 
     String SP_BIND_STATE = "device_bind_state";
+
+    String SP_POST_INTERNAL = "post_internal_value";
 
     UUID UUID_READ_SERVICE = fromString("328B1CD1-F643-F7B5-A243-0C51CD3DEEAA");
 

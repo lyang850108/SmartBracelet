@@ -132,6 +132,21 @@ public class Utils implements ConstDefine{
         return jsonObject;
     }
 
+    public static JSONObject bindJOWarningTest(String macAddress, int warningType) {
+        JSONObject subJsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("method", Integer.toString(102));
+            subJsonObject.put("DeviceID", macAddress);
+            subJsonObject.put("AlarmTypeID", warningType);
+            subJsonObject.put("CreateTime", getTime());
+            jsonObject.put("params", subJsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
     public static JSONObject bindJOMsgPush() {
         JSONObject subJsonObject = new JSONObject();
         JSONObject jsonObject = new JSONObject();
@@ -232,7 +247,21 @@ public class Utils implements ConstDefine{
             JSONObject jsonObject = new JSONObject(json);
             JSONObject params = jsonObject.getJSONObject("params");
             result = params.getInt("MsgTypeID");
-            LogUtil.d("parseJsonResult = " + result);
+            LogUtil.d("parseMsgTypeResult = " + result);
+            return result;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public  static int parseMsgTypeStatus (String json) {
+        int result = 0;
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONObject params = jsonObject.getJSONObject("params");
+            result = params.getInt("status");
+            LogUtil.d("parseMsgTypeStatus = " + result);
             return result;
         } catch (JSONException e) {
             e.printStackTrace();
