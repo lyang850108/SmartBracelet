@@ -56,6 +56,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -193,6 +196,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_flow);
 
+
         mContext = this;
 
         ButterKnife.bind(this);
@@ -220,14 +224,12 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
             @Override
             public void uiAvailableServices(BluetoothGatt gatt, BluetoothDevice device, List<BluetoothGattService> services) {
-                LogUtil.d("uiAvailableServices");
                 for (BluetoothGattService service : mBleWrapper.getCachedServices()) {
                     String uuid = service.getUuid().toString().toLowerCase(Locale.getDefault());
                     String name = BleNamesResolver.resolveServiceName(uuid);
-                    LogUtil.d("uiAvailableServices name " + name);
                     String type = (service.getType() == BluetoothGattService.SERVICE_TYPE_PRIMARY) ? "Primary" : "Secondary";
 
-                    if (service.getUuid().equals(Service.BATTERY_SERVICE)) {
+                    if (service.getUuid().equals(Service.BATTERY_SERVICE) || service.getUuid().equals(Service.UNKNOWN_SERVICE)) {
                         mBleWrapper.getCharacteristicsForService(service);
                     }
 
@@ -237,14 +239,18 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
             @Override
             public void uiCharacteristicForService(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, List<BluetoothGattCharacteristic> chars) {
-                LogUtil.d("uiCharacteristicForService");
                 for(BluetoothGattCharacteristic ch : chars) {
                     String uuid = ch.getUuid().toString().toLowerCase(Locale.getDefault());
-                    LogUtil.d("uiCharacteristicForService uuid " + uuid);
                     String name = BleNamesResolver.resolveCharacteristicName(uuid);
                     LogUtil.d("uiCharacteristicForService name " + name);
                     if (ch.getUuid().equals(Characteristic.BATTERY_LEVEL)) {
                         gatt.readCharacteristic(ch);
+                    }
+                    if (ch.getUuid().equals(Characteristic.CHAR01_LEVEL)) {
+                        gatt.readCharacteristic(ch);
+                    }
+                    if (ch.getUuid().equals(Characteristic.CHAR02_LEVEL)) {
+                        gatt.writeCharacteristic(ch);
                     }
                 }
             }
@@ -266,6 +272,17 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 });
 
             }
+
+            @Override
+            public void uiClickValueRead(final String value) {
+                LogUtil.d("uiClickValueRead : " + value);
+                mContext.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mTextView.append("点击次数" + value);
+                    }
+                });
+            }
         });
 
         // check if we have BT and BLE on board
@@ -278,6 +295,9 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
         sharedPreferencesHelper = SharedPreferencesHelper.getInstance();
         LogUtil.d("sharedPreferencesHelper" + sharedPreferencesHelper);
+        if (null != sharedPreferencesHelper) {
+            sharedPreferencesHelper.putInt(SP_POST_INTERNAL, 60000);
+        }
 
         getPersimmions();
 
@@ -783,10 +803,10 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     }
 
     private void handleWarningMsg() {
-        if (0 == Utils.parseMsgTypeStatus(postDetailRTR)) {
-            mTextView.append("\n 服务器处理告警成功");
-        } else if (1 == Utils.parseMsgTypeStatus(postDetailRTR)) {
-            mTextView.append("\n 服务器处理告警失败，要求app重新上报");
+        if (-1 == Utils.parseJsonResult(postDetailRTR)) {
+            mTextView.append("\n 服务器处理失败，要求app重新上报");
+        } else if (0 == Utils.parseJsonResult(postDetailRTR)) {
+            mTextView.append("\n 服务器处理成功");
         } else {
             mTextView.append("\n 告警消息推送返回错误");
         }
@@ -825,14 +845,26 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     }
 
     private void handlePushMsg() {
-        if (1 == Utils.parseMsgTypeResult(postDetailRTR)) {
-            mTextView.append("\n 短消息");
-        } else if (2 == Utils.parseMsgTypeResult(postDetailRTR)) {
-            mTextView.append("\n 设置GPS上报间隔时间");
-        } else if (3 == Utils.parseMsgTypeResult(postDetailRTR)) {
-            mTextView.append("\n 设置手环扫描间隔");
-        } else {
-            mTextView.append("\n 消息推送返回错误");
+        try {
+            JSONObject jsonObject = new JSONObject(postDetailRTR);
+            JSONArray marks = jsonObject.getJSONArray("params");
+            for(int i=0; i< marks.length(); i++){
+                JSONObject mark = (JSONObject)marks.get(i);
+                String showMessage = mark.getString("MsgTypeID");
+                if (showMessage.equals("1")) {
+                    showMessage = "短消息 ";
+                } else if (showMessage.equals("2")) {
+                    showMessage = "设置GPS上报间隔时间 ";
+                } else if (showMessage.equals("3")) {
+                    showMessage = "设置手环扫描间隔 ";
+                }
+
+                String msg = mark.getString("Msg");
+                String time = mark.getString("CreateTime");
+                mTextView.append("\n " + showMessage + "Msg: " + msg + "Create time : " + time);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -845,7 +877,11 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
         if (0 != longtitude && 0 != latitude && null != sharedPreferencesHelper) {
 
-            int times = sharedPreferencesHelper.getInt(SP_POST_INTERNAL);
+            long times = sharedPreferencesHelper.getInt(SP_POST_INTERNAL);
+            LogUtil.d("times == " + times);
+            if (0 == times) {
+                times = 20000;
+            }
             //Must cancel first
 
             App.timerTask = new TimerTask() {

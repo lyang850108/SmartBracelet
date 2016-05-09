@@ -60,6 +60,8 @@ public interface BleWrapperUiCallbacks {
 	public void uiNewRssiAvailable(final BluetoothGatt gatt, final BluetoothDevice device, final int rssi);
 
 	public void uiBatteryValueRead(String value);
+
+	public void uiClickValueRead(String value);
 	
 	/* define Null Adapter class for that interface */
 	public static class Null implements BleWrapperUiCallbacks {
@@ -101,6 +103,11 @@ public interface BleWrapperUiCallbacks {
 
 		@Override
 		public void uiBatteryValueRead(String value) {
+
+		}
+
+		@Override
+		public void uiClickValueRead(String value) {
 
 		}
 

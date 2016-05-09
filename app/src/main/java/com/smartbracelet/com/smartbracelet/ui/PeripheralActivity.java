@@ -108,6 +108,11 @@ public class PeripheralActivity extends AppCompatActivity implements BleWrapperU
 
 	}
 
+	@Override
+	public void uiClickValueRead(String value) {
+
+	}
+
 	public void uiAvailableServices(final BluetoothGatt gatt,
     						        final BluetoothDevice device,
     							    final List<BluetoothGattService> services)

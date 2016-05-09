@@ -220,7 +220,7 @@ public class BleWrapper {
         
         // lets read and do real parsing of some characteristic to get meaningful value from it 
         UUID uuid = ch.getUuid();
-        
+        LogUtil.d("CHAR01_LEVEL CHAR01_LEVEL" + uuid);
         if(uuid.equals(ConstDefine.Characteristic.HEART_RATE_MEASUREMENT)) { // heart rate
         	// follow https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml
         	// first check format used by the device - it is specified in bit 0 and tells us if we should ask for index 1 (and uint8) or index 2 (and uint16)
@@ -255,7 +255,12 @@ public class BleWrapper {
         	intValue = rawValue[0];
         	strValue = "" + intValue + "% battery level";
             mUiCallback.uiBatteryValueRead(strValue);
-        }        
+        }
+        else if(uuid.equals(ConstDefine.Characteristic.CHAR01_LEVEL)) { // battery level
+            // follow: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.battery_level.xml
+            strValue = ch.getStringValue(3);
+            mUiCallback.uiClickValueRead(strValue);
+        }
         else {
         	// not known type of characteristic, so we need to handle this in "general" way
         	// get first four bytes and transform it to integer

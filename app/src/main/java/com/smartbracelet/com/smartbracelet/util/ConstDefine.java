@@ -52,6 +52,7 @@ public interface ConstDefine {
     public static class Service {
         final static public UUID HEART_RATE               = UUID.fromString("0000180d-0000-1000-8000-00805f9b34fb");
         final static public UUID BATTERY_SERVICE               = UUID.fromString("0000180f-0000-1000-8000-00805f9b34fb");
+        final static public UUID UNKNOWN_SERVICE               = UUID.fromString("328b1cd1-f643-f7b5-a243-0c51cd3deeaa");
     };
 
     public static class Characteristic {
@@ -62,6 +63,8 @@ public interface ConstDefine {
         final static public UUID APPEARANCE               = UUID.fromString("00002a01-0000-1000-8000-00805f9b34fb");
         final static public UUID BODY_SENSOR_LOCATION     = UUID.fromString("00002a38-0000-1000-8000-00805f9b34fb");
         final static public UUID BATTERY_LEVEL            = UUID.fromString("00002a19-0000-1000-8000-00805f9b34fb");
+        final static public UUID CHAR01_LEVEL            = UUID.fromString("ef716109-4f4d-1882-9842-7d95e5b7df71");
+        final static public UUID CHAR02_LEVEL            = UUID.fromString("5860dc9a-0ea0-4ebc-9045-f980f732932c");
     }
 
     public static class Descriptor {

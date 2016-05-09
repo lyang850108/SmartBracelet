@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.smartbracelet.com.smartbracelet.ui.App;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -255,19 +256,24 @@ public class Utils implements ConstDefine{
         }
     }
 
-    public  static int parseMsgTypeStatus (String json) {
+    /*public  static int parseMsgTypeStatus (String json) {
         int result = 0;
         try {
             JSONObject jsonObject = new JSONObject(json);
-            JSONObject params = jsonObject.getJSONObject("params");
-            result = params.getInt("status");
-            LogUtil.d("parseMsgTypeStatus = " + result);
+            JSONArray marks = jsonObject.getJSONArray("params");
+            for(int i=0; i< marks.length(); i++){
+                JSONObject mark = (JSONObject)marks.get(i);
+                String showMessage = mark.getString("MsgTypeID");
+
+                String replyId = mark.getString("Msg");
+                String time = mark.getString("CreateTime");
+            }
             return result;
         } catch (JSONException e) {
             e.printStackTrace();
             return -1;
         }
-    }
+    }*/
 
     public static String getTelNumber() {
         return mPhoneAddress;
