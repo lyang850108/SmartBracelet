@@ -21,6 +21,8 @@ import com.smartbracelet.com.smartbracelet.util.SharedPreferencesHelper;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import retrofit.ErrorHandler;
@@ -39,12 +41,21 @@ public class App extends Application {
     public static int sScreenHeight;
     public LocationService locationService;
     public Vibrator mVibrator;
+    public static boolean isFirstLaunched = false;
+
+    public static Timer timer = new Timer();
+    public static TimerTask timerTask;
+
+    public static int timesJudgeGps;
     @Override
     public void onCreate() {
         super.onCreate();
+        isFirstLaunched = true;
         //PreferenceUtils.init(this);
         setUpSharedPreferencesHelper(this);
+
         LiteOrmDBUtil.init(this);
+        LiteOrmDBUtil.testLrmOdm();
 //        LiteOrmDBUtil.test();
         sContext = getApplicationContext();
         initRetrofitService();
@@ -65,6 +76,7 @@ public class App extends Application {
      */
     private void setUpSharedPreferencesHelper(Context context) {
         SharedPreferencesHelper.getInstance().Builder(context);
+
     }
 
 
@@ -117,7 +129,12 @@ public class App extends Application {
 
     @Override
     public void onTerminate() {
+        LogUtil.d("onTerminate");
+        if (null != timerTask) {
+            LogUtil.d("stop_post_package");
+            timerTask.cancel();
+        }
         super.onTerminate();
-
     }
+
 }

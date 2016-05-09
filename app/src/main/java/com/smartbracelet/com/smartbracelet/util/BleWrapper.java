@@ -254,6 +254,7 @@ public class BleWrapper {
         	// follow: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.battery_level.xml
         	intValue = rawValue[0];
         	strValue = "" + intValue + "% battery level";
+            mUiCallback.uiBatteryValueRead(strValue);
         }        
         else {
         	// not known type of characteristic, so we need to handle this in "general" way

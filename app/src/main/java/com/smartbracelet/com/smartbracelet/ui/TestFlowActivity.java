@@ -23,21 +23,17 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.smartbracelet.com.smartbracelet.R;
-import com.smartbracelet.com.smartbracelet.adapter.CharacteristicDetailsAdapter;
-import com.smartbracelet.com.smartbracelet.adapter.CharacteristicsListAdapter;
 import com.smartbracelet.com.smartbracelet.adapter.DeviceListAdapter;
-import com.smartbracelet.com.smartbracelet.adapter.ServicesListAdapter;
 import com.smartbracelet.com.smartbracelet.service.LocationService;
 import com.smartbracelet.com.smartbracelet.util.BleNamesResolver;
 import com.smartbracelet.com.smartbracelet.util.BleWrapper;
@@ -63,7 +59,6 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
@@ -71,13 +66,19 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
+public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
     /*@Bind(R.id.test_device_list)
     ListView mDeviceList;*/
 
     @Bind(R.id.test_text_view)
     TextView mTextView;
+
+    @Bind(R.id.test_ca_tx)
+    TextView mConnectedAddTx;
+
+    @Bind(R.id.test_bt_tx)
+    TextView mBatteryLevelTx;
 
     @Bind(R.id.test_fab)
     android.support.design.widget.FloatingActionButton mFloatingActionBtn;
@@ -86,8 +87,8 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
 
     public static Handler mBTHandler;
 
-    private List<String> deviceNameList =  new ArrayList<String>();
-    private List<String> deviceAddressList =  new ArrayList<String>();
+    private List<String> deviceNameList = new ArrayList<String>();
+    private List<String> deviceAddressList = new ArrayList<String>();
     private SharedPreferencesHelper sharedPreferencesHelper;
 
     private ArrayAdapter<String> arrayAdapter;
@@ -107,6 +108,8 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
     private List<BluetoothDevice> mDevices;
 
     private String bleAddress = null;
+
+    private String mBatterymValue = null;
 
     // 手机蓝牙地址(第一次获取到的)
     String SP_PHONE_ADDRESS = "init_phone_address";
@@ -147,9 +150,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
 
     private static int retryCnt = 0;
 
-    Timer timer = new Timer();
-    TimerTask timerTask;
-
     private class BlueToothTestHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -168,8 +168,14 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
 
 
                 case MSG_CHA_SEND_LOCATION:
-
+                    LogUtil.d("MSG_CHA_SEND_LOCATION");
                     mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOGps(latitude, longtitude, bleAddress).toString(), TYPE_UPLOAD_LOCATION);
+                    mPostDataTask.execute(0);
+                    break;
+
+                case MSG_PUSH_MSG:
+                    LogUtil.d("MSG_PUSH_MSG");
+                    mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOMsgPushTest(bleAddress).toString(), TYPE_PUSH_MSG);
                     mPostDataTask.execute(0);
                     break;
             }
@@ -197,9 +203,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
 
                 LogUtil.d("uiDeviceConnected");
                 handleDeviceConnected(gatt, device);
-                Message message = new Message();
-                message.what = MSG_SERCH_DONE;
-                mBTHandler.sendMessage(message);
+
             }
 
             @Override
@@ -211,17 +215,55 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
             @Override
             public void uiAvailableServices(BluetoothGatt gatt, BluetoothDevice device, List<BluetoothGattService> services) {
                 LogUtil.d("uiAvailableServices");
-                for(BluetoothGattService service : mBleWrapper.getCachedServices()) {
-                    /*if (BATTERY_LEVEL == service.getUuid()) {
+                for (BluetoothGattService service : mBleWrapper.getCachedServices()) {
+                    String uuid = service.getUuid().toString().toLowerCase(Locale.getDefault());
+                    String name = BleNamesResolver.resolveServiceName(uuid);
+                    LogUtil.d("uiAvailableServices name " + name);
+                    String type = (service.getType() == BluetoothGattService.SERVICE_TYPE_PRIMARY) ? "Primary" : "Secondary";
 
-                    }*/
+                    if (service.getUuid().equals(Service.BATTERY_SERVICE)) {
+                        mBleWrapper.getCharacteristicsForService(service);
+                    }
 
                 }
+            }
+
+
+            @Override
+            public void uiCharacteristicForService(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, List<BluetoothGattCharacteristic> chars) {
+                LogUtil.d("uiCharacteristicForService");
+                for(BluetoothGattCharacteristic ch : chars) {
+                    String uuid = ch.getUuid().toString().toLowerCase(Locale.getDefault());
+                    LogUtil.d("uiCharacteristicForService uuid " + uuid);
+                    String name = BleNamesResolver.resolveCharacteristicName(uuid);
+                    LogUtil.d("uiCharacteristicForService name " + name);
+                    if (ch.getUuid().equals(Characteristic.BATTERY_LEVEL)) {
+                        gatt.readCharacteristic(ch);
+                    }
+                }
+            }
+
+            @Override
+            public void uiGotNotification(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, BluetoothGattCharacteristic characteristic) {
+
+            }
+
+            @Override
+            public void uiBatteryValueRead(String value) {
+                mBatterymValue = value;
+                LogUtil.d("uiBatteryValueRead : " + value);
+                mContext.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBatteryLevelTx.setText(mBatterymValue);
+                    }
+                });
+
             }
         });
 
         // check if we have BT and BLE on board
-        if(mBleWrapper.checkBleHardwareAvailable() == false) {
+        if (mBleWrapper.checkBleHardwareAvailable() == false) {
             bleMissing();
         }
         //Add end
@@ -236,6 +278,29 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
         if (null != sharedPreferencesHelper) {
             checkPhomeNumerAvailble(sharedPreferencesHelper);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.option_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.menu_setting:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
+
+            case R.id.menu_program:
+                startActivity(new Intent(this, ProgramItemActivity.class));
+                break;
+        }
+        return true;
     }
 
     private void checkPhomeNumerAvailble(SharedPreferencesHelper sharedPreferencesHelper) {
@@ -264,13 +329,22 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
 
         if (TextUtils.isEmpty(sharedPreferencesHelper.getString(SP_PHONE_ADDRESS))) {
             sharedPreferencesHelper.putString(SP_PHONE_ADDRESS, device.getAddress());
+            App.isFirstLaunched = false;
         }
-
 
         mContext.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mTextView.append("\n " + device.getName() + " Connected");
+                mConnectedAddTx.setText(device.getName() + "\n" + device.getAddress()+ "\n" + " Connected");
+
+                if (STATE_DEVICE_UNBIND == sharedPreferencesHelper.getInt(SP_BIND_STATE)) {
+                    Message message = new Message();
+                    message.what = MSG_SERCH_DONE;
+                    mBTHandler.sendMessage(message);
+                } else if (STATE_DEVICE_BIND == sharedPreferencesHelper.getInt(SP_BIND_STATE)) {
+                    mTextView.append("\n 该手环已被绑定过 ");
+                    sendGPGTimely();
+                }
             }
         });
     }
@@ -279,7 +353,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
         mContext.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mTextView.append("\n " + device.getName() + " Disconnected");
+                mConnectedAddTx.setText(device.getName() + "\n" + device.getAddress()+ "\n" + " Disconnected");
             }
         });
     }
@@ -291,7 +365,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
 
         //Add demo begin
         // on every Resume check if BT is enabled (user could turn it off while app was in background etc.)
-        if(mBleWrapper.isBtEnabled() == false) {
+        if (mBleWrapper.isBtEnabled() == false) {
             // BT is not turned on - ask user to make it enabled
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, ENABLE_BT_REQUEST_ID);
@@ -341,8 +415,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
     /* add device to the current list of devices */
     private void handleFoundDevice(final BluetoothDevice device,
                                    final int rssi,
-                                   final byte[] scanRecord)
-    {
+                                   final byte[] scanRecord) {
         // adding to the UI have to happen in UI thread
         mContext.runOnUiThread(new Runnable() {
             @Override
@@ -354,7 +427,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
                 //For test
                 String bindAddress = sharedPreferencesHelper.getString(SP_PHONE_ADDRESS);
 
-                if (bindAddress.equals(device.getAddress())) {
+                if (bindAddress.equals(device.getAddress()) || App.isFirstLaunched) {
                     if (!TextUtils.isEmpty(device.getName()) && device.getName().startsWith("utt")) {
                         LogUtil.d("existAddress" + bindAddress);
                         String mName = device.getName();
@@ -379,7 +452,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
     }
 
 
-
     private void btDisabled() {
         ToastHelper.showAlert(mContext, "Sorry, BT has to be turned ON for us to work!");
         mContext.finish();
@@ -391,12 +463,12 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
     }
 
     /* make sure that potential scanning will take no longer
-	 * than <SCANNING_TIMEOUT> seconds from now on */
+     * than <SCANNING_TIMEOUT> seconds from now on */
     private void addScanningTimeout() {
         Runnable timeout = new Runnable() {
             @Override
             public void run() {
-                if(mBleWrapper == null) return;
+                if (mBleWrapper == null) return;
                 mScanning = false;
                 mBleWrapper.stopScanning();
             }
@@ -422,7 +494,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
     }
 
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -438,9 +509,9 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
             mDevicesListAdapter.clearList();
             //Add demo end
 
-            if (null != timerTask) {
+            if (null != App.timerTask) {
                 LogUtil.d("stop_post_package");
-                timerTask.cancel();
+                App.timerTask.cancel();
             }
         }
 
@@ -461,7 +532,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
 
     /*****
      * 定位结果回调，重写onReceiveLocation方法，可以直接拷贝如下代码到自己工程中修改
-     *
      */
     private BDLocationListener mListener = new BDLocationListener() {
 
@@ -497,10 +567,10 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
              * 定位权限为必须权限，用户如果禁止，则每次进入都会申请
              */
             // 定位精确位置
-            if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
             }
-            if(checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
             }
 			/*
@@ -524,14 +594,14 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
     @TargetApi(23)
     private boolean addPermission(ArrayList<String> permissionsList, String permission) {
         if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) { // 如果应用没有获得对应权限,则添加到列表中,准备批量申请
-            if (shouldShowRequestPermissionRationale(permission)){
+            if (shouldShowRequestPermissionRationale(permission)) {
                 return true;
-            }else{
+            } else {
                 permissionsList.add(permission);
                 return false;
             }
 
-        }else{
+        } else {
             return true;
         }
     }
@@ -564,7 +634,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
         }
 
 
-        try{
+        try {
             LogUtil.e("doInBackground, Post httpUrl:" + httpUrl);
             HttpPost httpRequest = new HttpPost(httpUrl);
 
@@ -584,25 +654,25 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
             HttpResponse httpResponse = httpclient.execute(httpRequest);
             //HttpStatus.SC_OK表示连接成功
             LogUtil.e("post, yangli:" + httpResponse.getStatusLine().getStatusCode());
-            if (httpResponse.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_OK){
+            if (httpResponse.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_OK) {
                 //取得返回的字符串
                 //String strResult = EntityUtils.toString(httpResponse.getEntity());
                 postRTR = "请求成功!";
                 postDetailRTR = EntityUtils.toString(httpResponse.getEntity());
                 //postDetailRTR = httpResponse.getEntity().toString();
-            }else{
-                postRTR = "请求错误! 错误码" +  httpResponse.getStatusLine().getStatusCode();
+            } else {
+                postRTR = "请求错误! 错误码" + httpResponse.getStatusLine().getStatusCode();
                 LogUtil.e("post, yangli:" + "请求错误");
             }
-        }catch (ClientProtocolException e){
+        } catch (ClientProtocolException e) {
             postRTR = "ClientProtocolException!";
             LogUtil.e("post, yangli:" + "ClientProtocolException");
             e.printStackTrace();
-        } catch (IOException e){
+        } catch (IOException e) {
             postRTR = "IOException!";
             LogUtil.e("post, yangli:" + "IOException");
             e.printStackTrace();
-        }catch (Exception e){
+        } catch (Exception e) {
             postRTR = "Exception!";
             LogUtil.e("post, yangli:" + "Exception");
             e.printStackTrace();
@@ -634,13 +704,12 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
 
             //String httpUrl = "http://api.gigaset.com/cn/mobile/v1/demovideo/querydemo";
 
-            url = "http://"+ mPostWord;
+            url = "http://" + mPostWord;
 
 
             httpPostParams(url, mParamsPost, mPostType);
             return null;
         }
-
 
 
         @Override
@@ -660,6 +729,9 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
                 loadingDialog.dismiss();
                 if (postRTR.contains("请求成功") && 0 == Utils.parseJsonResult(postDetailRTR)) {
                     mTextView.append("\n 服务器处理成功 ");
+                    //该设备已经绑定过
+                    sharedPreferencesHelper.putInt(SP_BIND_STATE, STATE_DEVICE_BIND);
+
                     if (null != mContext) {
                         if (null != mAlertDialog) {
                             mAlertDialog.dismiss();
@@ -684,60 +756,106 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
                         retryCnt = 0;
                         return;
                     }
-                    retryCnt ++;
+                    retryCnt++;
                     //Again
                     Message message = new Message();
                     message.what = MSG_SERCH_DONE;
                     mBTHandler.sendMessageDelayed(message, 60000);
                 }
             } else if (TYPE_UPLOAD_LOCATION == CURRENT_TYPE_POST) {
-                if (-1 == Utils.parseJsonResult(postDetailRTR)) {
-                    mTextView.append("\n 坐标数据服务器处理失败");
-                } else if (0 == Utils.parseJsonResult(postDetailRTR)) {
-                    mTextView.append("\n 坐标数据服务器处理成功，没有越界");
-                } else if (1 == Utils.parseJsonResult(postDetailRTR)) {
-                    mTextView.append("\n 坐标数据服务器处理成功，坐标越界");
-                } else if (2 == Utils.parseJsonResult(postDetailRTR)) {
-                    mTextView.append("\n 坐标数据服务器处理成功，设备未进行人员信息绑定");
-                } else {
-                    mTextView.append("\n 坐标数据服务器没有返回");
-                }
+                handleGpsMsg();
 
+            } else if (TYPE_PUSH_MSG == CURRENT_TYPE_POST) {
+                handlePushMsg();
             }
 
         }
     }
 
+    private void handleGpsMsg() {
+        if (-1 == Utils.parseJsonResult(postDetailRTR)) {
+            mTextView.append("\n 坐标数据服务器处理失败");
+        } else if (0 == Utils.parseJsonResult(postDetailRTR)) {
+            mTextView.append("\n 坐标数据服务器处理成功，没有越界");
+        } else if (1 == Utils.parseJsonResult(postDetailRTR)) {
+            mTextView.append("\n 坐标数据服务器处理成功，坐标越界");
+        } else if (2 == Utils.parseJsonResult(postDetailRTR)) {
+            //mTextView.append("\n 坐标数据服务器处理成功，设备未进行人员信息绑定");
+            if (null != App.timerTask) {
+                LogUtil.d("stop_post_package");
+                App.timerTask.cancel();
+            }
+            if (null != mContext) {
+                if (null != mAlertDialog) {
+                    mAlertDialog.dismiss();
+                    mAlertDialog = null;
+                }
+                AlertDialogCreator.getInstance().setmButtonOnClickListener(mDialogListener);
+                mAlertDialog = AlertDialogCreator
+                        .getInstance()
+                        .createAlertDialog(
+                                mContext,
+                                getString(R.string.tip_title),
+                                getString(R.string.test_gps_bind_tip_content));
+                mAlertDialog.show();
+            }
+        } else {
+            mTextView.append("\n 坐标数据服务器没有返回");
+        }
+    }
+
+    private void handlePushMsg() {
+        if (1 == Utils.parseJsonResult(postDetailRTR)) {
+            mTextView.append("\n 短消息");
+        } else if (2 == Utils.parseJsonResult(postDetailRTR)) {
+            mTextView.append("\n 设置GPS上报间隔时间");
+        } else if (3 == Utils.parseJsonResult(postDetailRTR)) {
+            mTextView.append("\n 设置手环扫描间隔");
+        } else {
+            mTextView.append("\n 消息推送返回错误");
+        }
+    }
+
     private void sendGPGTimely() {
 
-        if (null != timerTask) {
+        if (null != App.timerTask) {
             LogUtil.d("stop_post_package");
-            timerTask.cancel();
+            App.timerTask.cancel();
         }
 
         if (0 != longtitude && 0 != latitude) {
             int times = 60000;
             //Must cancel first
 
-            timerTask = new TimerTask() {
+            App.timerTask = new TimerTask() {
                 @Override
                 public void run() {
                     //SEND MESSAGE TIMER
                     Message msg = new Message();
-                    msg.what = MSG_CHA_SEND_LOCATION;
+                    msg.what = MSG_PUSH_MSG;
                     if (null != mBTHandler) {
                         mBTHandler.sendMessage(msg);
+                        App.timesJudgeGps++;
+                    }
+
+                    if (3 == App.timesJudgeGps) {
+                        App.timesJudgeGps = 0;
+                        Message msg2 = new Message();
+                        msg2.what = MSG_CHA_SEND_LOCATION;
+                        if (null != mBTHandler) {
+                            mBTHandler.sendMessage(msg2);
+                        }
                     }
                 }
             };
-            timer.schedule(timerTask, 0, times);
+            App.timer.schedule(App.timerTask, 0, times);
         }
     }
 
     private AlertDialogCreator.ButtonOnClickListener mDialogListener = new AlertDialogCreator.ButtonOnClickListener() {
         @Override
         public void buttonTrue() {
-           sendGPGTimely();
+            sendGPGTimely();
         }
 
         @Override
@@ -762,7 +880,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine{
         public void buttonCancel() {
 
             //ToastHelper.showAlert(mContext, getString(R.string.boolth_eable_tip));
-                //finish();
+            //finish();
         }
     };
 }

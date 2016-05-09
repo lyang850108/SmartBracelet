@@ -4,16 +4,26 @@ import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.Table;
 
 /**
- * Created by zengjinlong on 15-12-13.
+ * Created by Yangli on 16-05-06.
  */
-@Table("homeItems")
+@Table("msg")
 public class ProgramItem extends BaseModel {
-    @Column("query") public String query;
-    @Column("translation") public String translation;
-    @Column("basic") public String basic;
-    @Column("web") public String web;
+    @Column("title") public String title;
+    @Column("author") public String author;
+    @Column("body") public String body;
+    @Column("timeStamp") public Long timeStamp;
+
+    public static ProgramItem getData(int index) {
+        ProgramItem programItem = new ProgramItem();
+        programItem.title = "title" + index;
+        programItem.author = "author" + index;
+        programItem.body = "body" + index;
+
+        return  programItem;
+
+    }
 
     public String toString() {
-        return errorCode + "," + query + "," + translation+ "," + basic+ "," + web;
+        return title + "," + author + "," + body+ "," + timeStamp;
     }
 }

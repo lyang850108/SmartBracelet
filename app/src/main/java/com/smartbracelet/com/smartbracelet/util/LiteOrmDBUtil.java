@@ -7,6 +7,7 @@ import com.litesuits.orm.db.assit.QueryBuilder;
 import com.litesuits.orm.db.assit.WhereBuilder;
 import com.litesuits.orm.db.model.ConflictAlgorithm;
 import com.smartbracelet.com.smartbracelet.BuildConfig;
+import com.smartbracelet.com.smartbracelet.model.ProgramItem;
 
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class LiteOrmDBUtil {
 
-    public static final String DB_NAME = "abroadEasy.db";
+    public static final String DB_NAME = "utt.db";
     public static LiteOrm sLiteOrm;
 
     public static void init(Context context) {
@@ -118,5 +119,16 @@ public class LiteOrmDBUtil {
     }
 
     private static int sTestNum = 0;
+
+    public static void testLrmOdm () {
+        LogUtil.d("testLrmOdm begin");
+        List<ProgramItem> list = new ArrayList<ProgramItem>();
+        for (int i = 0; i < 10; i++) {
+            list.add(ProgramItem.getData(i));
+        }
+
+        LiteOrmDBUtil.insertAll(list);
+    }
+
 
 }

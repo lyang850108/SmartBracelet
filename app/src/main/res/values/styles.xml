@@ -38,6 +38,18 @@
 
     </style>
 
+    <style name="BlogItemTextButtonStyle" >
+        <item name="android:textColor">@color/orange_500</item>
+        <item name="android:textSize">@dimen/tab_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ItemTitleTextStyle" >
+        <item name="android:textColor">@color/grey_600</item>
+        <item name="android:textSize">@dimen/title_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 
 
 </resources>

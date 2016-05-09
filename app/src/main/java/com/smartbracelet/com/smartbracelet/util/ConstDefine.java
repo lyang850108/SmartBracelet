@@ -29,8 +29,14 @@ public interface ConstDefine {
     final int MSG_SERCH_DONE = 1;
     final int MSG_CHA_READ = 2;
     final int MSG_CHA_SEND_LOCATION = 3;
+    final int MSG_PUSH_MSG = 4;
+
+    final int STATE_DEVICE_UNBIND = 0;
+    final int STATE_DEVICE_BIND = 1;
 
     String SP_PHONE_NUMBER = "init_phone_number";
+
+    String SP_BIND_STATE = "device_bind_state";
 
     UUID UUID_READ_SERVICE = fromString("328B1CD1-F643-F7B5-A243-0C51CD3DEEAA");
 
@@ -42,6 +48,7 @@ public interface ConstDefine {
 
     public static class Service {
         final static public UUID HEART_RATE               = UUID.fromString("0000180d-0000-1000-8000-00805f9b34fb");
+        final static public UUID BATTERY_SERVICE               = UUID.fromString("0000180f-0000-1000-8000-00805f9b34fb");
     };
 
     public static class Characteristic {

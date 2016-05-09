@@ -226,6 +226,20 @@ public class Utils implements ConstDefine{
         }
     }
 
+    public  static int parseMsgTypeResult (String json) {
+        int result = 0;
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONObject params = jsonObject.getJSONObject("params");
+            result = params.getInt("MsgTypeID");
+            LogUtil.d("parseJsonResult = " + result);
+            return result;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
     public static String getTelNumber() {
         return mPhoneAddress;
     }
