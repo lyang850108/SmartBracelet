@@ -1,13 +1,20 @@
 package com.smartbracelet.com.smartbracelet.util;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.ui.App;
+import com.smartbracelet.com.smartbracelet.ui.ProgramItemActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +30,7 @@ import java.util.Date;
  */
 public class Utils implements ConstDefine{
     public static final boolean DEBUG = true;
+    private static final int NOTIFICATION_ID = 123;
     private static String mPhoneAddress = "";
     public static final long SWIPE_BEHAVIOR_ANIMATION_TIME = 200;
     public static void showShortToast(Context context, int resId) {
@@ -281,6 +289,42 @@ public class Utils implements ConstDefine{
     public static String setTelNumber(String address) {
         mPhoneAddress =  address;
         return mPhoneAddress;
+    }
+
+    public static byte[] parseHexStringToBytes(final String hex) {
+        String tmp = hex.substring(2).replaceAll("[^[0-9][a-f]]", "");
+        byte[] bytes = new byte[tmp.length() / 2]; // every two letters in the string are one byte finally
+
+        String part = "";
+
+        for(int i = 0; i < bytes.length; ++i) {
+            part = "0x" + tmp.substring(i*2, i*2+2);
+            bytes[i] = Long.decode(part).byteValue();
+        }
+
+        return bytes;
+    }
+
+    public static void notifyMessageComing(Context context, String title, String body) {
+        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+        //通知消息与Intent关联
+        Intent intent = new Intent(context, ProgramItemActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(App.getsContext(), 1, intent, Notification.FLAG_AUTO_CANCEL);
+        mBuilder.setContentTitle(title)//设置通知栏标题
+                .setContentText(body)
+                .setContentIntent(pendingIntent) //设置通知栏点击意图
+                .setTicker(body) //通知首次出现在通知栏，带上升动画效果的
+                .setWhen(System.currentTimeMillis())//通知产生的时间，会在通知信息里显示，一般是系统获取到的时间
+                .setPriority(Notification.PRIORITY_MAX) //设置该通知优先级
+// .setAutoCancel(true)//设置这个标志当用户单击面板就可以让通知将自动取消
+                .setOngoing(false)//ture，设置他为一个正在进行的通知。他们通常是用来表示一个后台任务,用户积极参与(如播放音乐)或以某种方式正在等待,因此占用设备(如一个文件下载,同步操作,主动网络连接)
+                .setDefaults(Notification.DEFAULT_VIBRATE)//向通知添加声音、闪灯和振动效果的最简单、最一致的方式是使用当前的用户默认设置，使用defaults属性，可以组合
+//Notification.DEFAULT_ALL Notification.DEFAULT_SOUND 添加声音 // requires VIBRATE permission
+                .setSmallIcon(R.mipmap.ic_phone);//设置通知小ICON
+
+        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+
     }
 
 }

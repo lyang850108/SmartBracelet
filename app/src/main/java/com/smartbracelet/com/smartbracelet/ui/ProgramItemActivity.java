@@ -15,8 +15,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.smartbracelet.com.smartbracelet.R;
+import com.smartbracelet.com.smartbracelet.model.ProgramItem;
+import com.smartbracelet.com.smartbracelet.util.LiteOrmDBUtil;
+import com.smartbracelet.com.smartbracelet.util.LogUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -81,12 +85,13 @@ public class ProgramItemActivity extends AppCompatActivity {
         public BlogAdapter(LayoutInflater layoutInflater) {
             mData = new ArrayList<BlogItem>();
             mLayoutInflater = layoutInflater;
-            for (int i = 0; i < 20; i++) {
-                Drawable d;
+            List<ProgramItem> list = new ArrayList<ProgramItem>();
+            list = LiteOrmDBUtil.getQueryAll(ProgramItem.class);
+            LogUtil.d("list" + list.size());
+            for (int i = 0; i < list.size() ; i++) {
 
-                d = getResources().getDrawable(R.mipmap.blog_im1);
-                mData.add(new BlogItem("服务器推送消息Title " + i, "Number" + i + "\n" +"正文内容\n" +
-                        "Whitsunday lsland,Whitsunday lslands ", d));
+                LogUtil.d("BlogAdapter" + list.get(i).title);
+                mData.add(new BlogItem(list.get(i).title, list.get(i).body));
             }
         }
 
@@ -136,13 +141,11 @@ public class ProgramItemActivity extends AppCompatActivity {
     private static class BlogItem {
         String mTitle;
         String mDescrip;
-        Drawable mPicture;
         private static int idCounter = 0;
 
-        public BlogItem(String title, String descrip, Drawable d) {
+        public BlogItem(String title, String descrip) {
             mTitle = title;
             mDescrip = descrip;
-            mPicture = d;
         }
     }
 

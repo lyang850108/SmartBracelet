@@ -4,6 +4,9 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -14,12 +17,15 @@ import android.bluetooth.BluetoothSocket;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -30,17 +36,23 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.adapter.DeviceListAdapter;
+import com.smartbracelet.com.smartbracelet.model.ProgramItem;
 import com.smartbracelet.com.smartbracelet.service.LocationService;
 import com.smartbracelet.com.smartbracelet.util.BleNamesResolver;
 import com.smartbracelet.com.smartbracelet.util.BleWrapper;
 import com.smartbracelet.com.smartbracelet.util.BleWrapperUiCallbacks;
 import com.smartbracelet.com.smartbracelet.util.ConstDefine;
 import com.smartbracelet.com.smartbracelet.util.Gps;
+import com.smartbracelet.com.smartbracelet.util.LiteOrmDBUtil;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
 import com.smartbracelet.com.smartbracelet.util.PositionUtil;
 import com.smartbracelet.com.smartbracelet.util.SharedPreferencesHelper;
@@ -90,11 +102,14 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     ImageView mBatteryLevelIm;
 
     @Bind(R.id.test_fab)
-    android.support.design.widget.FloatingActionButton mFloatingActionBtn;
+    FloatingActionButton mFloatingActionBtn;
 
     private Activity mContext;
 
     public static Handler mBTHandler;
+
+    //0x00：没有配对 0x01：配对成功
+    public String mBindResult = "0x00000000";
 
     private List<String> deviceNameList = new ArrayList<String>();
     private List<String> deviceAddressList = new ArrayList<String>();
@@ -159,16 +174,45 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
     private static int retryCnt = 0;
 
+    private BluetoothGattCharacteristic characBatteryLevel;
+
+    private BluetoothGattCharacteristic charac01;
+
+    private BluetoothGattCharacteristic charac02;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
+
     private class BlueToothTestHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MSG_SEARCH_OUT:
+                case MSG_CHA_READ:
+                    int type = msg.arg1;
+                    if (TYPE_GET_CLCIK_TIMES == type) {
+                        if (null != charac01) {
+                            mBleWrapper.requestCharacteristicValue(charac01);
+                        }
+                    }
                     break;
 
-                case MSG_SERCH_DONE:
-                    LogUtil.d("MSG_SERCH_DONE : " + bleAddress);
+                case MSG_CHA_WRITE:
+                    int type2 = msg.arg1;
+                    if (TYPE_SET_BIND_STATE == type2) {
+                        if (null != charac02) {
+                            String newValue = mBindResult;
+                            byte[] dataToWrite = Utils.parseHexStringToBytes(newValue);
+                            LogUtil.d("MSG_CHA_WRITE : " + dataToWrite.toString());
+                            mBleWrapper.writeDataToCharacteristic(charac02, dataToWrite);
+                        }
+                    }
+                    break;
 
+
+                case MSG_SERCH_DONE:
                     mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOTelTest(bleAddress).toString(), TYPE_GET_NUM_PARM);
                     mPostDataTask.execute(0);
                     loadingDialog.show();
@@ -177,7 +221,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
 
                 case MSG_CHA_SEND_LOCATION:
-                    LogUtil.d("MSG_CHA_SEND_LOCATION");
                     mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOGps(latitude, longtitude, bleAddress).toString(), TYPE_UPLOAD_LOCATION);
                     mPostDataTask.execute(0);
                     break;
@@ -212,6 +255,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             public void uiDeviceConnected(BluetoothGatt gatt, BluetoothDevice device) {
 
                 LogUtil.d("uiDeviceConnected");
+                mBindResult = "0x00010002";
                 handleDeviceConnected(gatt, device);
 
             }
@@ -219,6 +263,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             @Override
             public void uiDeviceDisconnected(BluetoothGatt gatt, BluetoothDevice device) {
                 LogUtil.d("uiDeviceDisconnected");
+                mBindResult = "0x00000003";
                 handleDeviceDisconnected(gatt, device);
             }
 
@@ -228,8 +273,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                     String uuid = service.getUuid().toString().toLowerCase(Locale.getDefault());
                     String name = BleNamesResolver.resolveServiceName(uuid);
                     String type = (service.getType() == BluetoothGattService.SERVICE_TYPE_PRIMARY) ? "Primary" : "Secondary";
-
-                    if (service.getUuid().equals(Service.BATTERY_SERVICE) || service.getUuid().equals(Service.UNKNOWN_SERVICE)) {
+                    if (service.getUuid().equals(Service.BATTERY_SERVICE) || service.getUuid().equals(Service.UNKNOWN_SERVICE2)) {
                         mBleWrapper.getCharacteristicsForService(service);
                     }
 
@@ -239,18 +283,18 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
             @Override
             public void uiCharacteristicForService(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, List<BluetoothGattCharacteristic> chars) {
-                for(BluetoothGattCharacteristic ch : chars) {
+                for (BluetoothGattCharacteristic ch : chars) {
                     String uuid = ch.getUuid().toString().toLowerCase(Locale.getDefault());
                     String name = BleNamesResolver.resolveCharacteristicName(uuid);
-                    LogUtil.d("uiCharacteristicForService name " + name);
                     if (ch.getUuid().equals(Characteristic.BATTERY_LEVEL)) {
+                        characBatteryLevel = ch;
                         gatt.readCharacteristic(ch);
-                    }
-                    if (ch.getUuid().equals(Characteristic.CHAR01_LEVEL)) {
-                        gatt.readCharacteristic(ch);
-                    }
-                    if (ch.getUuid().equals(Characteristic.CHAR02_LEVEL)) {
-                        gatt.writeCharacteristic(ch);
+                    } else if (ch.getUuid().equals(Characteristic.CHAR01_LEVEL2)) {
+                        charac01 = ch;
+                        //gatt.readCharacteristic(ch);
+                    } else if (ch.getUuid().equals(Characteristic.CHAR02_LEVEL2)) {
+                        charac02 = ch;
+                        //gatt.writeCharacteristic(ch);
                     }
                 }
             }
@@ -271,6 +315,8 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                     }
                 });
 
+
+                sendMsg(MSG_CHA_READ, TYPE_GET_CLCIK_TIMES);
             }
 
             @Override
@@ -280,6 +326,36 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                     @Override
                     public void run() {
                         mTextView.append("点击次数" + value);
+                    }
+                });
+
+                sendMsg(MSG_CHA_WRITE, TYPE_SET_BIND_STATE);
+            }
+
+            public void uiSuccessfulWrite(final BluetoothGatt gatt,
+                                          final BluetoothDevice device,
+                                          final BluetoothGattService service,
+                                          final BluetoothGattCharacteristic ch,
+                                          final String description) {
+                LogUtil.d("uiSuccessfulWrite : ");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Writing to " + description + " was finished successfully!", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+            public void uiFailedWrite(final BluetoothGatt gatt,
+                                      final BluetoothDevice device,
+                                      final BluetoothGattService service,
+                                      final BluetoothGattCharacteristic ch,
+                                      final String description) {
+                LogUtil.d("uiFailedWrite : ");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Writing to " + description + " FAILED!", Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -304,6 +380,9 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         if (null != sharedPreferencesHelper) {
             checkPhomeNumerAvailble(sharedPreferencesHelper);
         }
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -361,12 +440,10 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         mContext.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mConnectedAddTx.setText(device.getName() + "\n" + device.getAddress()+ "\n" + " Connected");
+                mConnectedAddTx.setText(device.getName() + "\n" + device.getAddress() + "\n" + " Connected");
 
                 if (STATE_DEVICE_UNBIND == sharedPreferencesHelper.getInt(SP_BIND_STATE)) {
-                    Message message = new Message();
-                    message.what = MSG_SERCH_DONE;
-                    mBTHandler.sendMessage(message);
+                    sendMsg(MSG_SERCH_DONE, 0);
                 } else if (STATE_DEVICE_BIND == sharedPreferencesHelper.getInt(SP_BIND_STATE)) {
                     mTextView.append("\n 该手环已被绑定过 ");
                     sendGPGTimely();
@@ -375,11 +452,20 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         });
     }
 
+    private void sendMsg(int msg, int type) {
+        Message message = new Message();
+        message.what = msg;
+        if (0 < type) {
+            message.arg1 = type;
+        }
+        mBTHandler.sendMessage(message);
+    }
+
     private void handleDeviceDisconnected(final BluetoothGatt gatt, final BluetoothDevice device) {
         mContext.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mConnectedAddTx.setText(device.getName() + "\n" + device.getAddress()+ "\n" + " Disconnected");
+                mConnectedAddTx.setText(device.getName() + "\n" + device.getAddress() + "\n" + " Disconnected");
             }
         });
     }
@@ -507,6 +593,9 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     @Override
     protected void onStart() {
         super.onStart();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
         locationService = ((App) getApplication()).locationService;
         //获取locationservice实例，建议应用中只初始化1个location实例，然后使用，可以参考其他示例的activity，都是通过此种方式获取locationservice实例的
         locationService.registerListener(mListener);
@@ -601,7 +690,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
             }
-			/*
+            /*
 			 * 读写权限和电话状态权限非必要权限(建议授予)只会申请一次，用户同意或者禁止，只会弹一次
 			 */
             // 读写权限
@@ -645,8 +734,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     @Override
     protected void onStop() {
         super.onStop();
-        locationService.unregisterListener(mListener); //注销掉监听
-        locationService.stop(); //停止定位服务
     }
 
     //hTTP
@@ -848,19 +935,35 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         try {
             JSONObject jsonObject = new JSONObject(postDetailRTR);
             JSONArray marks = jsonObject.getJSONArray("params");
-            for(int i=0; i< marks.length(); i++){
-                JSONObject mark = (JSONObject)marks.get(i);
+            List<ProgramItem> list = new ArrayList<ProgramItem>();
+            for (int i = 0; i < marks.length(); i++) {
+                JSONObject mark = (JSONObject) marks.get(i);
                 String showMessage = mark.getString("MsgTypeID");
+                String msg = mark.getString("Msg");
+                String time = mark.getString("CreateTime");
                 if (showMessage.equals("1")) {
                     showMessage = "短消息 ";
+                    ProgramItem programItem = new ProgramItem();
+                    programItem.title = showMessage;
+                    programItem.body = msg;
+
+                    list.add(programItem);
+
+                    Utils.notifyMessageComing(mContext, showMessage, msg);
+
                 } else if (showMessage.equals("2")) {
                     showMessage = "设置GPS上报间隔时间 ";
                 } else if (showMessage.equals("3")) {
                     showMessage = "设置手环扫描间隔 ";
                 }
 
-                String msg = mark.getString("Msg");
-                String time = mark.getString("CreateTime");
+                if (null != list && list.size() > 0) {
+                    LogUtil.d("LiteOrmDBUtil.insertAll :" + list.size());
+                    LiteOrmDBUtil.insertAll(list);
+                }
+
+                //Notify
+                //Utils.notiy(mContext, showMessage, msg);
                 mTextView.append("\n " + showMessage + "Msg: " + msg + "Create time : " + time);
             }
         } catch (JSONException e) {
@@ -940,4 +1043,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             //finish();
         }
     };
+    private NotificationManager mNotificationManager;
+    private Notification notification;
+
 }

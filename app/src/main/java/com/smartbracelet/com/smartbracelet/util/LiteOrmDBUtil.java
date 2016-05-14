@@ -120,15 +120,5 @@ public class LiteOrmDBUtil {
 
     private static int sTestNum = 0;
 
-    public static void testLrmOdm () {
-        LogUtil.d("testLrmOdm begin");
-        List<ProgramItem> list = new ArrayList<ProgramItem>();
-        for (int i = 0; i < 10; i++) {
-            list.add(ProgramItem.getData(i));
-        }
-
-        LiteOrmDBUtil.insertAll(list);
-    }
-
 
 }

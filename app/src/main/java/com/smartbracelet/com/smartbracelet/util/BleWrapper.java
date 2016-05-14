@@ -256,9 +256,12 @@ public class BleWrapper {
         	strValue = "" + intValue + "% battery level";
             mUiCallback.uiBatteryValueRead(strValue);
         }
-        else if(uuid.equals(ConstDefine.Characteristic.CHAR01_LEVEL)) { // battery level
+        else if(uuid.equals(ConstDefine.Characteristic.CHAR01_LEVEL2)) { // battery level
             // follow: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.battery_level.xml
-            strValue = ch.getStringValue(3);
+            intValue  = ((int)rawValue[1]) << 8;
+            intValue +=  rawValue[2];
+            strValue = "" + intValue;
+
             mUiCallback.uiClickValueRead(strValue);
         }
         else {

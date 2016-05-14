@@ -55,8 +55,6 @@ public class App extends Application {
         setUpSharedPreferencesHelper(this);
 
         LiteOrmDBUtil.init(this);
-        LiteOrmDBUtil.testLrmOdm();
-//        LiteOrmDBUtil.test();
         sContext = getApplicationContext();
         initRetrofitService();
         sScreenHeight = getResources().getDisplayMetrics().heightPixels;

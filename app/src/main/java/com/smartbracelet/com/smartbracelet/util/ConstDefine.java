@@ -24,6 +24,8 @@ public interface ConstDefine {
     int TYPE_PUSH_MSG = 4;
     int TYPE_PARAMS_POST = 5;
     int TYPE_WARNING_NOTIFY = 6;
+    int TYPE_GET_CLCIK_TIMES = 7;
+    int TYPE_SET_BIND_STATE = 8;
 
 
     final int MSG_SEARCH_OUT = 0;
@@ -31,6 +33,7 @@ public interface ConstDefine {
     final int MSG_CHA_READ = 2;
     final int MSG_CHA_SEND_LOCATION = 3;
     final int MSG_PUSH_MSG = 4;
+    final int MSG_CHA_WRITE = 5;
 
     final int STATE_DEVICE_UNBIND = 0;
     final int STATE_DEVICE_BIND = 1;
@@ -53,6 +56,7 @@ public interface ConstDefine {
         final static public UUID HEART_RATE               = UUID.fromString("0000180d-0000-1000-8000-00805f9b34fb");
         final static public UUID BATTERY_SERVICE               = UUID.fromString("0000180f-0000-1000-8000-00805f9b34fb");
         final static public UUID UNKNOWN_SERVICE               = UUID.fromString("328b1cd1-f643-f7b5-a243-0c51cd3deeaa");
+        final static public UUID UNKNOWN_SERVICE2               = UUID.fromString("51f6d338-f274-b387-1949-47705f0ab335");
     };
 
     public static class Characteristic {
@@ -65,6 +69,8 @@ public interface ConstDefine {
         final static public UUID BATTERY_LEVEL            = UUID.fromString("00002a19-0000-1000-8000-00805f9b34fb");
         final static public UUID CHAR01_LEVEL            = UUID.fromString("ef716109-4f4d-1882-9842-7d95e5b7df71");
         final static public UUID CHAR02_LEVEL            = UUID.fromString("5860dc9a-0ea0-4ebc-9045-f980f732932c");
+        final static public UUID CHAR01_LEVEL2            = UUID.fromString("e54d1a53-e9ae-2ea1-6648-5d82466c884e");
+        final static public UUID CHAR02_LEVEL2            = UUID.fromString("c8a46bff-fee2-1ca3-0c4f-be76d5afd803");
     }
 
     public static class Descriptor {
