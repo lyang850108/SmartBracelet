@@ -1,4 +1,4 @@
-package com.smartbracelet.com.smartbracelet.ui;
+package com.smartbracelet.com.smartbracelet.activity;
 
 import android.app.Application;
 import android.app.Service;
@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Vibrator;
 
-import com.baidu.mapapi.SDKInitializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.bind.DateTypeAdapter;
@@ -16,13 +15,12 @@ import com.smartbracelet.com.smartbracelet.network.RetrofitService;
 import com.smartbracelet.com.smartbracelet.service.LocationService;
 import com.smartbracelet.com.smartbracelet.util.LiteOrmDBUtil;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
-import com.smartbracelet.com.smartbracelet.util.PreferenceUtils;
+import com.smartbracelet.com.smartbracelet.util.ReschedulableTimerTask;
 import com.smartbracelet.com.smartbracelet.util.SharedPreferencesHelper;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.util.Date;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import retrofit.ErrorHandler;
@@ -44,7 +42,10 @@ public class App extends Application {
     public static boolean isFirstLaunched = false;
 
     public static Timer timer = new Timer();
-    public static TimerTask timerTask;
+    /**
+     * Self-define
+     */
+    public static ReschedulableTimerTask timerTask;
 
     public static int timesJudgeGps;
     @Override

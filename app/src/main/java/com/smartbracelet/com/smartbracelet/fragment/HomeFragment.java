@@ -1,4 +1,4 @@
-package com.smartbracelet.com.smartbracelet.ui;
+package com.smartbracelet.com.smartbracelet.fragment;
 
 import android.os.AsyncTask;
 import android.os.Bundle;

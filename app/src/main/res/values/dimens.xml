@@ -60,7 +60,11 @@
     <dimen name="nav_header_height">180dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-    <dimen name="title_text_size">20sp</dimen>
+    <dimen name="title_text_size">30sp</dimen>
+
+    <dimen name="descrip_text_size">20sp</dimen>
+
+    <dimen name="title__big_text_size">40sp</dimen>
 
     <dimen name="search_button_padding_left">25dp</dimen>
     <dimen name="home_radio_button_height">48dp</dimen>

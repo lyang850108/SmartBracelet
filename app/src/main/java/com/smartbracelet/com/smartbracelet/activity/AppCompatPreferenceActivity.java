@@ -1,4 +1,4 @@
-package com.smartbracelet.com.smartbracelet.ui;
+package com.smartbracelet.com.smartbracelet.activity;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

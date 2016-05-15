@@ -49,6 +49,12 @@
         <item name="android:textSize">@dimen/title_text_size</item>
         <item name="android:textStyle">bold</item>
     </style>
+    <style name="ItemDecripTextStyle" >
+        <item name="android:textColor">@color/grey_400</item>
+        <item name="android:textSize">@dimen/descrip_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 
 
 

@@ -1,4 +1,4 @@
-package com.smartbracelet.com.smartbracelet.ui;
+package com.smartbracelet.com.smartbracelet.activity;
 
 import java.util.List;
 import java.util.Locale;

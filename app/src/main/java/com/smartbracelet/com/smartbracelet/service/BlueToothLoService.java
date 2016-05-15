@@ -11,14 +11,12 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.smartbracelet.com.smartbracelet.ui.App;
-import com.smartbracelet.com.smartbracelet.ui.BlueToothFragment;
-import com.smartbracelet.com.smartbracelet.ui.HomeFragment;
+import com.smartbracelet.com.smartbracelet.activity.App;
+import com.smartbracelet.com.smartbracelet.fragment.BlueToothFragment;
 import com.smartbracelet.com.smartbracelet.util.ConstDefine;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
 

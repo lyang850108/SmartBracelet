@@ -13,10 +13,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.smartbracelet.com.smartbracelet.R;
-import com.smartbracelet.com.smartbracelet.ui.App;
-import com.smartbracelet.com.smartbracelet.ui.ProgramItemActivity;
+import com.smartbracelet.com.smartbracelet.activity.App;
+import com.smartbracelet.com.smartbracelet.activity.ProgramItemActivity;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,6 +23,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Yangli on 16-04-05.
@@ -194,7 +195,14 @@ public class Utils implements ConstDefine{
                 mPhoneAddress = num;
             }
         } else {
-            mPhoneAddress = num;
+            try {
+                num = checkPhoneNum(num);
+
+                mPhoneAddress = num;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
         LogUtil.d("getTelNum" + num);
         return num;
@@ -324,6 +332,40 @@ public class Utils implements ConstDefine{
                 .setSmallIcon(R.mipmap.ic_phone);//设置通知小ICON
 
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+
+    }
+
+
+    protected static String checkPhoneNum(String phoneNum) throws Exception {
+
+        Pattern p1 = Pattern.compile("^((\\+{0,1}86){0,1})1[0-9]{10}");
+        Matcher m1 = p1.matcher(phoneNum);
+        if (m1.matches()) {
+            Pattern p2 = Pattern.compile("^((\\+{0,1}86){0,1})");
+            Matcher m2 = p2.matcher(phoneNum);
+            StringBuffer sb = new StringBuffer();
+            while (m2.find()) {
+                m2.appendReplacement(sb, "");
+            }
+            m2.appendTail(sb);
+            return sb.toString();
+
+        } else {
+            throw new Exception("The format of phoneNum "+phoneNum+"  is not correct!Please correct it");
+        }
+
+    }
+
+    public static void test() {
+        String num = "+8613823209476";
+        try {
+            num = checkPhoneNum(num);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        LogUtil.d("yangli" + num);
+
 
     }
 

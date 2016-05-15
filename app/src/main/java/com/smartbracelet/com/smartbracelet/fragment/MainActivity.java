@@ -1,35 +1,25 @@
-package com.smartbracelet.com.smartbracelet.ui;
+package com.smartbracelet.com.smartbracelet.fragment;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.FragmentTransaction;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
-import android.content.Context;
 import android.content.pm.PackageManager;
 
 import android.os.Build;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.smartbracelet.com.smartbracelet.R;
+import com.smartbracelet.com.smartbracelet.activity.App;
 import com.smartbracelet.com.smartbracelet.model.BaseFragment;
 import com.smartbracelet.com.smartbracelet.service.LocationService;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
-import com.smartbracelet.com.smartbracelet.util.SharedPreferencesHelper;
-import com.smartbracelet.com.smartbracelet.util.ToastHelper;
-import com.smartbracelet.com.smartbracelet.view.AlertDialogCreator;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.ButterKnife;
 

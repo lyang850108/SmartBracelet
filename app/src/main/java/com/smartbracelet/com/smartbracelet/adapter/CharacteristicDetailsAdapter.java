@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.smartbracelet.com.smartbracelet.R;
-import com.smartbracelet.com.smartbracelet.ui.PeripheralActivity;
+import com.smartbracelet.com.smartbracelet.activity.PeripheralActivity;
 import com.smartbracelet.com.smartbracelet.util.BleNamesResolver;
 import com.smartbracelet.com.smartbracelet.util.BleWrapper;
 

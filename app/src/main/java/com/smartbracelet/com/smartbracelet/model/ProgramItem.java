@@ -8,10 +8,12 @@ import com.litesuits.orm.db.annotation.Table;
  */
 @Table("msg")
 public class ProgramItem extends BaseModel {
+    public static final String TITLE = "title";
+    public static final String ID = "_id";
     @Column("title") public String title;
     @Column("author") public String author;
     @Column("body") public String body;
-    @Column("timeStamp") public Long timeStamp;
+    @Column("timeStamp") public String timeStamp;
 
     public static ProgramItem getData(int index) {
         ProgramItem programItem = new ProgramItem();

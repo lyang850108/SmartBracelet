@@ -1,4 +1,4 @@
-package com.smartbracelet.com.smartbracelet.ui;
+package com.smartbracelet.com.smartbracelet.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -17,17 +16,15 @@ import android.bluetooth.BluetoothSocket;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,7 +37,6 @@ import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
-import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.smartbracelet.com.smartbracelet.R;
@@ -51,10 +47,9 @@ import com.smartbracelet.com.smartbracelet.util.BleNamesResolver;
 import com.smartbracelet.com.smartbracelet.util.BleWrapper;
 import com.smartbracelet.com.smartbracelet.util.BleWrapperUiCallbacks;
 import com.smartbracelet.com.smartbracelet.util.ConstDefine;
-import com.smartbracelet.com.smartbracelet.util.Gps;
 import com.smartbracelet.com.smartbracelet.util.LiteOrmDBUtil;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
-import com.smartbracelet.com.smartbracelet.util.PositionUtil;
+import com.smartbracelet.com.smartbracelet.util.ReschedulableTimerTask;
 import com.smartbracelet.com.smartbracelet.util.SharedPreferencesHelper;
 import com.smartbracelet.com.smartbracelet.util.ToastHelper;
 import com.smartbracelet.com.smartbracelet.util.Utils;
@@ -77,7 +72,6 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimerTask;
 import java.util.UUID;
 
 import butterknife.Bind;
@@ -179,11 +173,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     private BluetoothGattCharacteristic charac01;
 
     private BluetoothGattCharacteristic charac02;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
 
     private class BlueToothTestHandler extends Handler {
@@ -370,7 +359,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         loadingDialog = new LoadingDialog(mContext);
 
         sharedPreferencesHelper = SharedPreferencesHelper.getInstance();
-        LogUtil.d("sharedPreferencesHelper" + sharedPreferencesHelper);
         if (null != sharedPreferencesHelper) {
             sharedPreferencesHelper.putInt(SP_POST_INTERNAL, 60000);
         }
@@ -380,9 +368,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         if (null != sharedPreferencesHelper) {
             checkPhomeNumerAvailble(sharedPreferencesHelper);
         }
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -468,6 +453,12 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 mConnectedAddTx.setText(device.getName() + "\n" + device.getAddress() + "\n" + " Disconnected");
             }
         });
+
+        //Disconnected start scaning again
+        mScanning = true;
+        // remember to add timeout for scanning to not run it forever and drain the battery
+        addScanningTimeout();
+        mBleWrapper.startScanning();
     }
 
 
@@ -475,14 +466,16 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     protected void onResume() {
         super.onResume();
 
+        checkBTAvail();
+
         //Add demo begin
         // on every Resume check if BT is enabled (user could turn it off while app was in background etc.)
-        if (mBleWrapper.isBtEnabled() == false) {
+        /*if (mBleWrapper.isBtEnabled() == false) {
             // BT is not turned on - ask user to make it enabled
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, ENABLE_BT_REQUEST_ID);
             // see onActivityResult to check what is the status of our request
-        }
+        }*/
 
         // initialize BleWrapper object
         mBleWrapper.initialize();
@@ -593,9 +586,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     @Override
     protected void onStart() {
         super.onStart();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
+
         locationService = ((App) getApplication()).locationService;
         //获取locationservice实例，建议应用中只初始化1个location实例，然后使用，可以参考其他示例的activity，都是通过此种方式获取locationservice实例的
         locationService.registerListener(mListener);
@@ -931,11 +922,12 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         }
     }
 
+    private static List<ProgramItem> list = new ArrayList<ProgramItem>();
+
     private void handlePushMsg() {
         try {
             JSONObject jsonObject = new JSONObject(postDetailRTR);
             JSONArray marks = jsonObject.getJSONArray("params");
-            List<ProgramItem> list = new ArrayList<ProgramItem>();
             for (int i = 0; i < marks.length(); i++) {
                 JSONObject mark = (JSONObject) marks.get(i);
                 String showMessage = mark.getString("MsgTypeID");
@@ -946,10 +938,13 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                     ProgramItem programItem = new ProgramItem();
                     programItem.title = showMessage;
                     programItem.body = msg;
+                    programItem.timeStamp = time;
 
-                    list.add(programItem);
-
-                    Utils.notifyMessageComing(mContext, showMessage, msg);
+                    //Don't add the same item
+                    if (!list.contains(programItem)) {
+                        list.add(programItem);
+                        Utils.notifyMessageComing(mContext, showMessage, msg);
+                    }
 
                 } else if (showMessage.equals("2")) {
                     showMessage = "设置GPS上报间隔时间 ";
@@ -978,6 +973,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             App.timerTask.cancel();
         }
 
+
         if (0 != longtitude && 0 != latitude && null != sharedPreferencesHelper) {
 
             long times = sharedPreferencesHelper.getInt(SP_POST_INTERNAL);
@@ -987,7 +983,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             }
             //Must cancel first
 
-            App.timerTask = new TimerTask() {
+            App.timerTask = new ReschedulableTimerTask() {
                 @Override
                 public void run() {
                     //SEND MESSAGE TIMER
@@ -1015,6 +1011,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     private AlertDialogCreator.ButtonOnClickListener mDialogListener = new AlertDialogCreator.ButtonOnClickListener() {
         @Override
         public void buttonTrue() {
+            LogUtil.d("buttonTrue buttonTrue");
             sendGPGTimely();
         }
 
@@ -1045,5 +1042,35 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     };
     private NotificationManager mNotificationManager;
     private Notification notification;
+
+    private void checkBTAvail() {
+        if (null == mBtAdapter) {
+            mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+        }
+
+        if (!mBtAdapter.enable()) {
+            /*try {
+                if (null != mContext) {
+                    if (null != mAlertDialog) {
+                        mAlertDialog.dismiss();
+                        mAlertDialog = null;
+                    }
+                    AlertDialogCreator.getInstance().setmButtonOnClickListener(mDialogListener);
+                    mAlertDialog = AlertDialogCreator
+                            .getInstance()
+                            .createAlertDialog(
+                                    mContext,
+                                    getString(R.string.tip_title),
+                                    getString(R.string.boolth_tip_content));
+                    mAlertDialog.show();
+                }
+            } catch (Exception e) {
+                // TODO: handle exception
+            }*/
+        }
+    }
+
+
+
 
 }

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_marginTop="@dimen/action_bar_height"
-    tools:context=".ui.StatisFragment">
+    tools:context=".fragment.StatisFragment">
 
     <TextView
         android:id="@+id/longtitude"
