@@ -16,13 +16,17 @@ import android.bluetooth.BluetoothSocket;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -310,11 +314,10 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
             @Override
             public void uiClickValueRead(final String value) {
-                LogUtil.d("uiClickValueRead : " + value);
                 mContext.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mTextView.append("点击次数" + value);
+                        mTextView.append("\n 点击次数" + value);
                     }
                 });
 
@@ -363,11 +366,11 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             sharedPreferencesHelper.putInt(SP_POST_INTERNAL, 60000);
         }
 
-        getPersimmions();
-
-        if (null != sharedPreferencesHelper) {
+        if (null != sharedPreferencesHelper && TextUtils.isEmpty(Utils.getLocalNum())) {
             checkPhomeNumerAvailble(sharedPreferencesHelper);
         }
+
+        initGPS(mContext);
     }
 
     @Override
@@ -667,61 +670,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
     };
 
-    @TargetApi(23)
-    private void getPersimmions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            ArrayList<String> permissions = new ArrayList<String>();
-            /***
-             * 定位权限为必须权限，用户如果禁止，则每次进入都会申请
-             */
-            // 定位精确位置
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
-            }
-            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-            }
-            /*
-			 * 读写权限和电话状态权限非必要权限(建议授予)只会申请一次，用户同意或者禁止，只会弹一次
-			 */
-            // 读写权限
-            if (addPermission(permissions, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                permissionInfo += "Manifest.permission.WRITE_EXTERNAL_STORAGE Deny \n";
-            }
-            // 读取电话状态权限
-            if (addPermission(permissions, Manifest.permission.READ_PHONE_STATE)) {
-                permissionInfo += "Manifest.permission.READ_PHONE_STATE Deny \n";
-            }
-
-            if (permissions.size() > 0) {
-                requestPermissions(permissions.toArray(new String[permissions.size()]), SDK_PERMISSION_REQUEST);
-            }
-        }
-    }
-
-    @TargetApi(23)
-    private boolean addPermission(ArrayList<String> permissionsList, String permission) {
-        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) { // 如果应用没有获得对应权限,则添加到列表中,准备批量申请
-            if (shouldShowRequestPermissionRationale(permission)) {
-                return true;
-            } else {
-                permissionsList.add(permission);
-                return false;
-            }
-
-        } else {
-            return true;
-        }
-    }
-
-    @TargetApi(23)
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        // TODO Auto-generated method stub
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -1017,6 +965,12 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
         @Override
         public void buttonTrue(int ring_dis) {
+            if (DIALOG_TYPE_GPS == ring_dis) {
+                // 转到手机设置界面，用户设置GPS
+                Intent intent = new Intent(
+                        Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                mContext.startActivity(intent); // 设置完成后返回到原来的界面
+            }
 
         }
 
@@ -1071,6 +1025,38 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     }
 
 
+    private void initGPS(final Context context) {
+        LocationManager locationManager = (LocationManager) context
+                .getSystemService(Context.LOCATION_SERVICE);
+        // 判断GPS模块是否开启，如果没有则开启
+        if (!locationManager
+                .isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+            Toast.makeText(context, "请打开GPS",
+                    Toast.LENGTH_SHORT).show();
 
+            if (null != mContext) {
+                if (null != mAlertDialog) {
+                    mAlertDialog.dismiss();
+                    mAlertDialog = null;
+                }
+                AlertDialogCreator.getInstance().setmButtonOnClickListener(mDialogListener);
+                mAlertDialog = AlertDialogCreator
+                        .getInstance()
+                        .createAlertDialogType(
+                                mContext,
+                                getString(R.string.tip_title),
+                                getString(R.string.open_gps), DIALOG_TYPE_GPS);
+                mAlertDialog.show();
+            }
+
+        } else {
+            // 弹出Toast
+//			Toast.makeText(TrainDetailsActivity.this, "GPS is ready",
+//					Toast.LENGTH_LONG).show();
+//			// 弹出对话框
+//			new AlertDialog.Builder(this).setMessage("GPS is ready")
+//					.setPositiveButton("OK", null).show();
+        }
+    }
 
 }

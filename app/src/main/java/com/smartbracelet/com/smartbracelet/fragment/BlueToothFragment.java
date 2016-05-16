@@ -28,6 +28,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.smartbracelet.com.smartbracelet.R;
+import com.smartbracelet.com.smartbracelet.activity.MainActivity;
 import com.smartbracelet.com.smartbracelet.activity.PeripheralActivity;
 import com.smartbracelet.com.smartbracelet.adapter.DeviceListAdapter;
 import com.smartbracelet.com.smartbracelet.model.BaseFragment;

@@ -1,4 +1,4 @@
-package com.smartbracelet.com.smartbracelet.fragment;
+package com.smartbracelet.com.smartbracelet.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -14,7 +14,9 @@ import android.widget.RadioGroup;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.smartbracelet.com.smartbracelet.R;
-import com.smartbracelet.com.smartbracelet.activity.App;
+import com.smartbracelet.com.smartbracelet.fragment.BlueToothFragment;
+import com.smartbracelet.com.smartbracelet.fragment.HomeFragment;
+import com.smartbracelet.com.smartbracelet.fragment.StatisFragment;
 import com.smartbracelet.com.smartbracelet.model.BaseFragment;
 import com.smartbracelet.com.smartbracelet.service.LocationService;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;

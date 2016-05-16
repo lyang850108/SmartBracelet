@@ -64,6 +64,34 @@ public class AlertDialogCreator {
         return localDialog;
     }
 
+    public AlertDialog createAlertDialogType(final Context mContext, String title, String msg, final int type) {
+        final AlertDialog localDialog = new AlertDialog.Builder(mContext)
+                .setTitle(title)
+                .setMessage(msg)
+                .setPositiveButton(R.string.button_true, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                /* User clicked Yes so do some stuff */
+                        getmButtonOnClickListener().buttonTrue(type);
+                    }
+                })
+                .setCancelable(false)
+                /*.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                *//* User clicked No so do some stuff *//*
+                        getmButtonOnClickListener().buttonCancel();
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        getmButtonOnClickListener().buttonCancel();
+                    }
+                })*/.create();
+
+        return localDialog;
+    }
+
     public AlertDialog createAlertDialogEdit(final Context mContext, String title, String msg, final EditText editText) {
         final AlertDialog localDialog = new AlertDialog.Builder(mContext)
                 .setTitle(title)

@@ -260,8 +260,9 @@ public class BleWrapper {
             // follow: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.battery_level.xml
             intValue  = ((int)rawValue[1]) << 8;
             intValue +=  rawValue[2];
+            //处理负数的问题
+            intValue = Math.abs(intValue);
             strValue = "" + intValue;
-
             mUiCallback.uiClickValueRead(strValue);
         }
         else {

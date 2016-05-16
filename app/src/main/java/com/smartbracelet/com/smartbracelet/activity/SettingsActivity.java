@@ -86,7 +86,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Pre
                         internal = 15000;
                         break;
                     case 1:
-                        internal = 30000;
+                        internal = 20000;
                         break;
                     case 2:
                         internal = 60000;

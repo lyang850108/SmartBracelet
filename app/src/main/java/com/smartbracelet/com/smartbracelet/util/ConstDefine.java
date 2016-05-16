@@ -35,6 +35,8 @@ public interface ConstDefine {
     final int MSG_PUSH_MSG = 4;
     final int MSG_CHA_WRITE = 5;
 
+    final int DIALOG_TYPE_GPS =0;
+
     final int STATE_DEVICE_UNBIND = 0;
     final int STATE_DEVICE_BIND = 1;
 

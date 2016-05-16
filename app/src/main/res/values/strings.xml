@@ -19,7 +19,7 @@
 
     <string name="restore_default">"还原默认设置"</string>
 
-
+    <string name="open_gps">"请打开GPS"</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_settings">Settings</string>
@@ -55,7 +55,7 @@
     <string name="pref_title_sync_frequency">消息同步频率</string>
     <string-array name="pref_sync_frequency_titles">
         <item>15 second</item>
-        <item>30 second</item>
+        <item>20 second</item>
         <item>1 min</item>
         <item>3 min</item>
         <item>6 min</item>
@@ -63,7 +63,7 @@
     </string-array>
     <string-array name="pref_sync_frequency_values">
         <item>15</item>
-        <item>30</item>
+        <item>20</item>
         <item>60</item>
         <item>180</item>
         <item>360</item>
