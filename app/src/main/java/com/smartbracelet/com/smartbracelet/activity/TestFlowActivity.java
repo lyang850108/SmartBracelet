@@ -223,6 +223,15 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                     mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOMsgPushTest(bleAddress).toString(), TYPE_PUSH_MSG);
                     mPostDataTask.execute(0);
                     break;
+
+                case MSG_STATE_WARNING:
+                    if (null != mBleWrapper && !mBleWrapper.isConnected()) {
+                        int warningType = msg.arg1;
+                        mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOWarningTest(bleAddress, warningType).toString(), TYPE_WARNING_NOTIFY);
+                        mPostDataTask.execute(0);
+                    }
+
+                    break;
             }
         }
     }
@@ -428,7 +437,9 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         mContext.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mConnectedAddTx.setText(device.getName() + "\n" + device.getAddress() + "\n" + " Connected");
+                if (null != mConnectedAddTx) {
+                    mConnectedAddTx.setText(device.getName() + "\n" + device.getAddress() + "\n" + " Connected");
+                }
 
                 if (STATE_DEVICE_UNBIND == sharedPreferencesHelper.getInt(SP_BIND_STATE)) {
                     sendMsg(MSG_SERCH_DONE, 0);
@@ -462,6 +473,8 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         // remember to add timeout for scanning to not run it forever and drain the battery
         addScanningTimeout();
         mBleWrapper.startScanning();
+        //Notify the server in 120s
+        sendWarningTimely(WARNING_TYPE_DEVCE_DISCONNECTED);
     }
 
 
@@ -535,7 +548,9 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 //For test
                 String bindAddress = sharedPreferencesHelper.getString(SP_PHONE_ADDRESS);
 
-                if (bindAddress.equals(device.getAddress()) || App.isFirstLaunched) {
+                LogUtil.d("bindAddress" + bindAddress);
+                LogUtil.d("device" + device.getAddress() + " " + device.getName());
+                if (bindAddress.equals(device.getAddress()) || (App.isFirstLaunched && TextUtils.isEmpty(bindAddress))) {
                     if (!TextUtils.isEmpty(device.getName()) && device.getName().startsWith("utt")) {
                         LogUtil.d("existAddress" + bindAddress);
                         String mName = device.getName();
@@ -613,15 +628,16 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     public void onFabClick(View v) {
         // Automatically start scanning for devices
         //Add demo begin
-        if (mBleWrapper.isConnected()) {
-            mBleWrapper.stopScanning();
+        if (null != mBleWrapper && mBleWrapper.isConnected()) {
+            return;
+            /*mBleWrapper.stopScanning();
             mDevicesListAdapter.clearList();
             //Add demo end
 
             if (null != App.timerTask) {
                 LogUtil.d("stop_post_package");
                 App.timerTask.cancel();
-            }
+            }*/
         }
 
         mScanning = true;
@@ -636,12 +652,12 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         //loadingDialog.show();
     }
 
-    @OnClick(R.id.test_bt_im)
+    /*@OnClick(R.id.test_bt_im)
     public void onBattButtonClick() {
         LogUtil.d("onBattButtonClick");
         mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOWarningTest(bleAddress, 1).toString(), TYPE_WARNING_NOTIFY);
         mPostDataTask.execute(0);
-    }
+    }*/
 
     public static double latitude = 0;
     public static double longtitude = 0;
@@ -955,6 +971,37 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             App.timer.schedule(App.timerTask, 0, times);
         }
     }
+
+    private void sendWarningTimely(final int type) {
+
+        if (null != App.timerTask) {
+            LogUtil.d("stop_post_package");
+            App.timerTask.cancel();
+        }
+
+
+        if (0 != longtitude && 0 != latitude && null != sharedPreferencesHelper) {
+
+            long times = 120000;
+            //Must cancel first
+
+            App.timerTask = new ReschedulableTimerTask() {
+                @Override
+                public void run() {
+                    //SEND MESSAGE TIMER
+                    Message msg = new Message();
+                    msg.what = MSG_STATE_WARNING;
+                    msg.arg1 = type;
+                    if (null != mBTHandler) {
+                        mBTHandler.sendMessage(msg);
+                    }
+
+                }
+            };
+            App.timer.schedule(App.timerTask, 0, times);
+        }
+    }
+
 
     private AlertDialogCreator.ButtonOnClickListener mDialogListener = new AlertDialogCreator.ButtonOnClickListener() {
         @Override

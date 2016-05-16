@@ -47,6 +47,12 @@ public class App extends Application {
      */
     public static ReschedulableTimerTask timerTask;
 
+    public static Timer timerWarning = new Timer();
+    /**
+     * Self-define
+     */
+    public static ReschedulableTimerTask timerTaskWarning;
+
     public static int timesJudgeGps;
     @Override
     public void onCreate() {
@@ -130,8 +136,11 @@ public class App extends Application {
     public void onTerminate() {
         LogUtil.d("onTerminate");
         if (null != timerTask) {
-            LogUtil.d("stop_post_package");
             timerTask.cancel();
+        }
+
+        if (null != timerTaskWarning) {
+            timerTaskWarning.cancel();
         }
         super.onTerminate();
     }

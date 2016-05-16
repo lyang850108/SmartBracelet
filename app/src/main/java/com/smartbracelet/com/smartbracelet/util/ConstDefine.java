@@ -34,6 +34,9 @@ public interface ConstDefine {
     final int MSG_CHA_SEND_LOCATION = 3;
     final int MSG_PUSH_MSG = 4;
     final int MSG_CHA_WRITE = 5;
+    final int MSG_STATE_WARNING = 6;
+
+    final int WARNING_TYPE_DEVCE_DISCONNECTED = 1;
 
     final int DIALOG_TYPE_GPS =0;
 
