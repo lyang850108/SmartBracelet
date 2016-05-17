@@ -74,8 +74,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 
 import butterknife.Bind;
@@ -226,6 +229,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
                 case MSG_STATE_WARNING:
                     if (null != mBleWrapper && !mBleWrapper.isConnected()) {
+                        LogUtil.d("*********MSG_STATE_WARNING");
                         int warningType = msg.arg1;
                         mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOWarningTest(bleAddress, warningType).toString(), TYPE_WARNING_NOTIFY);
                         mPostDataTask.execute(0);
@@ -240,7 +244,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_flow);
-
 
         mContext = this;
 
@@ -375,7 +378,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             sharedPreferencesHelper.putInt(SP_POST_INTERNAL, 60000);
         }
 
-        if (null != sharedPreferencesHelper && TextUtils.isEmpty(Utils.getLocalNum())) {
+        if (null != sharedPreferencesHelper) {
             checkPhomeNumerAvailble(sharedPreferencesHelper);
         }
 
@@ -441,11 +444,13 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                     mConnectedAddTx.setText(device.getName() + "\n" + device.getAddress() + "\n" + " Connected");
                 }
 
-                if (STATE_DEVICE_UNBIND == sharedPreferencesHelper.getInt(SP_BIND_STATE)) {
+                int bindState = sharedPreferencesHelper.getInt(SP_BIND_STATE);
+                LogUtil.d("handleDeviceConnected SP_BIND_STATE" + bindState);
+                if (STATE_DEVICE_UNBIND == bindState) {
                     sendMsg(MSG_SERCH_DONE, 0);
-                } else if (STATE_DEVICE_BIND == sharedPreferencesHelper.getInt(SP_BIND_STATE)) {
-                    mTextView.append("\n 该手环已被绑定过 ");
-                    sendGPGTimely();
+                } else if (STATE_DEVICE_BIND == bindState) {
+                    //mTextView.append("\n 该手环已被绑定过 ");
+                    sendGPSTimely();
                 }
             }
         });
@@ -547,9 +552,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 }*/
                 //For test
                 String bindAddress = sharedPreferencesHelper.getString(SP_PHONE_ADDRESS);
-
-                LogUtil.d("bindAddress" + bindAddress);
-                LogUtil.d("device" + device.getAddress() + " " + device.getName());
+                LogUtil.d("handleFoundDevice" + device.getAddress() + " name: " + device.getName());
                 if (bindAddress.equals(device.getAddress()) || (App.isFirstLaunched && TextUtils.isEmpty(bindAddress))) {
                     if (!TextUtils.isEmpty(device.getName()) && device.getName().startsWith("utt")) {
                         LogUtil.d("existAddress" + bindAddress);
@@ -654,7 +657,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
     @OnClick(R.id.test_bt_im)
     public void onBattButtonClick() {
-        LogUtil.d("onBattButtonClick");
         mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOWarningTest(bleAddress, 1).toString(), TYPE_WARNING_NOTIFY);
         mPostDataTask.execute(0);
     }
@@ -705,7 +707,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
 
         try {
-            LogUtil.e("doInBackground, Post httpUrl:" + httpUrl);
             HttpPost httpRequest = new HttpPost(httpUrl);
 
             //设置字符集
@@ -720,10 +721,8 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             //取得默认的HttpClient
             HttpClient httpclient = new DefaultHttpClient();
             //取得HttpResponse
-            LogUtil.e("doInBackground, httpclient.execute");
             HttpResponse httpResponse = httpclient.execute(httpRequest);
             //HttpStatus.SC_OK表示连接成功
-            LogUtil.e("post, yangli:" + httpResponse.getStatusLine().getStatusCode());
             if (httpResponse.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_OK) {
                 //取得返回的字符串
                 //String strResult = EntityUtils.toString(httpResponse.getEntity());
@@ -732,7 +731,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 //postDetailRTR = httpResponse.getEntity().toString();
             } else {
                 postRTR = "请求错误! 错误码" + httpResponse.getStatusLine().getStatusCode();
-                LogUtil.e("post, yangli:" + "请求错误");
             }
         } catch (ClientProtocolException e) {
             postRTR = "ClientProtocolException!";
@@ -818,19 +816,21 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                     }
 
                 } else if (postRTR.contains("请求成功") && 1 == Utils.parseJsonResult(postDetailRTR)) {
-                    mTextView.append("\n 该手环已被绑定过 ");
-                    sendGPGTimely();
+                    mTextView.append("\n 该手环已被绑定过 请换个手环");
                 } else {
-                    //Limited retry counts are 3
-                    if (2 == retryCnt) {
-                        retryCnt = 0;
-                        return;
+                    if (STATE_DEVICE_UNBIND == sharedPreferencesHelper.getInt(SP_BIND_STATE)) {
+                        //Limited retry counts are 3
+                        if (2 == retryCnt) {
+                            retryCnt = 0;
+                            return;
+                        }
+                        retryCnt++;
+                        //Again
+                        Message message = new Message();
+                        message.what = MSG_SERCH_DONE;
+                        mBTHandler.sendMessageDelayed(message, 60000);
                     }
-                    retryCnt++;
-                    //Again
-                    Message message = new Message();
-                    message.what = MSG_SERCH_DONE;
-                    mBTHandler.sendMessageDelayed(message, 60000);
+
                 }
             } else if (TYPE_UPLOAD_LOCATION == CURRENT_TYPE_POST) {
                 handleGpsMsg();
@@ -859,12 +859,13 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             mTextView.append("\n 坐标数据服务器处理失败");
         } else if (0 == Utils.parseJsonResult(postDetailRTR)) {
             mTextView.append("\n 坐标数据服务器处理成功，没有越界");
+            sendGPSTimely();
         } else if (1 == Utils.parseJsonResult(postDetailRTR)) {
             mTextView.append("\n 坐标数据服务器处理成功，坐标越界");
+            sendGPSTimely();
         } else if (2 == Utils.parseJsonResult(postDetailRTR)) {
-            //mTextView.append("\n 坐标数据服务器处理成功，设备未进行人员信息绑定");
+            mTextView.append("\n 坐标数据服务器处理成功，设备未进行人员信息绑定");
             if (null != App.timerTask) {
-                LogUtil.d("stop_post_package");
                 App.timerTask.cancel();
             }
             if (null != mContext) {
@@ -886,7 +887,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         }
     }
 
-    private static List<ProgramItem> list = new ArrayList<ProgramItem>();
+    private List<ProgramItem> list = new ArrayList<ProgramItem>();
 
     private void handlePushMsg() {
         try {
@@ -907,7 +908,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                     //Don't add the same item
                     if (!list.contains(programItem)) {
                         list.add(programItem);
-                        Utils.notifyMessageComing(mContext, showMessage, msg);
                     }
 
                 } else if (showMessage.equals("2")) {
@@ -917,7 +917,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 }
 
                 if (null != list && list.size() > 0) {
-                    LogUtil.d("LiteOrmDBUtil.insertAll :" + list.size());
+                    removePrograms(list);
                     LiteOrmDBUtil.insertAll(list);
                 }
 
@@ -930,10 +930,18 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         }
     }
 
-    private void sendGPGTimely() {
+    private void sendGPS() {
+
+        Message msg2 = new Message();
+        msg2.what = MSG_CHA_SEND_LOCATION;
+        if (null != mBTHandler) {
+            mBTHandler.sendMessage(msg2);
+        }
+    }
+
+    private void sendGPSTimely() {
 
         if (null != App.timerTask) {
-            LogUtil.d("stop_post_package");
             App.timerTask.cancel();
         }
 
@@ -941,7 +949,12 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         if (0 != longtitude && 0 != latitude && null != sharedPreferencesHelper) {
 
             long times = sharedPreferencesHelper.getInt(SP_POST_INTERNAL);
-            LogUtil.d("times == " + times);
+            if (null != App.timerTask) {
+                LogUtil.d("times == " + times);
+                App.timerTask.setPeriod(times);
+            }
+
+
             if (0 == times) {
                 times = 20000;
             }
@@ -974,40 +987,35 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
     private void sendWarningTimely(final int type) {
 
-        if (null != App.timerTask) {
-            LogUtil.d("stop_post_package");
-            App.timerTask.cancel();
+        if (null != App.timerTaskWarning) {
+            App.timerTaskWarning.cancel();
         }
 
 
-        if (0 != longtitude && 0 != latitude && null != sharedPreferencesHelper) {
+        long times = 120000;
+        //Must cancel first
 
-            long times = 120000;
-            //Must cancel first
-
-            App.timerTask = new ReschedulableTimerTask() {
-                @Override
-                public void run() {
-                    //SEND MESSAGE TIMER
-                    Message msg = new Message();
-                    msg.what = MSG_STATE_WARNING;
-                    msg.arg1 = type;
-                    if (null != mBTHandler) {
-                        mBTHandler.sendMessage(msg);
-                    }
-
+        App.timerTaskWarning = new ReschedulableTimerTask() {
+            @Override
+            public void run() {
+                //SEND MESSAGE TIMER
+                Message msg = new Message();
+                msg.what = MSG_STATE_WARNING;
+                msg.arg1 = type;
+                if (null != mBTHandler) {
+                    mBTHandler.sendMessage(msg);
                 }
-            };
-            App.timer.schedule(App.timerTask, 0, times);
-        }
+
+            }
+        };
+        App.timerWarning.schedule(App.timerTaskWarning, 0, times);
     }
 
 
     private AlertDialogCreator.ButtonOnClickListener mDialogListener = new AlertDialogCreator.ButtonOnClickListener() {
         @Override
         public void buttonTrue() {
-            LogUtil.d("buttonTrue buttonTrue");
-            sendGPGTimely();
+            sendGPS();
         }
 
         @Override
@@ -1105,5 +1113,27 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 //					.setPositiveButton("OK", null).show();
         }
     }
+
+    /**
+     * 通过循环删除
+     *
+     * @param list
+     */
+    public void removePrograms(List<ProgramItem> list) {
+
+        try {
+            for (int i = 0; i < list.size() - 1; i++) {
+                for (int j = list.size() - 1; j > i; j--) {
+                    if (list.get(j).timeStamp.equals(list.get(i).timeStamp)) {
+                        list.remove(j);
+                    }
+                }
+            }
+        } catch (IndexOutOfBoundsException e) {
+            LogUtil.d("" + e);
+        }
+
+    }
+
 
 }

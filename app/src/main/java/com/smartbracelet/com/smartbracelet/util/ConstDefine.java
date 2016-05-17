@@ -45,7 +45,7 @@ public interface ConstDefine {
 
     String SP_PHONE_NUMBER = "init_phone_number";
 
-    String SP_BIND_STATE = "device_bind_state";
+    String SP_BIND_NUM = "device_bind_state";
 
     String SP_POST_INTERNAL = "post_internal_value";
 

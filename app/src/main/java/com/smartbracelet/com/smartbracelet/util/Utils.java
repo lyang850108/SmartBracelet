@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.activity.App;
 import com.smartbracelet.com.smartbracelet.activity.ProgramItemActivity;
+import com.smartbracelet.com.smartbracelet.model.ProgramItem;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +28,12 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -213,17 +219,6 @@ public class Utils implements ConstDefine{
         return num;
     }
 
-    public static String getLocalNum () {
-        TelephonyManager telephonyManager = (TelephonyManager) App.getsContext().getSystemService(Context.TELEPHONY_SERVICE);
-        String num = telephonyManager.getLine1Number();
-        if (null == num || TextUtils.isEmpty(num)) {
-
-            return "";
-        }
-
-        return  num;
-    }
-
 
     public static String getImei() {
         TelephonyManager telephonyManager = (TelephonyManager) App.getsContext().getSystemService(Context.TELEPHONY_SERVICE);
@@ -374,18 +369,6 @@ public class Utils implements ConstDefine{
 
     }
 
-    public static void test() {
-        String num = "+8613823209476";
-        try {
-            num = checkPhoneNum(num);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        LogUtil.d("yangli" + num);
-
-
-    }
 
     /**
      * 判断GPS是否开启，GPS或者AGPS开启一个就认为是开启的
@@ -415,5 +398,6 @@ public class Utils implements ConstDefine{
                 Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         context.startActivity(intent); // 设置完成后返回到原来的界面
     }
+
 
 }

@@ -100,7 +100,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Pre
 
                 }
                 if (null != sharedPreferencesHelper) {
-                    App.timerTask.setPeriod(internal);
+                    if (null != App.timerTask) {
+                        LogUtil.d("times == " + internal);
+                        App.timerTask.setPeriod(internal);
+                    }
                     sharedPreferencesHelper.putInt(SP_POST_INTERNAL, internal);
                 }
                 return true;
