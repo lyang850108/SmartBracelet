@@ -97,7 +97,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     TextView mBatteryLevelTx;
 
     @Bind(R.id.test_bt_im)
-    ImageView mBatteryLevelIm;
+    TextView mBatteryLevelIm;
 
     @Bind(R.id.test_fab)
     FloatingActionButton mFloatingActionBtn;
@@ -652,12 +652,12 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         //loadingDialog.show();
     }
 
-    /*@OnClick(R.id.test_bt_im)
+    @OnClick(R.id.test_bt_im)
     public void onBattButtonClick() {
         LogUtil.d("onBattButtonClick");
         mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOWarningTest(bleAddress, 1).toString(), TYPE_WARNING_NOTIFY);
         mPostDataTask.execute(0);
-    }*/
+    }
 
     public static double latitude = 0;
     public static double longtitude = 0;
