@@ -3,7 +3,6 @@ package com.smartbracelet.com.smartbracelet.activity;
 import java.util.List;
 import java.util.Locale;
 import android.os.Bundle;
-import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -22,9 +21,9 @@ import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.adapter.CharacteristicDetailsAdapter;
 import com.smartbracelet.com.smartbracelet.adapter.CharacteristicsListAdapter;
 import com.smartbracelet.com.smartbracelet.adapter.ServicesListAdapter;
-import com.smartbracelet.com.smartbracelet.util.BleNamesResolver;
-import com.smartbracelet.com.smartbracelet.util.BleWrapper;
-import com.smartbracelet.com.smartbracelet.util.BleWrapperUiCallbacks;
+import com.smartbracelet.com.smartbracelet.bluetooth.BleNamesResolver;
+import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapper;
+import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapperUiCallbacks;
 
 public class PeripheralActivity extends AppCompatActivity implements BleWrapperUiCallbacks {
     public static final String EXTRAS_DEVICE_NAME    = "BLE_DEVICE_NAME";

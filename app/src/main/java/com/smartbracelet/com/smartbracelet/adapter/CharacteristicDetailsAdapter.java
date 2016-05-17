@@ -15,8 +15,8 @@ import android.widget.ToggleButton;
 
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.activity.PeripheralActivity;
-import com.smartbracelet.com.smartbracelet.util.BleNamesResolver;
-import com.smartbracelet.com.smartbracelet.util.BleWrapper;
+import com.smartbracelet.com.smartbracelet.bluetooth.BleNamesResolver;
+import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapper;
 
 public class CharacteristicDetailsAdapter extends BaseAdapter {
    	

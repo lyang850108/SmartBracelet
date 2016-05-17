@@ -1,7 +1,5 @@
 package com.smartbracelet.com.smartbracelet.activity;
 
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
@@ -17,12 +15,9 @@ import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -35,21 +30,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.adapter.DeviceListAdapter;
 import com.smartbracelet.com.smartbracelet.model.ProgramItem;
 import com.smartbracelet.com.smartbracelet.service.LocationService;
-import com.smartbracelet.com.smartbracelet.util.BleNamesResolver;
-import com.smartbracelet.com.smartbracelet.util.BleWrapper;
-import com.smartbracelet.com.smartbracelet.util.BleWrapperUiCallbacks;
+import com.smartbracelet.com.smartbracelet.bluetooth.BleNamesResolver;
+import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapper;
+import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapperUiCallbacks;
 import com.smartbracelet.com.smartbracelet.util.ConstDefine;
 import com.smartbracelet.com.smartbracelet.util.LiteOrmDBUtil;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
@@ -74,11 +66,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.UUID;
 
 import butterknife.Bind;
@@ -145,8 +134,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     // Bluetooth
     //public static BluetoothManager mBluetoothManager;
     public BluetoothAdapter mBtAdapter;
-
-    private BluetoothDevice bluetoothDevice;
 
     // 搜索重试次数
     private int retySearchCount = 0;
@@ -429,17 +416,13 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         }
     }
 
+    private BluetoothDevice mBluetoothDeviceConnected;
     private void handleDeviceConnected(final BluetoothGatt gatt, final BluetoothDevice device) {
-        // 只保留最原始的蓝牙地址
-
-        if (TextUtils.isEmpty(sharedPreferencesHelper.getString(SP_PHONE_ADDRESS))) {
-            sharedPreferencesHelper.putString(SP_PHONE_ADDRESS, device.getAddress());
-            App.isFirstLaunched = false;
-        }
 
         mContext.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mBluetoothDeviceConnected = device;
                 if (null != mConnectedAddTx) {
                     mConnectedAddTx.setText(device.getName() + "\n" + device.getAddress() + "\n" + " Connected");
                 }
@@ -553,7 +536,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 //For test
                 String bindAddress = sharedPreferencesHelper.getString(SP_PHONE_ADDRESS);
                 LogUtil.d("handleFoundDevice" + device.getAddress() + " name: " + device.getName());
-                if (bindAddress.equals(device.getAddress()) || (App.isFirstLaunched && TextUtils.isEmpty(bindAddress))) {
+                if (bindAddress.equals(device.getAddress()) || TextUtils.isEmpty(bindAddress)) {
                     if (!TextUtils.isEmpty(device.getName()) && device.getName().startsWith("utt")) {
                         LogUtil.d("existAddress" + bindAddress);
                         String mName = device.getName();
@@ -797,8 +780,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 loadingDialog.dismiss();
                 if (postRTR.contains("请求成功") && 0 == Utils.parseJsonResult(postDetailRTR)) {
                     mTextView.append("\n 服务器处理成功 ");
-                    //该设备已经绑定过
-                    sharedPreferencesHelper.putInt(SP_BIND_STATE, STATE_DEVICE_BIND);
 
                     if (null != mContext) {
                         if (null != mAlertDialog) {
@@ -818,7 +799,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 } else if (postRTR.contains("请求成功") && 1 == Utils.parseJsonResult(postDetailRTR)) {
                     mTextView.append("\n 该手环已被绑定过 请换个手环");
                 } else {
-                    if (STATE_DEVICE_UNBIND == sharedPreferencesHelper.getInt(SP_BIND_STATE)) {
+                    //if (STATE_DEVICE_UNBIND == sharedPreferencesHelper.getInt(SP_BIND_STATE)) {
                         //Limited retry counts are 3
                         if (2 == retryCnt) {
                             retryCnt = 0;
@@ -829,7 +810,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                         Message message = new Message();
                         message.what = MSG_SERCH_DONE;
                         mBTHandler.sendMessageDelayed(message, 60000);
-                    }
+                    //}
 
                 }
             } else if (TYPE_UPLOAD_LOCATION == CURRENT_TYPE_POST) {
@@ -859,9 +840,21 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             mTextView.append("\n 坐标数据服务器处理失败");
         } else if (0 == Utils.parseJsonResult(postDetailRTR)) {
             mTextView.append("\n 坐标数据服务器处理成功，没有越界");
+            // 只保留最原始的蓝牙地址
+            if (TextUtils.isEmpty(sharedPreferencesHelper.getString(SP_PHONE_ADDRESS)) && null!= mBluetoothDeviceConnected) {
+                sharedPreferencesHelper.putString(SP_PHONE_ADDRESS, mBluetoothDeviceConnected.getAddress());
+                //该设备已经绑定过
+                sharedPreferencesHelper.putInt(SP_BIND_STATE, STATE_DEVICE_BIND);
+            }
             sendGPSTimely();
         } else if (1 == Utils.parseJsonResult(postDetailRTR)) {
             mTextView.append("\n 坐标数据服务器处理成功，坐标越界");
+            // 只保留最原始的蓝牙地址
+            if (TextUtils.isEmpty(sharedPreferencesHelper.getString(SP_PHONE_ADDRESS)) && null!= mBluetoothDeviceConnected) {
+                sharedPreferencesHelper.putString(SP_PHONE_ADDRESS, mBluetoothDeviceConnected.getAddress());
+                //该设备已经绑定过
+                sharedPreferencesHelper.putInt(SP_BIND_STATE, STATE_DEVICE_BIND);
+            }
             sendGPSTimely();
         } else if (2 == Utils.parseJsonResult(postDetailRTR)) {
             mTextView.append("\n 坐标数据服务器处理成功，设备未进行人员信息绑定");

@@ -39,7 +39,6 @@ public class App extends Application {
     public static int sScreenHeight;
     public LocationService locationService;
     public Vibrator mVibrator;
-    public static boolean isFirstLaunched = false;
 
     public static Timer timer = new Timer();
     /**
@@ -57,7 +56,6 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        isFirstLaunched = true;
         //PreferenceUtils.init(this);
         setUpSharedPreferencesHelper(this);
 

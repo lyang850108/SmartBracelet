@@ -12,7 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.smartbracelet.com.smartbracelet.R;
-import com.smartbracelet.com.smartbracelet.util.BleNamesResolver;
+import com.smartbracelet.com.smartbracelet.bluetooth.BleNamesResolver;
 
 public class CharacteristicsListAdapter extends BaseAdapter {
     	private ArrayList<BluetoothGattCharacteristic> mCharacteristics;

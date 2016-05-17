@@ -1,4 +1,4 @@
-package com.smartbracelet.com.smartbracelet.util;
+package com.smartbracelet.com.smartbracelet.bluetooth;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,6 +20,9 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.util.Log;
+
+import com.smartbracelet.com.smartbracelet.util.ConstDefine;
+import com.smartbracelet.com.smartbracelet.util.LogUtil;
 
 public class BleWrapper {
 	/* defines (in milliseconds) how often RSSI should be updated */

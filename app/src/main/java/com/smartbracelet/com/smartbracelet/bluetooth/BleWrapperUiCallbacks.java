@@ -1,4 +1,4 @@
-package com.smartbracelet.com.smartbracelet.util;
+package com.smartbracelet.com.smartbracelet.bluetooth;
 
 import java.util.List;
 
