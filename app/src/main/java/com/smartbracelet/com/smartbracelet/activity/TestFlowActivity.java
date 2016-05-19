@@ -1,9 +1,11 @@
 package com.smartbracelet.com.smartbracelet.activity;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -16,6 +18,7 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -38,6 +41,10 @@ import com.baidu.location.BDLocationListener;
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.adapter.DeviceListAdapter;
 import com.smartbracelet.com.smartbracelet.model.ProgramItem;
+import com.smartbracelet.com.smartbracelet.network.AsyncResponse;
+import com.smartbracelet.com.smartbracelet.network.PollingUtils;
+import com.smartbracelet.com.smartbracelet.network.SocketConnAsync;
+import com.smartbracelet.com.smartbracelet.service.HttpPostService;
 import com.smartbracelet.com.smartbracelet.service.LocationService;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleNamesResolver;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapper;
@@ -51,6 +58,7 @@ import com.smartbracelet.com.smartbracelet.util.ToastHelper;
 import com.smartbracelet.com.smartbracelet.util.Utils;
 import com.smartbracelet.com.smartbracelet.view.AlertDialogCreator;
 import com.smartbracelet.com.smartbracelet.view.LoadingDialog;
+
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -91,6 +99,9 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     @Bind(R.id.test_bt_im)
     TextView mBatteryLevelIm;
 
+    @Bind(R.id.test_lo_tx)
+    TextView mLocationTx;
+
     @Bind(R.id.test_fab)
     FloatingActionButton mFloatingActionBtn;
 
@@ -126,7 +137,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     private String mBatterymValue = null;
 
     // 手机蓝牙地址(第一次获取到的)
-    String SP_PHONE_ADDRESS = "init_phone_address";
+    //String SP_PHONE_ADDRESS = "init_phone_address";
 
     private static final int REQUEST_ENABLE_BT = 1;
     private static final long SCAN_PERIOD = 10000;
@@ -235,8 +246,35 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         mContext = this;
 
         ButterKnife.bind(this);
+
         mBTHandler = new BlueToothTestHandler();
 
+        initBle(mContext);
+
+        // check if we have BT and BLE on board
+        if (mBleWrapper.checkBleHardwareAvailable() == false) {
+            bleMissing();
+        }
+        //Add end
+
+        loadingDialog = new LoadingDialog(mContext);
+
+        sharedPreferencesHelper = SharedPreferencesHelper.getInstance();
+        if (null != sharedPreferencesHelper) {
+            sharedPreferencesHelper.putInt(SP_POST_INTERNAL, 60000);
+        }
+
+        if (null != sharedPreferencesHelper) {
+            checkPhomeNumerAvailble(sharedPreferencesHelper);
+        }
+
+        initGPS(mContext);
+
+    }
+    public static PendingIntent pendingIntent;
+
+
+    private void initBle(final Activity mContext) {
         mBleWrapper = new BleWrapper(mContext, new BleWrapperUiCallbacks.Null() {
             @Override
             public void uiDeviceFound(final BluetoothDevice device, final int rssi, final byte[] record) {
@@ -351,25 +389,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 });
             }
         });
-
-        // check if we have BT and BLE on board
-        if (mBleWrapper.checkBleHardwareAvailable() == false) {
-            bleMissing();
-        }
-        //Add end
-
-        loadingDialog = new LoadingDialog(mContext);
-
-        sharedPreferencesHelper = SharedPreferencesHelper.getInstance();
-        if (null != sharedPreferencesHelper) {
-            sharedPreferencesHelper.putInt(SP_POST_INTERNAL, 60000);
-        }
-
-        if (null != sharedPreferencesHelper) {
-            checkPhomeNumerAvailble(sharedPreferencesHelper);
-        }
-
-        initGPS(mContext);
     }
 
     @Override
@@ -534,7 +553,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                     mDevicesListAdapter.notifyDataSetChanged();
                 }*/
                 //For test
-                String bindAddress = sharedPreferencesHelper.getString(SP_PHONE_ADDRESS);
+                String bindAddress = sharedPreferencesHelper.getString(BLE_ADDRESS_PREF);
                 LogUtil.d("handleFoundDevice" + device.getAddress() + " name: " + device.getName());
                 if (bindAddress.equals(device.getAddress()) || TextUtils.isEmpty(bindAddress)) {
                     if (!TextUtils.isEmpty(device.getName()) && device.getName().startsWith("utt")) {
@@ -666,6 +685,16 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 //sb.append(location.getTime());
                 latitude = location.getLatitude();
                 longtitude = location.getLongitude();
+
+                //Store the preference
+                if (null != sharedPreferencesHelper) {
+                    sharedPreferencesHelper.putDouble(LATITUDE_PREF, latitude);
+                    sharedPreferencesHelper.putDouble(LONGTITUDE_PREF, longtitude);
+                }
+
+
+                String address = location.getAddrStr();
+                mLocationTx.setText(address);
             }
         }
 
@@ -731,7 +760,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
     }
 
-    private PostDataTask mPostDataTask;
+    public  PostDataTask mPostDataTask;
     private AlertDialog mAlertDialog;
 
     private class PostDataTask extends AsyncTask<Integer, Void, Void> {
@@ -841,8 +870,8 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         } else if (0 == Utils.parseJsonResult(postDetailRTR)) {
             mTextView.append("\n 坐标数据服务器处理成功，没有越界");
             // 只保留最原始的蓝牙地址
-            if (TextUtils.isEmpty(sharedPreferencesHelper.getString(SP_PHONE_ADDRESS)) && null!= mBluetoothDeviceConnected) {
-                sharedPreferencesHelper.putString(SP_PHONE_ADDRESS, mBluetoothDeviceConnected.getAddress());
+            if (TextUtils.isEmpty(sharedPreferencesHelper.getString(BLE_ADDRESS_PREF)) && null!= mBluetoothDeviceConnected) {
+                sharedPreferencesHelper.putString(BLE_ADDRESS_PREF, mBluetoothDeviceConnected.getAddress());
                 //该设备已经绑定过
                 sharedPreferencesHelper.putInt(SP_BIND_STATE, STATE_DEVICE_BIND);
             }
@@ -850,8 +879,8 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         } else if (1 == Utils.parseJsonResult(postDetailRTR)) {
             mTextView.append("\n 坐标数据服务器处理成功，坐标越界");
             // 只保留最原始的蓝牙地址
-            if (TextUtils.isEmpty(sharedPreferencesHelper.getString(SP_PHONE_ADDRESS)) && null!= mBluetoothDeviceConnected) {
-                sharedPreferencesHelper.putString(SP_PHONE_ADDRESS, mBluetoothDeviceConnected.getAddress());
+            if (TextUtils.isEmpty(sharedPreferencesHelper.getString(BLE_ADDRESS_PREF)) && null!= mBluetoothDeviceConnected) {
+                sharedPreferencesHelper.putString(BLE_ADDRESS_PREF, mBluetoothDeviceConnected.getAddress());
                 //该设备已经绑定过
                 sharedPreferencesHelper.putInt(SP_BIND_STATE, STATE_DEVICE_BIND);
             }
@@ -942,18 +971,20 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         if (0 != longtitude && 0 != latitude && null != sharedPreferencesHelper) {
 
             long times = sharedPreferencesHelper.getInt(SP_POST_INTERNAL);
-            if (null != App.timerTask) {
+            /*if (null != App.timerTask) {
                 LogUtil.d("times == " + times);
                 App.timerTask.setPeriod(times);
-            }
+            }*/
 
 
             if (0 == times) {
                 times = 20000;
             }
+
+            PollingUtils.startPollingService(this, times/1000, HttpPostService.class, ACTION_GPS_POST_CMD);
             //Must cancel first
 
-            App.timerTask = new ReschedulableTimerTask() {
+            /*App.timerTask = new ReschedulableTimerTask() {
                 @Override
                 public void run() {
                     //SEND MESSAGE TIMER
@@ -974,7 +1005,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                     }
                 }
             };
-            App.timer.schedule(App.timerTask, 0, times);
+            App.timer.schedule(App.timerTask, 0, times);*/
         }
     }
 

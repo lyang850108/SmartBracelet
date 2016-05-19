@@ -1,8 +1,11 @@
 package com.smartbracelet.com.smartbracelet.activity;
 
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Vibrator;
 
@@ -11,7 +14,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.internal.bind.DateTypeAdapter;
 
 import com.smartbracelet.com.smartbracelet.BuildConfig;
+import com.smartbracelet.com.smartbracelet.network.PollingUtils;
 import com.smartbracelet.com.smartbracelet.network.RetrofitService;
+import com.smartbracelet.com.smartbracelet.service.HttpPostService;
 import com.smartbracelet.com.smartbracelet.service.LocationService;
 import com.smartbracelet.com.smartbracelet.util.LiteOrmDBUtil;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
@@ -39,6 +44,12 @@ public class App extends Application {
     public static int sScreenHeight;
     public LocationService locationService;
     public Vibrator mVibrator;
+    String ACTION_GPS_POST_CMD = "ACTION_GPS_POST_CMD";
+
+
+    //Alarm Manager test
+    public static AlarmManager alarmManager;
+
 
     public static Timer timer = new Timer();
     /**
@@ -133,14 +144,20 @@ public class App extends Application {
     @Override
     public void onTerminate() {
         LogUtil.d("onTerminate");
-        if (null != timerTask) {
+
+        //Stop the post action
+
+        PollingUtils.stopPollingService(this, HttpPostService.class, ACTION_GPS_POST_CMD);
+        //alarmManager.cancel(pendingIntent);
+        /*if (null != timerTask) {
             timerTask.cancel();
         }
 
         if (null != timerTaskWarning) {
             timerTaskWarning.cancel();
-        }
+        }*/
         super.onTerminate();
     }
+
 
 }

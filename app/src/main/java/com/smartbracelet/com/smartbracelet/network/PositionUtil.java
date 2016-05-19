@@ -1,4 +1,4 @@
-package com.smartbracelet.com.smartbracelet.util;
+package com.smartbracelet.com.smartbracelet.network;
 
 /**
  * Created by leo.yang on 2016/5/9.
@@ -17,7 +17,7 @@ public class PositionUtil {
      * @param lon
      * @return
      */
-    public static Gps gps84_To_Gcj02(double lat, double lon) {
+    public static AsyncResponse.Gps gps84_To_Gcj02(double lat, double lon) {
         if (outOfChina(lat, lon)) {
             return null;
         }
@@ -31,17 +31,17 @@ public class PositionUtil {
         dLon = (dLon * 180.0) / (a / sqrtMagic * Math.cos(radLat) * pi);
         double mgLat = lat + dLat;
         double mgLon = lon + dLon;
-        return new Gps(mgLat, mgLon);
+        return new AsyncResponse.Gps(mgLat, mgLon);
     }
 
     /**
      * * 火星坐标系 (GCJ-02) to 84 * * @param lon * @param lat * @return
      * */
-    public static Gps gcj_To_Gps84(double lat, double lon) {
-        Gps gps = transform(lat, lon);
+    public static AsyncResponse.Gps gcj_To_Gps84(double lat, double lon) {
+        AsyncResponse.Gps gps = transform(lat, lon);
         double lontitude = lon * 2 - gps.getWgLon();
         double latitude = lat * 2 - gps.getWgLat();
-        return new Gps(latitude, lontitude);
+        return new AsyncResponse.Gps(latitude, lontitude);
     }
 
     /**
@@ -50,26 +50,26 @@ public class PositionUtil {
      * @param gg_lat
      * @param gg_lon
      */
-    public static Gps gcj02_To_Bd09(double gg_lat, double gg_lon) {
+    public static AsyncResponse.Gps gcj02_To_Bd09(double gg_lat, double gg_lon) {
         double x = gg_lon, y = gg_lat;
         double z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * pi);
         double theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * pi);
         double bd_lon = z * Math.cos(theta) + 0.0065;
         double bd_lat = z * Math.sin(theta) + 0.006;
-        return new Gps(bd_lat, bd_lon);
+        return new AsyncResponse.Gps(bd_lat, bd_lon);
     }
 
     /**
      * * 火星坐标系 (GCJ-02) 与百度坐标系 (BD-09) 的转换算法 * * 将 BD-09 坐标转换成GCJ-02 坐标 * * @param
      * bd_lat * @param bd_lon * @return
      */
-    public static Gps bd09_To_Gcj02(double bd_lat, double bd_lon) {
+    public static AsyncResponse.Gps bd09_To_Gcj02(double bd_lat, double bd_lon) {
         double x = bd_lon - 0.0065, y = bd_lat - 0.006;
         double z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * pi);
         double theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * pi);
         double gg_lon = z * Math.cos(theta);
         double gg_lat = z * Math.sin(theta);
-        return new Gps(gg_lat, gg_lon);
+        return new AsyncResponse.Gps(gg_lat, gg_lon);
     }
 
     /**
@@ -78,10 +78,10 @@ public class PositionUtil {
      * @param bd_lon
      * @return
      */
-    public static Gps bd09_To_Gps84(double bd_lat, double bd_lon) {
+    public static AsyncResponse.Gps bd09_To_Gps84(double bd_lat, double bd_lon) {
 
-        Gps gcj02 = PositionUtil.bd09_To_Gcj02(bd_lat, bd_lon);
-        Gps map84 = PositionUtil.gcj_To_Gps84(gcj02.getWgLat(),
+        AsyncResponse.Gps gcj02 = PositionUtil.bd09_To_Gcj02(bd_lat, bd_lon);
+        AsyncResponse.Gps map84 = PositionUtil.gcj_To_Gps84(gcj02.getWgLat(),
                 gcj02.getWgLon());
         return map84;
 
@@ -95,9 +95,9 @@ public class PositionUtil {
         return false;
     }
 
-    public static Gps transform(double lat, double lon) {
+    public static AsyncResponse.Gps transform(double lat, double lon) {
         if (outOfChina(lat, lon)) {
-            return new Gps(lat, lon);
+            return new AsyncResponse.Gps(lat, lon);
         }
         double dLat = transformLat(lon - 105.0, lat - 35.0);
         double dLon = transformLon(lon - 105.0, lat - 35.0);
@@ -109,7 +109,7 @@ public class PositionUtil {
         dLon = (dLon * 180.0) / (a / sqrtMagic * Math.cos(radLat) * pi);
         double mgLat = lat + dLat;
         double mgLon = lon + dLon;
-        return new Gps(mgLat, mgLon);
+        return new AsyncResponse.Gps(mgLat, mgLon);
     }
 
     public static double transformLat(double x, double y) {

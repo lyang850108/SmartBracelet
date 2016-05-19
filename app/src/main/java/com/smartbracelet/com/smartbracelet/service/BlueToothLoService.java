@@ -59,7 +59,7 @@ public class BlueToothLoService extends Service implements ConstDefine{
         if (null != intent) {
             String action = intent.getAction();
             if (!TextUtils.isEmpty(action)) {
-                String address = intent.getStringExtra(BLE_ADDRESS);
+                String address = intent.getStringExtra(BLE_ADDRESS_PREF);
                 if (ACTION_CONNECTED_CMD.equals(action)) {
                     LogUtil.d("onStartCommand address:" + address);
                     connectDevice(address);

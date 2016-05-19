@@ -13,7 +13,20 @@ public interface ConstDefine {
 
     String ACTION_READ_CMD = "ACTION_SERVICE_READ_CMD";
 
-    String BLE_ADDRESS = "mAddress";
+    String ACTION_GPS_POST_CMD = "ACTION_GPS_POST_CMD";
+
+    String ACTION_WARNING_POST_CMD = "ACTION_WARNING_POST_CMD";
+
+    // 手机蓝牙地址(第一次获取到的)
+    String BLE_ADDRESS_PREF = "mAddress_prefs";
+
+    String LONGTITUDE_PREF = "longtitude_prefs";
+
+    String EMPTY_STR = "";
+
+    String UTT_SETVER_URL = "120.25.89.222/main.cgi";
+
+    String LATITUDE_PREF = "latitude_prefs";
 
     String BLE_RSSI = "mRssi";
 
@@ -26,6 +39,14 @@ public interface ConstDefine {
     int TYPE_WARNING_NOTIFY = 6;
     int TYPE_GET_CLCIK_TIMES = 7;
     int TYPE_SET_BIND_STATE = 8;
+
+    String TYPE_POST_TELNUM_PARM = "1";
+    String TYPE_UPLOAD_LOCATION_PARM = "2";
+    String TYPE_UPLOAD_NOTIFY_PARM  = "3";
+    String TYPE_PUSH_MSG_PARM  = "4";
+    String TYPE_PARAMS_POST_PARM  = "5";
+    String TYPE_WARNING_NOTIFY_PARM  = "6";
+
 
 
     final int MSG_SEARCH_OUT = 0;
