@@ -1,5 +1,6 @@
 package com.smartbracelet.com.smartbracelet.network;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -14,7 +15,7 @@ import com.smartbracelet.com.smartbracelet.util.ConstDefine;
 public class PollingUtils implements ConstDefine{
 
     //开启轮询服务
-    public static void startPollingService(Context context, long seconds, Class<?> cls, String action) {
+    public static void startPollingService(Context context, long triggerMillis, Class<?> cls, String action) {
         //获取AlarmManager系统服务
         AlarmManager manager = (AlarmManager) context
                 .getSystemService(Context.ALARM_SERVICE);
@@ -29,8 +30,8 @@ public class PollingUtils implements ConstDefine{
         long triggerAtTime = SystemClock.elapsedRealtime();
 
         //使用AlarmManger的setRepeating方法设置定期执行的时间间隔（seconds秒）和需要执行的Service
-        manager.setRepeating(AlarmManager.ELAPSED_REALTIME, triggerAtTime,
-                seconds * 1000, pendingIntent);
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtTime,
+                triggerMillis, pendingIntent);
     }
 
 
@@ -44,6 +45,16 @@ public class PollingUtils implements ConstDefine{
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
         //取消正在执行的服务
         manager.cancel(pendingIntent);
+    }
+
+    public static boolean isPollServiceRunning(Context context) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if ("com.smartbracelet.com.smartbracelet.service.HttpPostService".equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

@@ -1,7 +1,6 @@
 package com.smartbracelet.com.smartbracelet.activity;
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -18,7 +17,6 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Address;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,6 +29,8 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -41,9 +41,7 @@ import com.baidu.location.BDLocationListener;
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.adapter.DeviceListAdapter;
 import com.smartbracelet.com.smartbracelet.model.ProgramItem;
-import com.smartbracelet.com.smartbracelet.network.AsyncResponse;
 import com.smartbracelet.com.smartbracelet.network.PollingUtils;
-import com.smartbracelet.com.smartbracelet.network.SocketConnAsync;
 import com.smartbracelet.com.smartbracelet.service.HttpPostService;
 import com.smartbracelet.com.smartbracelet.service.LocationService;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleNamesResolver;
@@ -184,6 +182,14 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
+                case MSG_SEARCH_OUT:
+                    int timesUpload = msg.arg1;
+                    if (null != mTextView) {
+                        mTextView.append("\n 后台服务器上报次数" + timesUpload);
+                        mTextView.append("\n 后台服务器上报时间" + Utils.getTime());
+                    }
+
+                    break;
                 case MSG_CHA_READ:
                     int type = msg.arg1;
                     if (TYPE_GET_CLCIK_TIMES == type) {
@@ -219,11 +225,11 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                     mPostDataTask.execute(0);
                     break;
 
-                case MSG_PUSH_MSG:
+                /*case MSG_PUSH_MSG:
                     LogUtil.d("MSG_PUSH_MSG");
                     mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOMsgPushTest(bleAddress).toString(), TYPE_PUSH_MSG);
                     mPostDataTask.execute(0);
-                    break;
+                    break;*/
 
                 case MSG_STATE_WARNING:
                     if (null != mBleWrapper && !mBleWrapper.isConnected()) {
@@ -269,6 +275,15 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         }
 
         initGPS(mContext);
+
+        //Add the animation in the startup by yangli 2013.11.11 happy singles day
+        TranslateAnimation alphaAnimation = new TranslateAnimation(0, 0, 0,
+                -70);
+        alphaAnimation.setDuration(500);
+        alphaAnimation.setRepeatCount(3);
+        alphaAnimation.setRepeatMode(Animation.REVERSE);
+        mFloatingActionBtn.setAnimation(alphaAnimation);
+        alphaAnimation.start();
 
     }
     public static PendingIntent pendingIntent;
@@ -435,13 +450,13 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         }
     }
 
-    private BluetoothDevice mBluetoothDeviceConnected;
+    private String mConnectedAddress;
     private void handleDeviceConnected(final BluetoothGatt gatt, final BluetoothDevice device) {
 
         mContext.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mBluetoothDeviceConnected = device;
+                mConnectedAddress = device.getAddress();
                 if (null != mConnectedAddTx) {
                     mConnectedAddTx.setText(device.getName() + "\n" + device.getAddress() + "\n" + " Connected");
                 }
@@ -451,8 +466,14 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 if (STATE_DEVICE_UNBIND == bindState) {
                     sendMsg(MSG_SERCH_DONE, 0);
                 } else if (STATE_DEVICE_BIND == bindState) {
-                    //mTextView.append("\n 该手环已被绑定过 ");
-                    sendGPSTimely();
+                    mTextView.append("\n 该手环已被绑定过 ");
+                    //STOP FIRST
+
+                    if (false == PollingUtils.isPollServiceRunning(mContext)) {
+                        mTextView.append("\n 后台服务重新开启 蚂蚁 蚂蚁 ");
+                        startPollService();
+                    }
+
                 }
             }
         });
@@ -481,7 +502,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         addScanningTimeout();
         mBleWrapper.startScanning();
         //Notify the server in 120s
-        sendWarningTimely(WARNING_TYPE_DEVCE_DISCONNECTED);
+        sendWarningDelayed(WARNING_TYPE_DEVCE_DISCONNECTED);
     }
 
 
@@ -490,6 +511,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         super.onResume();
 
         checkBTAvail();
+
 
         //Add demo begin
         // on every Resume check if BT is enabled (user could turn it off while app was in background etc.)
@@ -555,8 +577,9 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 //For test
                 String bindAddress = sharedPreferencesHelper.getString(BLE_ADDRESS_PREF);
                 LogUtil.d("handleFoundDevice" + device.getAddress() + " name: " + device.getName());
-                if (bindAddress.equals(device.getAddress()) || TextUtils.isEmpty(bindAddress)) {
+                if (bindAddress.equals(device.getAddress()) || (App.isFirstLuanched && TextUtils.isEmpty(bindAddress))) {
                     if (!TextUtils.isEmpty(device.getName()) && device.getName().startsWith("utt")) {
+                        mTextView.append("\n数据库存储的地址" + bindAddress);
                         LogUtil.d("existAddress" + bindAddress);
                         String mName = device.getName();
                         String mAddress = device.getAddress();
@@ -694,7 +717,9 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
 
                 String address = location.getAddrStr();
-                mLocationTx.setText(address);
+                if (null != mLocationTx) {
+                    mLocationTx.setText(address);
+                }
             }
         }
 
@@ -803,48 +828,9 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 mEditParamsText.setText(subitJson);
             }*/
             if (TYPE_GET_NUM_PARM == CURRENT_TYPE_POST) {
-                mTextView.append("\n http 后台结果  " + postRTR);
-                mTextView.append("\n http 后台返回数据    " + postDetailRTR);
-                //mPostDetailsRtrTx.setText(postDetailRTR);
-                loadingDialog.dismiss();
-                if (postRTR.contains("请求成功") && 0 == Utils.parseJsonResult(postDetailRTR)) {
-                    mTextView.append("\n 服务器处理成功 ");
-
-                    if (null != mContext) {
-                        if (null != mAlertDialog) {
-                            mAlertDialog.dismiss();
-                            mAlertDialog = null;
-                        }
-                        AlertDialogCreator.getInstance().setmButtonOnClickListener(mDialogListener);
-                        mAlertDialog = AlertDialogCreator
-                                .getInstance()
-                                .createAlertDialog(
-                                        mContext,
-                                        getString(R.string.tip_title),
-                                        getString(R.string.test_bind_tip_content));
-                        mAlertDialog.show();
-                    }
-
-                } else if (postRTR.contains("请求成功") && 1 == Utils.parseJsonResult(postDetailRTR)) {
-                    mTextView.append("\n 该手环已被绑定过 请换个手环");
-                } else {
-                    //if (STATE_DEVICE_UNBIND == sharedPreferencesHelper.getInt(SP_BIND_STATE)) {
-                        //Limited retry counts are 3
-                        if (2 == retryCnt) {
-                            retryCnt = 0;
-                            return;
-                        }
-                        retryCnt++;
-                        //Again
-                        Message message = new Message();
-                        message.what = MSG_SERCH_DONE;
-                        mBTHandler.sendMessageDelayed(message, 60000);
-                    //}
-
-                }
+                handleUploadTelMsg();
             } else if (TYPE_UPLOAD_LOCATION == CURRENT_TYPE_POST) {
                 handleGpsMsg();
-
             } else if (TYPE_PUSH_MSG == CURRENT_TYPE_POST) {
                 handlePushMsg();
             } else if (TYPE_WARNING_NOTIFY == CURRENT_TYPE_POST) {
@@ -864,27 +850,83 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         }
     }
 
+    private void handleUploadTelMsg() {
+        mTextView.append("\n http 后台结果  " + postRTR);
+        mTextView.append("\n http 后台返回数据    " + postDetailRTR);
+        //mPostDetailsRtrTx.setText(postDetailRTR);
+        loadingDialog.dismiss();
+        if (postRTR.contains("请求成功") && 0 == Utils.parseJsonResult(postDetailRTR)) {
+            mTextView.append("\n 服务器处理成功 ");
+
+            if (null != mContext) {
+                if (null != mAlertDialog) {
+                    mAlertDialog.dismiss();
+                    mAlertDialog = null;
+                }
+                AlertDialogCreator.getInstance().setmButtonOnClickListener(mDialogListener);
+                mAlertDialog = AlertDialogCreator
+                        .getInstance()
+                        .createAlertDialog(
+                                mContext,
+                                getString(R.string.tip_title),
+                                getString(R.string.test_bind_tip_content));
+                mAlertDialog.show();
+            }
+
+        } else if (postRTR.contains("请求成功") && 1 == Utils.parseJsonResult(postDetailRTR)) {
+            mTextView.append("\n 该手环已被绑定过 请换个手环");
+
+        } else {
+            //if (STATE_DEVICE_UNBIND == sharedPreferencesHelper.getInt(SP_BIND_STATE)) {
+            //Limited retry counts are 3
+            if (2 == retryCnt) {
+                retryCnt = 0;
+                return;
+            }
+            retryCnt++;
+            //Again
+            Message message = new Message();
+            message.what = MSG_SERCH_DONE;
+            mBTHandler.sendMessageDelayed(message, 60000);
+            //}
+
+        }
+    }
+
     private void handleGpsMsg() {
         if (-1 == Utils.parseJsonResult(postDetailRTR)) {
             mTextView.append("\n 坐标数据服务器处理失败");
         } else if (0 == Utils.parseJsonResult(postDetailRTR)) {
             mTextView.append("\n 坐标数据服务器处理成功，没有越界");
             // 只保留最原始的蓝牙地址
-            if (TextUtils.isEmpty(sharedPreferencesHelper.getString(BLE_ADDRESS_PREF)) && null!= mBluetoothDeviceConnected) {
-                sharedPreferencesHelper.putString(BLE_ADDRESS_PREF, mBluetoothDeviceConnected.getAddress());
+            if (TextUtils.isEmpty(sharedPreferencesHelper.getString(BLE_ADDRESS_PREF))) {
+                if (App.isFirstLuanched) {
+                    App.isFirstLuanched =false;
+                }
+                LogUtil.d("handleGpsMsg getAddress" + mConnectedAddress);
+                if (!TextUtils.isEmpty(mConnectedAddress)) {
+                    sharedPreferencesHelper.putString(BLE_ADDRESS_PREF, mConnectedAddress);
+                }
+
                 //该设备已经绑定过
                 sharedPreferencesHelper.putInt(SP_BIND_STATE, STATE_DEVICE_BIND);
             }
-            sendGPSTimely();
+            startPollService();
         } else if (1 == Utils.parseJsonResult(postDetailRTR)) {
             mTextView.append("\n 坐标数据服务器处理成功，坐标越界");
             // 只保留最原始的蓝牙地址
-            if (TextUtils.isEmpty(sharedPreferencesHelper.getString(BLE_ADDRESS_PREF)) && null!= mBluetoothDeviceConnected) {
-                sharedPreferencesHelper.putString(BLE_ADDRESS_PREF, mBluetoothDeviceConnected.getAddress());
+            if (TextUtils.isEmpty(sharedPreferencesHelper.getString(BLE_ADDRESS_PREF))) {
+                if (App.isFirstLuanched) {
+                    App.isFirstLuanched =false;
+                }
+                LogUtil.d("handleGpsMsg getAddress" + mConnectedAddress);
+                if (!TextUtils.isEmpty(mConnectedAddress)) {
+                    sharedPreferencesHelper.putString(BLE_ADDRESS_PREF, mConnectedAddress);
+                }
                 //该设备已经绑定过
                 sharedPreferencesHelper.putInt(SP_BIND_STATE, STATE_DEVICE_BIND);
             }
-            sendGPSTimely();
+            startPollService();
         } else if (2 == Utils.parseJsonResult(postDetailRTR)) {
             mTextView.append("\n 坐标数据服务器处理成功，设备未进行人员信息绑定");
             if (null != App.timerTask) {
@@ -961,11 +1003,15 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         }
     }
 
-    private void sendGPSTimely() {
+    private void stopPollService() {
 
-        if (null != App.timerTask) {
+    }
+
+    private void startPollService() {
+
+        /*if (null != App.timerTask) {
             App.timerTask.cancel();
-        }
+        }*/
 
 
         if (0 != longtitude && 0 != latitude && null != sharedPreferencesHelper) {
@@ -981,7 +1027,8 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 times = 20000;
             }
 
-            PollingUtils.startPollingService(this, times/1000, HttpPostService.class, ACTION_GPS_POST_CMD);
+            mTextView.append("\n 开始执行后台坐标上报业务");
+            PollingUtils.startPollingService(this, times, HttpPostService.class, ACTION_GPS_POST_CMD);
             //Must cancel first
 
             /*App.timerTask = new ReschedulableTimerTask() {
@@ -1006,33 +1053,24 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 }
             };
             App.timer.schedule(App.timerTask, 0, times);*/
+        } else {
+            mTextView.append("\n 无法获取经纬度，不能执行后台上报业务");
         }
     }
 
-    private void sendWarningTimely(final int type) {
-
-        if (null != App.timerTaskWarning) {
-            App.timerTaskWarning.cancel();
-        }
-
+    private void sendWarningDelayed(final int type) {
 
         long times = 120000;
         //Must cancel first
 
-        App.timerTaskWarning = new ReschedulableTimerTask() {
-            @Override
-            public void run() {
-                //SEND MESSAGE TIMER
-                Message msg = new Message();
-                msg.what = MSG_STATE_WARNING;
-                msg.arg1 = type;
-                if (null != mBTHandler) {
-                    mBTHandler.sendMessage(msg);
-                }
+        //SEND MESSAGE TIMER
+        Message msg = new Message();
+        msg.what = MSG_STATE_WARNING;
+        msg.arg1 = type;
+        if (null != mBTHandler) {
+            mBTHandler.sendMessageDelayed(msg, times);
+        }
 
-            }
-        };
-        App.timerWarning.schedule(App.timerTaskWarning, 0, times);
     }
 
 

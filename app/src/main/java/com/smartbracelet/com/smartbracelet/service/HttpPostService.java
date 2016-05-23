@@ -9,6 +9,7 @@ import android.text.TextUtils;
 
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.activity.App;
+import com.smartbracelet.com.smartbracelet.activity.TestFlowActivity;
 import com.smartbracelet.com.smartbracelet.model.ProgramItem;
 import com.smartbracelet.com.smartbracelet.network.AsyncResponse;
 import com.smartbracelet.com.smartbracelet.network.SocketConnAsync;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HttpPostService extends Service implements ConstDefine{
+
+    int recoidTimes = 0;
 
     public SocketConnAsync socketConn = null;
 
@@ -61,6 +64,7 @@ public class HttpPostService extends Service implements ConstDefine{
             String action = intent.getAction();
             if (!TextUtils.isEmpty(action)) {
                 String bleAddress = sharedPreferencesHelper.getString(BLE_ADDRESS_PREF);
+                LogUtil.d("onStartCommand" + bleAddress);
                 if (ACTION_GPS_POST_CMD.equals(action)) {
                     doAsyncPostToServer(bleAddress, TYPE_PUSH_MSG_PARM);
                     App.timesJudgeGps++;
@@ -103,6 +107,11 @@ public class HttpPostService extends Service implements ConstDefine{
 
                 @Override
                 public void onDataReceivedSuccess(String type, String data) {
+                    recoidTimes ++;
+                    Message message = new Message();
+                    message.what = MSG_SEARCH_OUT;
+                    message.arg1 = recoidTimes;
+                    TestFlowActivity.mBTHandler.sendMessage(message);
                     if (type.equals(TYPE_UPLOAD_LOCATION_PARM)) {
 
                     } else if (type.equals(TYPE_PUSH_MSG_PARM)) {

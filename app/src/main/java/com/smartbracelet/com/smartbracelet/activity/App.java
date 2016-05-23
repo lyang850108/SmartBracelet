@@ -57,13 +57,10 @@ public class App extends Application {
      */
     public static ReschedulableTimerTask timerTask;
 
-    public static Timer timerWarning = new Timer();
-    /**
-     * Self-define
-     */
-    public static ReschedulableTimerTask timerTaskWarning;
 
     public static int timesJudgeGps;
+
+    public static boolean isFirstLuanched = true;
     @Override
     public void onCreate() {
         super.onCreate();

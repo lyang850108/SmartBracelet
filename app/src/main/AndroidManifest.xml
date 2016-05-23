@@ -93,7 +93,15 @@
         <service
             android:name=".service.HttpPostService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true">
+            <intent-filter>
+                <action android:name="ACTION_GPS_POST_CMD" />
+                <action android:name="ACTION_WARNING_POST_CMD" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </service>
     </application>
 
 </manifest>
