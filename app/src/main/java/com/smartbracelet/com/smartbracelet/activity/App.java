@@ -62,6 +62,7 @@ public class App extends Application {
 
     public static boolean isFirstLuanched = true;
 
+    //Timetask是否运行
     public static boolean isScanningDevice = false;
     @Override
     public void onCreate() {

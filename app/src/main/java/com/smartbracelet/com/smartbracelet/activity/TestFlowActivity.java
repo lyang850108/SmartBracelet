@@ -489,7 +489,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         });
 
         if (App.isScanningDevice) {
-            stopPollActivity();
+            stopScanningTask();
         }
     }
 
@@ -511,12 +511,37 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         });
 
         if (!App.isScanningDevice) {
-            startPollActivity();
+            startScanningTask();
         }
 
 
         //Notify the server in 120s
         sendWarningDelayed(WARNING_TYPE_DEVCE_DISCONNECTED);
+    }
+
+    private void startScanningTask() {
+        App.isScanningDevice = true;
+        int times = 8000;
+        App.timerTask = new ReschedulableTimerTask() {
+            @Override
+            public void run() {
+                LogUtil.d("startScanningTask");
+                //Disconnected start scaning again
+                mScanning = true;
+                // remember to add timeout for scanning to not run it forever and drain the battery
+                addScanningTimeout();
+                mBleWrapper.startScanning();
+            }
+        };
+        App.timer.schedule(App.timerTask, 0, times);
+    }
+
+    private void stopScanningTask() {
+        App.isScanningDevice = false;
+        if (null != App.timerTask) {
+            LogUtil.d("stopScanningTask");
+            App.timerTask.cancel();
+        }
     }
 
 
@@ -949,9 +974,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             startPollService();
         } else if (2 == Utils.parseJsonResult(postDetailRTR)) {
             mTextView.append("\n 坐标数据服务器处理成功，设备未进行人员信息绑定");
-            if (null != App.timerTask) {
-                App.timerTask.cancel();
-            }
+
             if (null != mContext) {
                 if (null != mAlertDialog) {
                     mAlertDialog.dismiss();
@@ -1081,31 +1104,17 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         }
     }
 
-    private void startPollActivity() {
-        App.isScanningDevice = true;
-        long times = 20000;
-
-        PollingUtils.startPollingActivity(this, times, TestFlowActivity.class, ACTION_START_SCANNING_CMD);
-
-    }
-
-    private void stopPollActivity() {
-        App.isScanningDevice = false;
-        PollingUtils.stopPollingActivity(this, TestFlowActivity.class, ACTION_START_SCANNING_CMD);
-
-    }
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (ACTION_START_SCANNING_CMD.equals(intent.getAction())) {
+        /*if (ACTION_START_SCANNING_CMD.equals(intent.getAction())) {
             LogUtil.d("ACTION_START_SCANNING_CMD");
             //Disconnected start scaning again
             mScanning = true;
             // remember to add timeout for scanning to not run it forever and drain the battery
             addScanningTimeout();
             mBleWrapper.startScanning();
-        }
+        }*/
     }
 
     private void sendWarningDelayed(final int type) {
