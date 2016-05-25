@@ -2,6 +2,7 @@ package com.smartbracelet.com.smartbracelet.activity;
 
 
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -35,6 +36,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Pre
     private SwitchPreference mVibratePref;
     private RingtonePreference mRingtonePref;
     private ListPreference mSyncPref;
+    private Preference mAddressPrefs;
     // Menu entries
     private static final int MENU_RESTORE_DEFAULTS    = 1;
 
@@ -46,10 +48,52 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Pre
     public static final String KEY_VIBRATE    = "notifications_new_message_vibrate";
     public static final String KEY_RINGTONE= "notifications_new_message_ringtone";
     public static final String KEY_SYNC_FREQUENCE    = "sync_frequency";
+    public static final String KEY_DEVICE_ADDRESS    = "mac_address_key";
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        return false;
+        boolean result = false;
+        if (preference == mNewMessagePref) {
+            LogUtil.d("mNewMessagePref" + newValue);
+            if (null != sharedPreferencesHelper) {
+                boolean notificationPrefs = (boolean) newValue;
+                sharedPreferencesHelper.putBoolean(NOTIFICATION_PREF, notificationPrefs);
+                result = true;
+            }
+        } else if (preference == mSyncPref) {
+            final String summary = newValue.toString();
+            int internal = 0;
+            int index = mSyncPref.findIndexOfValue(summary);
+            mSyncPref.setSummary(mSyncPref.getEntries()[index]);
+            mSyncPref.setValue(summary);
+            switch (index) {
+                case 0:
+                    internal = 15000;
+                    break;
+                case 1:
+                    internal = 20000;
+                    break;
+                case 2:
+                    internal = 60000;
+                    break;
+                case 3:
+                    internal = 180000;
+                    break;
+                case 4:
+                    internal = 360000;
+                    break;
+
+            }
+            if (null != sharedPreferencesHelper) {
+                if (null != App.timerTask) {
+                    LogUtil.d("times == " + internal);
+                    App.timerTask.setPeriod(internal);
+                }
+                sharedPreferencesHelper.putInt(SP_POST_INTERNAL, internal);
+                result = true;
+            }
+        }
+        return result;
     }
 
     @Override
@@ -69,6 +113,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Pre
 
         mNewMessagePref = (SwitchPreference) findPreference(KEY_NEW_MESSAGE);
         mVibratePref = (SwitchPreference) findPreference(KEY_VIBRATE);
+        //获取硬件地址
+        String bindAddress = sharedPreferencesHelper.getString(BLE_ADDRESS_PREF);
+        mAddressPrefs = (Preference) findPreference(KEY_DEVICE_ADDRESS);
+        mAddressPrefs.setSummary(bindAddress);
+
+
         mRingtonePref = (RingtonePreference) findPreference(KEY_RINGTONE);
         mRingtonePref.setShowDefault(false);
         mSyncPref
@@ -121,9 +171,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Pre
     @Override
     protected void onResume() {
         super.onResume();
+        registerListeners();
         invalidateOptionsMenu();
     }
 
+    private void registerListeners() {
+        mNewMessagePref.setOnPreferenceChangeListener(this);
+    }
 
 
     @Override

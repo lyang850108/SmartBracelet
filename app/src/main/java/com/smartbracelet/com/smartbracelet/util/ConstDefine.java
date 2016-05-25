@@ -22,6 +22,8 @@ public interface ConstDefine {
 
     String LONGTITUDE_PREF = "longtitude_prefs";
 
+    String NOTIFICATION_PREF = "notification_prefs";
+
     String EMPTY_STR = "";
 
     String UTT_SETVER_URL = "120.25.89.222/main.cgi";
@@ -68,7 +70,7 @@ public interface ConstDefine {
 
     String SP_BIND_STATE = "device_bind_state";
 
-    String SP_POST_INTERNAL = "post_internal_value";
+    String SP_POST_INTERNAL = "post_internal_value_prefs";
 
     UUID UUID_READ_SERVICE = fromString("328B1CD1-F643-F7B5-A243-0C51CD3DEEAA");
 

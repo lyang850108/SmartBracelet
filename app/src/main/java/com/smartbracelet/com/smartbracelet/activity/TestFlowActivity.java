@@ -184,10 +184,18 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             switch (msg.what) {
                 case MSG_SEARCH_OUT:
                     int timesUpload = msg.arg1;
-                    if (null != mTextView) {
-                        mTextView.append("\n 后台服务器上报次数" + timesUpload);
-                        mTextView.append("\n 后台服务器上报时间" + Utils.getTime());
+                    int backRtr = msg.arg2;
+                    if (0 == backRtr) {
+                        if (null != mTextView) {
+                            mTextView.append("\n 后台服务器上报次数" + timesUpload);
+                            mTextView.append("\n 后台服务器上报时间" + Utils.getTime());
+                        }
+                    } else {
+                        if (null != mTextView) {
+                            mTextView.append("\n 后台服务器上报失败 ***" + Utils.getTime());
+                        }
                     }
+
 
                     break;
                 case MSG_CHA_READ:
@@ -526,6 +534,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         mBleWrapper.initialize();
 
         mDevicesListAdapter = new DeviceListAdapter(mContext);
+
         /*mDeviceList.setAdapter(mDevicesListAdapter);
         mDeviceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -593,7 +602,12 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                         // start automatically connecting to the device
                         mTextView.setText("connecting ...");
                         bleAddress = mAddress;
-                        mBleWrapper.connect(mAddress);
+                        Boolean connectRtr = mBleWrapper.connect(mAddress);
+                        if (connectRtr) {
+                            mTextView.setText("connecting init successful");
+                        } else {
+                            mTextView.setText("connecting init failed");
+                        }
                     }
                 }
 
@@ -986,7 +1000,10 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 }
 
                 //Notify
-                //Utils.notiy(mContext, showMessage, msg);
+                if (true == sharedPreferencesHelper.getBoolean(NOTIFICATION_PREF)) {
+                    Utils.notifyMessageComing(mContext, showMessage, msg);
+                }
+
                 mTextView.append("\n " + showMessage + "Msg: " + msg + "Create time : " + time);
             }
         } catch (JSONException e) {

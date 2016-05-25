@@ -33,7 +33,7 @@
     <string name="pref_description_social_recommendations">打开此选项，设备靠近时会自动连接
     </string>
 
-    <string name="pref_title_display_name">设备名称</string>
+    <string name="pref_title_display_name">设备地址</string>
     <string name="pref_default_display_name">John Smith</string>
 
     <string name="pref_title_add_friends_to_messages">手动添加设备</string>

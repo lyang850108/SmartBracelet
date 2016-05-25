@@ -111,6 +111,7 @@ public class HttpPostService extends Service implements ConstDefine{
                     Message message = new Message();
                     message.what = MSG_SEARCH_OUT;
                     message.arg1 = recoidTimes;
+                    message.arg2 = 0;
                     TestFlowActivity.mBTHandler.sendMessage(message);
                     if (type.equals(TYPE_UPLOAD_LOCATION_PARM)) {
 
@@ -123,6 +124,11 @@ public class HttpPostService extends Service implements ConstDefine{
 
                 @Override
                 public void onDataReceivedFailed() {
+                    Message message = new Message();
+                    message.what = MSG_SEARCH_OUT;
+                    message.arg1 = recoidTimes;
+                    message.arg2 = 1;
+                    TestFlowActivity.mBTHandler.sendMessage(message);
 
                 }
             });

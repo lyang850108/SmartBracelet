@@ -111,7 +111,10 @@ public class BleWrapper {
         // check if we need to connect from scratch or just reconnect to previous device
         if(mBluetoothGatt != null && mBluetoothGatt.getDevice().getAddress().equals(deviceAddress)) {
         	// just reconnect
-        	return mBluetoothGatt.connect();
+            LogUtil.d("开始重新连接");
+        	//return mBluetoothGatt.connect();
+            mBluetoothGatt.close();
+            mBluetoothGatt = mBluetoothDevice.connectGatt(mParent, false, mBleCallback);
         }
         else {
         	// connect from scratch
@@ -370,6 +373,7 @@ public class BleWrapper {
             	startMonitoringRssiValue();
             }
             else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+
             	mConnected = false;
             	mUiCallback.uiDeviceDisconnected(mBluetoothGatt, mBluetoothDevice);
             }

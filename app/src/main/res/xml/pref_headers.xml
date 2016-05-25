@@ -27,14 +27,9 @@
 
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
-    <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue="@string/pref_default_display_name"
-        android:inputType="textCapWords"
-        android:key="example_text"
+    <Preference
+        android:key="mac_address_key"
         android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
         android:title="@string/pref_title_display_name" />
     <!-- A 'parent' preference, which enables/disables child preferences (below)
      when checked/unchecked. -->
