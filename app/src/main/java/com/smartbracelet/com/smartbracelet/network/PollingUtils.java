@@ -56,6 +56,38 @@ public class PollingUtils implements ConstDefine{
         }
         return false;
     }
+
+    //开启轮询服务
+    public static void startPollingActivity(Context context, long triggerMillis, Class<?> cls, String action) {
+        //获取AlarmManager系统服务
+        AlarmManager manager = (AlarmManager) context
+                .getSystemService(Context.ALARM_SERVICE);
+
+        //包装需要执行Service的Intent
+        Intent intent = new Intent(context, cls);
+        intent.setAction(action);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //触发服务的起始时间
+        long triggerAtTime = SystemClock.elapsedRealtime();
+
+        //使用AlarmManger的setRepeating方法设置定期执行的时间间隔（seconds秒）和需要执行的Service
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtTime,
+                triggerMillis, pendingIntent);
+    }
+
+    //停止轮询服务
+    public static void stopPollingActivity(Context context, Class<?> cls, String action) {
+        AlarmManager manager = (AlarmManager) context
+                .getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, cls);
+        intent.setAction(action);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        //取消正在执行的服务
+        manager.cancel(pendingIntent);
+    }
 }
 
 

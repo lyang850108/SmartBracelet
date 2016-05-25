@@ -61,6 +61,8 @@ public class App extends Application {
     public static int timesJudgeGps;
 
     public static boolean isFirstLuanched = true;
+
+    public static boolean isScanningDevice = false;
     @Override
     public void onCreate() {
         super.onCreate();

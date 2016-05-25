@@ -15,6 +15,8 @@ public interface ConstDefine {
 
     String ACTION_GPS_POST_CMD = "ACTION_GPS_POST_CMD";
 
+    String ACTION_START_SCANNING_CMD = "ACTION_START_SCANNING_CMD";
+
     String ACTION_WARNING_POST_CMD = "ACTION_WARNING_POST_CMD";
 
     // 手机蓝牙地址(第一次获取到的)

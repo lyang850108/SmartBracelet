@@ -294,6 +294,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
         alphaAnimation.start();
 
     }
+
     public static PendingIntent pendingIntent;
 
 
@@ -459,6 +460,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
     }
 
     private String mConnectedAddress;
+
     private void handleDeviceConnected(final BluetoothGatt gatt, final BluetoothDevice device) {
 
         mContext.runOnUiThread(new Runnable() {
@@ -485,6 +487,10 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
                 }
             }
         });
+
+        if (App.isScanningDevice) {
+            stopPollActivity();
+        }
     }
 
     private void sendMsg(int msg, int type) {
@@ -504,11 +510,11 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             }
         });
 
-        //Disconnected start scaning again
-        mScanning = true;
-        // remember to add timeout for scanning to not run it forever and drain the battery
-        addScanningTimeout();
-        mBleWrapper.startScanning();
+        if (!App.isScanningDevice) {
+            startPollActivity();
+        }
+
+
         //Notify the server in 120s
         sendWarningDelayed(WARNING_TYPE_DEVCE_DISCONNECTED);
     }
@@ -799,7 +805,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
     }
 
-    public  PostDataTask mPostDataTask;
+    public PostDataTask mPostDataTask;
     private AlertDialog mAlertDialog;
 
     private class PostDataTask extends AsyncTask<Integer, Void, Void> {
@@ -915,7 +921,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             // 只保留最原始的蓝牙地址
             if (TextUtils.isEmpty(sharedPreferencesHelper.getString(BLE_ADDRESS_PREF))) {
                 if (App.isFirstLuanched) {
-                    App.isFirstLuanched =false;
+                    App.isFirstLuanched = false;
                 }
                 LogUtil.d("handleGpsMsg getAddress" + mConnectedAddress);
                 if (!TextUtils.isEmpty(mConnectedAddress)) {
@@ -931,7 +937,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             // 只保留最原始的蓝牙地址
             if (TextUtils.isEmpty(sharedPreferencesHelper.getString(BLE_ADDRESS_PREF))) {
                 if (App.isFirstLuanched) {
-                    App.isFirstLuanched =false;
+                    App.isFirstLuanched = false;
                 }
                 LogUtil.d("handleGpsMsg getAddress" + mConnectedAddress);
                 if (!TextUtils.isEmpty(mConnectedAddress)) {
@@ -1072,6 +1078,33 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             App.timer.schedule(App.timerTask, 0, times);*/
         } else {
             mTextView.append("\n 无法获取经纬度，不能执行后台上报业务");
+        }
+    }
+
+    private void startPollActivity() {
+        App.isScanningDevice = true;
+        long times = 20000;
+
+        PollingUtils.startPollingActivity(this, times, TestFlowActivity.class, ACTION_START_SCANNING_CMD);
+
+    }
+
+    private void stopPollActivity() {
+        App.isScanningDevice = false;
+        PollingUtils.stopPollingActivity(this, TestFlowActivity.class, ACTION_START_SCANNING_CMD);
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (ACTION_START_SCANNING_CMD.equals(intent.getAction())) {
+            LogUtil.d("ACTION_START_SCANNING_CMD");
+            //Disconnected start scaning again
+            mScanning = true;
+            // remember to add timeout for scanning to not run it forever and drain the battery
+            addScanningTimeout();
+            mBleWrapper.startScanning();
         }
     }
 
