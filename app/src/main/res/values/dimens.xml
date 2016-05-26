@@ -70,4 +70,6 @@
     <dimen name="home_radio_button_height">48dp</dimen>
     <dimen name="home_radio_button_width">48dp</dimen>
 
+    <dimen name="main_menu_button_height">148dp</dimen>
+
 </resources>

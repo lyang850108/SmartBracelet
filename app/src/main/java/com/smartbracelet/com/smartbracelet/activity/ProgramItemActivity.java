@@ -84,7 +84,7 @@ public class ProgramItemActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            startActivity(new Intent(this, TestFlowActivity.class));
+            startActivity(new Intent(this, MainMenuActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

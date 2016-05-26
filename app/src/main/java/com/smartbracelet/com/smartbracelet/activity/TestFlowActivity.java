@@ -510,6 +510,7 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             }
         });
 
+        //这里会有个问题 如果长时间待机会杀死Timetask,如果扫描放在onreume里 会导致逻辑冲突
         if (!App.isScanningDevice) {
             startScanningTask();
         }

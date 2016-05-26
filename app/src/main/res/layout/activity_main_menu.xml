@@ -14,7 +14,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="@dimen/main_menu_button_height"
             android:orientation="vertical"
             android:gravity="center"
             android:layout_weight="1.0">
@@ -22,18 +22,19 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_setting"
-                android:id="@+id/imageButton2" />
+                android:src="@mipmap/ic_startup"
+                android:id="@+id/func1" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1111"/>
+                android:textAppearance="@style/MainMenuButtonTextStyle"
+                android:text="连接"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="@dimen/main_menu_button_height"
             android:orientation="vertical"
             android:gravity="center"
             android:layout_weight="1.0">
@@ -41,18 +42,19 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_setting"
-                android:id="@+id/imageButton3" />
+                android:src="@mipmap/ic_startup"
+                android:id="@+id/func2" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1111"/>
+                android:textAppearance="@style/MainMenuButtonTextStyle"
+                android:text="消息"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="@dimen/main_menu_button_height"
             android:orientation="vertical"
             android:gravity="center"
             android:layout_weight="1.0">
@@ -60,13 +62,14 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_setting"
-                android:id="@+id/imageButton" />
+                android:src="@mipmap/ic_startup"
+                android:id="@+id/func3" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1111"/>
+                android:textAppearance="@style/MainMenuButtonTextStyle"
+                android:text="联系"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -78,7 +81,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="@dimen/main_menu_button_height"
             android:orientation="vertical"
             android:gravity="center"
             android:layout_weight="1.0">
@@ -86,18 +89,19 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_setting"
-                android:id="@+id/imageButton6" />
+                android:src="@mipmap/ic_startup"
+                android:id="@+id/func4" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1111"/>
+                android:textAppearance="@style/MainMenuButtonTextStyle"
+                android:text="报警"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="@dimen/main_menu_button_height"
             android:orientation="vertical"
             android:gravity="center"
             android:layout_weight="1.0">
@@ -105,18 +109,19 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_setting"
-                android:id="@+id/imageButton4" />
+                android:src="@mipmap/ic_startup"
+                android:id="@+id/func5" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1111"/>
+                android:textAppearance="@style/MainMenuButtonTextStyle"
+                android:text="定位"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="@dimen/main_menu_button_height"
             android:orientation="vertical"
             android:gravity="center"
             android:layout_weight="1.0">
@@ -124,13 +129,14 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_setting"
-                android:id="@+id/imageButton5" />
+                android:src="@mipmap/ic_startup"
+                android:id="@+id/func6" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1111"/>
+                android:textAppearance="@style/MainMenuButtonTextStyle"
+                android:text="设置"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -141,7 +147,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="140dp"
         android:clickable="true"
         android:src="@mipmap/add"
         app:backgroundTint="#ef9b1d"
