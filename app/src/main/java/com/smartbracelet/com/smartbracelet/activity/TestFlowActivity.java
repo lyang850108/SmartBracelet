@@ -1171,8 +1171,6 @@ public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
             //finish();
         }
     };
-    private NotificationManager mNotificationManager;
-    private Notification notification;
 
     private void checkBTAvail() {
         if (null == mBtAdapter) {

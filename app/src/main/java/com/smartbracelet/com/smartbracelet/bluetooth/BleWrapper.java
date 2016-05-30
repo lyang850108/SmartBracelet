@@ -79,6 +79,7 @@ public class BleWrapper {
 	
 	/* start scanning for BT LE devices around */
 	public void startScanning() {
+        LogUtil.d("mBluetoothAdapter" + mBluetoothAdapter);
         mBluetoothAdapter.startLeScan(mDeviceFoundCallback);
 	}
 	

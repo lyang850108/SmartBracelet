@@ -47,8 +47,8 @@
         <activity
             android:name=".activity.LaunchAnimActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing"
-            android:theme="@style/Theme.NoActionBar">
+            android:theme="@style/Theme.NoActionBar"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -103,14 +103,18 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activity.TestFlowActivity"></activity>
-
+        <activity android:name=".activity.TestFlowActivity" />
         <activity
             android:name=".activity.MainMenuActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing">
-        </activity>
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".activity.DeviceManagerActivity"
+            android:label="@string/title_activity_device_manager"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity android:name=".activity.GpsInformationActivity"></activity>
     </application>
 
 </manifest>

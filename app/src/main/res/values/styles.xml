@@ -5,8 +5,7 @@
         <!-- Customize your theme here. -->
     </style>
     <!-- Base application theme. -->
-    <style name="Theme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
-    </style>
+    <style name="Theme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar"></style>
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -38,30 +37,38 @@
 
     </style>
 
-    <style name="BlogItemTextButtonStyle" >
+    <style name="BlogItemTextButtonStyle">
         <item name="android:textColor">@color/orange_500</item>
         <item name="android:textSize">@dimen/tab_text_size</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="ItemTitleTextStyle" >
+    <style name="ItemTitleTextStyle">
         <item name="android:textColor">@color/grey_600</item>
         <item name="android:textSize">@dimen/title_text_size</item>
         <item name="android:textStyle">bold</item>
     </style>
-    <style name="ItemDecripTextStyle" >
+
+    <style name="ItemDecripTextStyle">
         <item name="android:textColor">@color/grey_400</item>
         <item name="android:textSize">@dimen/descrip_text_size</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="MainMenuButtonTextStyle" >
+    <style name="MainMenuButtonTextStyle">
         <item name="android:textColor">@color/grey_600</item>
         <item name="android:textSize">@dimen/tab_text_size</item>
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
 </resources>
