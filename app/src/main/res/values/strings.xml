@@ -17,6 +17,12 @@
     <string name="test_store_num_tip_content">无法获取本机号码，请管理员手动输入</string>
     <string name="test_gps_bind_tip_content">该设备并未进行人员信息绑定，请管理员确认</string>
 
+    <string name="main_menu_camera">摄像头验证</string>
+    <string name="main_menu_location">实时位置</string>
+    <string name="main_menu_inbox">收件箱</string>
+    <string name="main_menu_wireless">无线手环</string>
+    <string name="main_menu_clockin">人员打卡</string>
+
     <string name="restore_default">"还原默认设置"</string>
 
     <string name="open_gps">"请打开GPS"</string>

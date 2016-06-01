@@ -28,6 +28,6 @@
         android:text="Welcome to UTT"
         android:textSize="38sp"
         android:textStyle="bold"
-        android:textColor="@color/grey_500"/>
+        android:textColor="@android:color/white"/>
 
 </RelativeLayout>

@@ -51,9 +51,6 @@ public class MainMenuActivity extends AppCompatActivity implements ConstDefine {
     @Bind(R.id.func5)
     ImageButton imageButton5;
 
-    @Bind(R.id.func6)
-    ImageButton imageButton6;
-
     @Bind(R.id.test_fab)
     Button exitBT;
 
@@ -123,6 +120,7 @@ public class MainMenuActivity extends AppCompatActivity implements ConstDefine {
         pThis = this;
         ButterKnife.bind(pThis);
 
+
         sharedPreferencesHelper = SharedPreferencesHelper.getInstance();
 
         initGPS(pThis);
@@ -172,34 +170,30 @@ public class MainMenuActivity extends AppCompatActivity implements ConstDefine {
 
     @OnClick(R.id.func1)
     public void onFunc1Click(View view) {
-        startActivity(new Intent(this, DeviceManagerActivity.class));
+
 
     }
 
     @OnClick(R.id.func2)
     public void onFunc2Click(View view) {
-        startActivity(new Intent(this, ProgramItemActivity.class));
+        startActivity(new Intent(this, GpsInformationActivity.class));
     }
 
     @OnClick(R.id.func3)
     public void onFunc3Click(View view) {
-
+        startActivity(new Intent(this, ProgramItemActivity.class));
     }
 
     @OnClick(R.id.func4)
     public void onFunc4Click(View view) {
-
+        startActivity(new Intent(this, DeviceManagerActivity.class));
     }
 
     @OnClick(R.id.func5)
     public void onFunc5Click(View view) {
-        startActivity(new Intent(this, GpsInformationActivity.class));
+
     }
 
-    @OnClick(R.id.func6)
-    public void onFunc6Click(View view) {
-        startActivity(new Intent(this, SettingsActivity.class));
-    }
 
     @OnClick(R.id.test_fab)
     public void onFabClick(View view) {

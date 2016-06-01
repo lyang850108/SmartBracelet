@@ -33,6 +33,7 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -87,7 +88,7 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
     private Activity pThis;
 
     @Bind(R.id.fab)
-    FloatingActionButton floatingActionButton;
+    Button floatingActionButton;
 
     @Bind(R.id.device_list_mm)
     ListView listView;

@@ -3,6 +3,8 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
+        <item name="actionBarStyle">@style/MyActionBar</item>
+        <item name="windowActionBarOverlay">true</item>
     </style>
     <!-- Base application theme. -->
     <style name="Theme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar"></style>
@@ -44,7 +46,7 @@
     </style>
 
     <style name="ItemTitleTextStyle">
-        <item name="android:textColor">@color/grey_600</item>
+        <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">@dimen/title_text_size</item>
         <item name="android:textStyle">bold</item>
     </style>
@@ -69,6 +71,11 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+    <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">　　
+        <item name="background">@color/blue_500</item>
+    </style>
 
 
 </resources>
