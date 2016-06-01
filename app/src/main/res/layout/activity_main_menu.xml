@@ -1,179 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.smartbracelet.com.smartbracelet.activity.MainMenuActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:background="@color/blue_500"
-        android:orientation="horizontal"
-        >
+        android:layout_marginTop="@dimen/main_menu_margin_gap"
+        android:background="@mipmap/bg_main_menu"
+        android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:src="@mipmap/ic_startup"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="20dp"/>
+            android:layout_marginLeft="20dp"
+            android:src="@mipmap/utt_log" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="UTT社区矫正客户端"
-            android:textAppearance="@style/ItemTitleTextStyle"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="5dp"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/main_menu_button_height"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_weight="1.0">
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_startup"
-                android:id="@+id/func1" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/MainMenuButtonTextStyle"
-                android:text="@string/main_menu_camera"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/main_menu_button_height"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_weight="1.0">
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_startup"
-                android:id="@+id/func2" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/MainMenuButtonTextStyle"
-                android:text="@string/main_menu_location"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/main_menu_button_height"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_weight="1.0">
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_startup"
-                android:id="@+id/func3" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/MainMenuButtonTextStyle"
-                android:text="@string/main_menu_inbox"/>
-        </LinearLayout>
-
+            android:layout_marginLeft="10dp"
+            android:text="UTT社区矫正客户端"
+            android:textAppearance="@style/ItemTitleTextStyle" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/main_menu_button_height"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_weight="1.0">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_menu_margin_gap"
+            android:layout_weight="1"
+            android:background="@mipmap/bg_main_menu">
 
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_startup"
-                android:id="@+id/func4" />
+            <ImageView
+                android:id="@+id/func1"
+                android:layout_width="@dimen/main_menu_ima_size"
+                android:layout_height="@dimen/main_menu_ima_size"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:src="@mipmap/main_menu_camera" />
+        </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/MainMenuButtonTextStyle"
-                android:text="@string/main_menu_wireless"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_menu_margin_gap"
+            android:layout_weight="1"
+            android:background="@mipmap/bg_main_menu"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/func2"
+                android:layout_width="@dimen/main_menu_ima_size"
+                android:layout_height="@dimen/main_menu_ima_size"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:src="@mipmap/main_menu_gps" />
+
+            <View
+                android:layout_width="2dip"
+                android:layout_height="match_parent"
+                android:background="@android:color/white"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <ImageView
+                android:id="@+id/func3"
+                android:layout_width="@dimen/main_menu_ima_size"
+                android:layout_height="@dimen/main_menu_ima_size"
+                android:layout_marginLeft="@dimen/main_menu_margin_gap"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:src="@mipmap/main_menu_sb" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/main_menu_button_height"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_weight="1.0">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_menu_margin_gap"
+            android:layout_weight="1"
+            android:background="@mipmap/bg_main_menu"
+            android:orientation="horizontal">
 
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_startup"
-                android:id="@+id/func5" />
+            <ImageView
+                android:id="@+id/func4"
+                android:layout_width="@dimen/main_menu_ima_size"
+                android:layout_height="@dimen/main_menu_ima_size"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:src="@mipmap/main_menu_inbox" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/MainMenuButtonTextStyle"
-                android:text="@string/main_menu_clockin"/>
+            <View
+                android:layout_width="2dip"
+                android:layout_height="match_parent"
+                android:background="@android:color/white"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <ImageView
+                android:id="@+id/func5"
+                android:layout_width="@dimen/main_menu_ima_size"
+                android:layout_height="@dimen/main_menu_ima_size"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/main_menu_margin_gap"
+                android:layout_weight="1"
+                android:src="@mipmap/main_menu_checkin" />
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/main_menu_button_height"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_weight="1.0"
-            android:visibility="invisible">
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_startup"
-                android:id="@+id/func6" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/MainMenuButtonTextStyle"
-                android:text="设置"/>
-        </LinearLayout>
-
     </LinearLayout>
-
-    <Button
-        android:id="@+id/test_fab"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:background="@color/blue_500"
-        android:layout_gravity="center_horizontal"
-        android:text="退出系统"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="80dp"/>
 
 </LinearLayout>

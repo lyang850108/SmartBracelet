@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@color/blue_500"
+    android:background="@mipmap/bg_main_menu"
     tools:context="com.original.abroadeasy.ui.LaunchAnimActivity">
 
     <ImageView
@@ -16,7 +16,7 @@
         android:layout_height="150dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="79dp"
-        android:src="@mipmap/ic_startup"/>
+        android:src="@mipmap/utt_log"/>
 
     <TextView
         android:id="@+id/tx_launch_title"

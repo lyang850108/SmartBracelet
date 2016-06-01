@@ -524,4 +524,6 @@
     <color name="actionbar_icon_color">#ffffff</color>
 
     <color name="blog_text_button">#68B9CC</color>
+
+    <color name="color_theme">#16B7A8</color>
 </resources>

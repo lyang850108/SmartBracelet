@@ -48,7 +48,7 @@
     <style name="ItemTitleTextStyle">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">@dimen/title_text_size</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textStyle">normal</item>
     </style>
 
     <style name="ItemDecripTextStyle">
@@ -74,7 +74,7 @@
 
 
     <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">　　
-        <item name="background">@color/blue_500</item>
+        <item name="background">@color/color_theme</item>
     </style>
 
 

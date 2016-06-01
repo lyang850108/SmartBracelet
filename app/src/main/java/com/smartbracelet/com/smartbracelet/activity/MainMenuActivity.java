@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
@@ -37,22 +38,19 @@ public class MainMenuActivity extends AppCompatActivity implements ConstDefine {
 
 
     @Bind(R.id.func1)
-    ImageButton imageButton1;
+    ImageView imageButton1;
 
     @Bind(R.id.func2)
-    ImageButton imageButton2;
+    ImageView imageButton2;
 
     @Bind(R.id.func3)
-    ImageButton imageButton3;
+    ImageView imageButton3;
 
     @Bind(R.id.func4)
-    ImageButton imageButton4;
+    ImageView imageButton4;
 
     @Bind(R.id.func5)
-    ImageButton imageButton5;
-
-    @Bind(R.id.test_fab)
-    Button exitBT;
+    ImageView imageButton5;
 
     //public static double latitude = 0;
     //public static double longtitude = 0;
@@ -181,12 +179,12 @@ public class MainMenuActivity extends AppCompatActivity implements ConstDefine {
 
     @OnClick(R.id.func3)
     public void onFunc3Click(View view) {
-        startActivity(new Intent(this, ProgramItemActivity.class));
+        startActivity(new Intent(this, DeviceManagerActivity.class));
     }
 
     @OnClick(R.id.func4)
     public void onFunc4Click(View view) {
-        startActivity(new Intent(this, DeviceManagerActivity.class));
+        startActivity(new Intent(this, ProgramItemActivity.class));
     }
 
     @OnClick(R.id.func5)
@@ -194,11 +192,6 @@ public class MainMenuActivity extends AppCompatActivity implements ConstDefine {
 
     }
 
-
-    @OnClick(R.id.test_fab)
-    public void onFabClick(View view) {
-        finish();
-    }
 
     private void initGPS(final Context context) {
         LocationManager locationManager = (LocationManager) context
