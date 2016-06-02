@@ -27,17 +27,17 @@
         <RadioButton
             android:id="@+id/tab_home"
             style="@style/navigation_bottom_radio"
-            android:drawableTop="@drawable/button_home_selector"
+            android:drawableTop="@drawable/image_location_selector"
             android:text="@string/home" />
         <RadioButton
             android:id="@+id/tab_statis"
-            android:drawableTop="@drawable/button_explore_selector"
+            android:drawableTop="@drawable/image_camera_selector"
             style="@style/navigation_bottom_radio"
             android:text="@string/statisc" />
 
         <RadioButton
             android:id="@+id/tab_setting"
-            android:drawableTop="@drawable/button_news_selector"
+            android:drawableTop="@drawable/image_inbox_selector"
             style="@style/navigation_bottom_radio"
             android:text="@string/bluetooth" />
 

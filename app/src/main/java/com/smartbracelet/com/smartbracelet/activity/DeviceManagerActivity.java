@@ -270,10 +270,6 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
             sharedPreferencesHelper.putInt(SP_POST_INTERNAL, 60000);
         }
 
-        if (null != sharedPreferencesHelper) {
-            checkPhomeNumerAvailble(sharedPreferencesHelper);
-        }
-
         mDeviceListAdapter = new DeviceListAdapter(pThis);
         listView.setAdapter(mDeviceListAdapter);
         listView.setOnItemClickListener(onItemClickListener);
@@ -281,34 +277,13 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
         setupActionBar();
 
         //Add the animation in the startup by yangli 2013.11.11 happy singles day
-        TranslateAnimation alphaAnimation = new TranslateAnimation(0, 0, 0,
+        /*TranslateAnimation alphaAnimation = new TranslateAnimation(0, 0, 0,
                 -70);
         alphaAnimation.setDuration(500);
         alphaAnimation.setRepeatCount(3);
         alphaAnimation.setRepeatMode(Animation.REVERSE);
         floatingActionButton.setAnimation(alphaAnimation);
-        alphaAnimation.start();
-    }
-
-    private void checkPhomeNumerAvailble(SharedPreferencesHelper sharedPreferencesHelper) {
-        if (TextUtils.isEmpty(Utils.getTelNum(sharedPreferencesHelper))) {
-            //ToDo
-            final EditText input = new EditText(this);
-            if (null != pThis) {
-                if (null != mAlertDialog) {
-                    mAlertDialog.dismiss();
-                    mAlertDialog = null;
-                }
-                AlertDialogCreator.getInstance().setmButtonOnClickListener(mDialogListener);
-                mAlertDialog = AlertDialogCreator
-                        .getInstance()
-                        .createAlertDialogEdit(
-                                pThis,
-                                getString(R.string.tip_title),
-                                getString(R.string.test_store_num_tip_content), input);
-                mAlertDialog.show();
-            }
-        }
+        alphaAnimation.start();*/
     }
 
     @Override
@@ -703,10 +678,7 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
 
         @Override
         public void buttonTrue(String value) {
-            if (null != value && (!TextUtils.isEmpty(value)) && null != sharedPreferencesHelper) {
-                Utils.setTelNumber(value);
-                sharedPreferencesHelper.putString(SP_PHONE_NUMBER, value);
-            }
+
         }
 
         @Override
@@ -765,6 +737,7 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
 
             //取得默认的HttpClient
             HttpClient httpclient = new DefaultHttpClient();
+
             //取得HttpResponse
             HttpResponse httpResponse = httpclient.execute(httpRequest);
             //HttpStatus.SC_OK表示连接成功

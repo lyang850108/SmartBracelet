@@ -1,17 +1,28 @@
 package com.smartbracelet.com.smartbracelet.activity;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.model.BaseActivity;
+import com.smartbracelet.com.smartbracelet.util.SharedPreferencesHelper;
+import com.smartbracelet.com.smartbracelet.util.Utils;
+import com.smartbracelet.com.smartbracelet.view.AlertDialogCreator;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -43,15 +54,29 @@ public class LaunchAnimActivity extends BaseActivity
         textView.setAnimation(alphaAnimation2);
         alphaAnimation2.start();
 
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper.getInstance();
 
-                Intent intent = new Intent(LaunchAnimActivity.this , MainMenuActivity.class);
-                startActivity(intent);
-                LaunchAnimActivity.this.finish();
+                if (null != sharedPreferencesHelper) {
+                    if (TextUtils.isEmpty(Utils.getTelNum(sharedPreferencesHelper))) {
+                        Intent intent = new Intent(LaunchAnimActivity.this, InputTelNumActivity.class);
+                        startActivity(intent);
+                        LaunchAnimActivity.this.finish();
+                    } else {
+                        Intent intent = new Intent(LaunchAnimActivity.this, MainMenuActivity.class);
+                        startActivity(intent);
+                        LaunchAnimActivity.this.finish();
+                    }
+
+                }
+
+
             }
-        } , 6000);
+        }, 6000);
+
     }
 
     @Override
@@ -59,4 +84,5 @@ public class LaunchAnimActivity extends BaseActivity
         ButterKnife.unbind(this);
         super.onDestroy();
     }
+
 }

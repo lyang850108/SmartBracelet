@@ -256,6 +256,9 @@ public class Utils implements ConstDefine{
     }
 
     public  static int parseJsonResult (String json) {
+        if (null == json) {
+            return -1;
+        }
         int result = 0;
         try {
             JSONObject jsonObject = new JSONObject(json);
@@ -305,9 +308,8 @@ public class Utils implements ConstDefine{
     public static String getTelNumber() {
         return mPhoneAddress;
     }
-    public static String setTelNumber(String address) {
+    public static void setTelNumber(String address) {
         mPhoneAddress =  address;
-        return mPhoneAddress;
     }
 
     public static byte[] parseHexStringToBytes(final String hex) {
@@ -396,6 +398,18 @@ public class Utils implements ConstDefine{
         Intent intent = new Intent(
                 Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         context.startActivity(intent); // 设置完成后返回到原来的界面
+    }
+
+    public static boolean isMobileNO(String mobiles){
+
+        Pattern p = Pattern.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$");
+
+        Matcher m = p.matcher(mobiles);
+
+        System.out.println(m.matches()+"---");
+
+        return m.matches();
+
     }
 
 

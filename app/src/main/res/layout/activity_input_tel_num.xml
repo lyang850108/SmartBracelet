@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context="com.smartbracelet.com.smartbracelet.activity.InputTelNumActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/tel_input_tx_height"
+        android:gravity="center"
+        android:textAppearance="@style/ItemDecripTextStyle"
+        android:text="@string/test_store_num_tip_content"/>
+
+    <EditText
+        android:id="@+id/input_tel_et"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:inputType="phone"
+        android:layout_gravity="center_horizontal"/>
+
+    <Button
+        android:id="@+id/input_confirm_bt"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:background="@color/color_theme"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/confirm"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="20dp"/>
+
+</LinearLayout>

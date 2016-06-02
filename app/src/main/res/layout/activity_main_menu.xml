@@ -49,7 +49,7 @@
                 android:layout_height="@dimen/main_menu_ima_size"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@mipmap/main_menu_camera" />
+                android:src="@drawable/image_camera_selector" />
         </LinearLayout>
 
 
@@ -67,7 +67,7 @@
                 android:layout_height="@dimen/main_menu_ima_size"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@mipmap/main_menu_gps" />
+                android:src="@drawable/image_location_selector" />
 
             <View
                 android:layout_width="2dip"
@@ -83,7 +83,7 @@
                 android:layout_marginLeft="@dimen/main_menu_margin_gap"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@mipmap/main_menu_sb" />
+                android:src="@drawable/image_sb_selector" />
         </LinearLayout>
 
         <LinearLayout
@@ -100,7 +100,7 @@
                 android:layout_height="@dimen/main_menu_ima_size"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@mipmap/main_menu_inbox" />
+                android:src="@drawable/image_inbox_selector" />
 
             <View
                 android:layout_width="2dip"
@@ -116,7 +116,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="@dimen/main_menu_margin_gap"
                 android:layout_weight="1"
-                android:src="@mipmap/main_menu_checkin" />
+                android:src="@drawable/image_checkin_selector" />
         </LinearLayout>
     </LinearLayout>
 

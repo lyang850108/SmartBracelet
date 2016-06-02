@@ -189,7 +189,7 @@ public class MainMenuActivity extends AppCompatActivity implements ConstDefine {
 
     @OnClick(R.id.func5)
     public void onFunc5Click(View view) {
-
+        startActivity(new Intent(this, CheckInActivity.class));
     }
 
 

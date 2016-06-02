@@ -17,11 +17,19 @@
     <string name="test_store_num_tip_content">无法获取本机号码，请管理员手动输入</string>
     <string name="test_gps_bind_tip_content">该设备并未进行人员信息绑定，请管理员确认</string>
 
+    <string name="input_error_warning">您输入的号码有误，请重新输入</string>
+
     <string name="main_menu_camera">摄像头验证</string>
     <string name="main_menu_location">实时位置</string>
     <string name="main_menu_inbox">收件箱</string>
     <string name="main_menu_wireless">无线手环</string>
     <string name="main_menu_clockin">人员打卡</string>
+
+    <string name="check_in_title">人员学习打卡</string>
+    <string name="check_in_announce">宣告</string>
+    <string name="check_in_talk">谈话</string>
+    <string name="check_in_study">学习教育</string>
+    <string name="check_in_labor">劳动</string>
 
     <string name="restore_default">"还原默认设置"</string>
 
@@ -44,6 +52,8 @@
 
     <string name="pref_title_add_friends_to_messages">手动添加设备</string>
     <string name="pref_title_add_friends_to_messages_detail">主页面会显示设备列表，点击添加</string>
+
+    <string name="confirm">确定</string>
     <string-array name="pref_example_list_titles">
         <item>Always</item>
         <item>When possible</item>
