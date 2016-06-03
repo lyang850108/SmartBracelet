@@ -50,6 +50,7 @@ import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapper;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapperUiCallbacks;
 import com.smartbracelet.com.smartbracelet.model.ProgramItem;
 import com.smartbracelet.com.smartbracelet.network.PollingUtils;
+import com.smartbracelet.com.smartbracelet.network.SocketConnAsync;
 import com.smartbracelet.com.smartbracelet.service.HttpPostService;
 import com.smartbracelet.com.smartbracelet.service.LocationService;
 import com.smartbracelet.com.smartbracelet.util.ConstDefine;
@@ -68,6 +69,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -736,7 +740,17 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
 
 
             //取得默认的HttpClient
-            HttpClient httpclient = new DefaultHttpClient();
+            //HttpClient httpclient = new DefaultHttpClient();
+
+            //Change to Https due of lazy reson i didn't use the SocketConnAsync at all
+            // 参数
+            HttpParams httpParameters = new BasicHttpParams();
+            // 设置连接超时
+            HttpConnectionParams.setConnectionTimeout(httpParameters, 3000);
+            // 设置socket超时
+            HttpConnectionParams.setSoTimeout(httpParameters, 3000);
+            //使用Https
+            HttpClient httpclient = SocketConnAsync.initHttpClient(httpParameters);
 
             //取得HttpResponse
             HttpResponse httpResponse = httpclient.execute(httpRequest);
