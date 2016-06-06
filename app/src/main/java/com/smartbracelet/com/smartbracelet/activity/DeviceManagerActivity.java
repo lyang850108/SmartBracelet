@@ -51,6 +51,7 @@ import com.smartbracelet.com.smartbracelet.bean.GpsBean;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleNamesResolver;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapper;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapperUiCallbacks;
+import com.smartbracelet.com.smartbracelet.model.BaseActivity;
 import com.smartbracelet.com.smartbracelet.model.ProgramItem;
 import com.smartbracelet.com.smartbracelet.network.NetworkUtil;
 import com.smartbracelet.com.smartbracelet.network.PollingUtils;
@@ -92,7 +93,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class DeviceManagerActivity extends AppCompatActivity implements ConstDefine{
+/**
+ * Created by Yangli on 16-06-03.
+ * 蓝牙手环管理页面
+ */
+public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
     private Activity pThis;
 
     @Bind(R.id.fab)
@@ -300,8 +305,6 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
         listView.setAdapter(mDeviceListAdapter);
         listView.setOnItemClickListener(onItemClickListener);
 
-        setupActionBar();
-
         //Add the animation in the startup by yangli 2013.11.11 happy singles day
         /*TranslateAnimation alphaAnimation = new TranslateAnimation(0, 0, 0,
                 -70);
@@ -358,26 +361,6 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
         mDeviceListAdapter.clearList();
     }
 
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            startActivity(new Intent(this, MainMenuActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onDestroy() {

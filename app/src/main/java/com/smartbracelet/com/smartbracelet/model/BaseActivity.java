@@ -17,8 +17,13 @@
 package com.smartbracelet.com.smartbracelet.model;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
+
+import com.smartbracelet.com.smartbracelet.activity.MainMenuActivity;
 
 /**
  * A common superclass that keeps track of whether an {@link Activity} has saved its state yet or
@@ -32,6 +37,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mIsSafeToCommitTransactions = true;
+        setupActionBar();
     }
 
     @Override
@@ -52,15 +58,25 @@ public abstract class BaseActivity extends AppCompatActivity {
         mIsSafeToCommitTransactions = false;
     }
 
-    /**
-     * Returns true if it is safe to commit {@link FragmentTransaction}s at this time, based on
-     * whether {@link Activity#onSaveInstanceState} has been called or not.
-     *
-     * Make sure that the current activity calls into
-     * {@link super.onSaveInstanceState( Bundle outState)} (if that method is overridden),
-     * so the flag is properly set.
-     */
-    public boolean isSafeToCommitTransactions() {
-        return mIsSafeToCommitTransactions;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            startActivity(new Intent(this, MainMenuActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * Set up the {@link android.app.ActionBar}, if the API is available.
+     */
+    private void setupActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            // Show the Up button in the action bar.
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
 }

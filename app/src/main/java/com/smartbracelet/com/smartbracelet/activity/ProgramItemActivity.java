@@ -12,13 +12,14 @@ import android.widget.ImageView;
 
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.adapter.ProgramItemAdapter;
+import com.smartbracelet.com.smartbracelet.model.BaseActivity;
 import com.smartbracelet.com.smartbracelet.model.ProgramItem;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ProgramItemActivity extends AppCompatActivity {
+public class ProgramItemActivity extends BaseActivity {
     private View mView;
 
     @Bind(R.id.recycler_view_blog)
@@ -33,18 +34,6 @@ public class ProgramItemActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
         initView();
-        setupActionBar();
-    }
-
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
     }
 
     @Override
@@ -80,15 +69,7 @@ public class ProgramItemActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            startActivity(new Intent(this, MainMenuActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+
 
     public void onShareButtonClick(int pos) {
 

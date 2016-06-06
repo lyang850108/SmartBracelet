@@ -37,6 +37,7 @@ import retrofit.converter.GsonConverter;
 
 /**
  * Created by Yangli on 16-03-20.
+ * 应用启动入口，完成一些初始化工作，启动服务，初始化数据库
  */
 public class App extends Application {
     private static Context sContext;

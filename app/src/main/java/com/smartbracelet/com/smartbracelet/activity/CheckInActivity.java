@@ -9,11 +9,16 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 
 import com.smartbracelet.com.smartbracelet.R;
+import com.smartbracelet.com.smartbracelet.model.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class CheckInActivity extends AppCompatActivity {
+/**
+ * Created by Yangli on 16-06-03.
+ * 打卡页面
+ */
+public class CheckInActivity extends BaseActivity {
     private Activity pThis;
 
     @Bind(R.id.check_announce_id)
@@ -38,7 +43,6 @@ public class CheckInActivity extends AppCompatActivity {
         ButterKnife.bind(pThis);
         setTitle(getString(R.string.main_menu_clockin));
 
-        setupActionBar();
     }
 
     @Override
@@ -47,24 +51,4 @@ public class CheckInActivity extends AppCompatActivity {
         ButterKnife.unbind(pThis);
     }
 
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            startActivity(new Intent(this, MainMenuActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }
