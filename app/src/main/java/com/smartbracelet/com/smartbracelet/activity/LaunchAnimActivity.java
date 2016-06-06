@@ -47,6 +47,7 @@ public class LaunchAnimActivity extends BaseActivity
         setContentView(R.layout.activity_launch_anim);
         ButterKnife.bind(this);
 
+        //Logo的旋转动画
         Animation operatingAnim = AnimationUtils.loadAnimation(this, R.anim.luancher_img_repeat);
         imageView.setAnimation(operatingAnim);
         operatingAnim.start();

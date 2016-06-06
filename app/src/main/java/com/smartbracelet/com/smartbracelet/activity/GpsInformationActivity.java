@@ -55,45 +55,57 @@ public class GpsInformationActivity extends AppCompatPreferenceActivity implemen
          * location.getTime() 是指服务端出本次结果的时间，如果位置不发生变化，则时间不变
          */
         GpsBean gpsBean = GpsBean.getInstance();
-        sb.append("\n类型 : ");
-        mTypePrefs.setSummary(Integer.toString(gpsBean.getLocType()));
-        sb.append(gpsBean.getLocType());
-        sb.append("\n纬度 : ");
-        mLatitudePrefs.setSummary(gpsBean.getLatitude() + "");
-        sb.append(gpsBean.getLatitude());
+        //sb.append("\n类型 : ");
+
+        //sb.append(gpsBean.getLocType());
+        //sb.append("\n纬度 : ");
+
+        /*sb.append(gpsBean.getLatitude());
         sb.append("\n经度 : ");
-        mLongtitudePrefs.setSummary(gpsBean.getLongitude() + "");
+
         sb.append(gpsBean.getLongitude());
         sb.append("\n半径 : ");
-        mRadiusPrefs.setSummary(gpsBean.getRadius() + "");
+
         sb.append(gpsBean.getRadius());
         sb.append("\n国家码 : ");
-        mCountryCodePrefs.setSummary(gpsBean.getCountryCode());
+
         sb.append(gpsBean.getCountryCode());
         sb.append("\n国家 : ");
-        mCountryPrefs.setSummary(gpsBean.getCountry());
+
         sb.append(gpsBean.getCountry());
         sb.append("\n城市码 : ");
-        mCityCodeCodePrefs.setSummary(gpsBean.getCityCode());
+
         sb.append(gpsBean.getCityCode());
         sb.append("\n城市 : ");
-        mCityCodePrefs.setSummary(gpsBean.getCity());
+
         sb.append(gpsBean.getCity());
         sb.append("\n地区 : ");
-        mDistrictPrefs.setSummary(gpsBean.getDistrict());
+
         sb.append(gpsBean.getDistrict());
         sb.append("\n街道 : ");
-        mAddressPrefs.setSummary(gpsBean.getStreet());
+
         sb.append(gpsBean.getStreet());
         sb.append("\n地址 : ");
-        mAddressPrefs.setSummary(gpsBean.getAddrStr());
+
         sb.append(gpsBean.getAddrStr());
-        mDescriptionPrefs.setSummary(gpsBean.getLocationDescribe());
+
         sb.append("\n概况: ");
         sb.append(gpsBean.getLocationDescribe());
-        /*sb.append("\nDirection(not all devices have value): ");
+        sb.append("\nDirection(not all devices have value): ");
         sb.append(gpsBean.getDirection());*/
 
+        mTypePrefs.setSummary(Integer.toString(gpsBean.getLocType()));
+        mLatitudePrefs.setSummary(gpsBean.getLatitude() + "");
+        mLongtitudePrefs.setSummary(gpsBean.getLongitude() + "");
+        mRadiusPrefs.setSummary(gpsBean.getRadius() + "");
+        mCountryCodePrefs.setSummary(gpsBean.getCountryCode());
+        mCountryPrefs.setSummary(gpsBean.getCountry());
+        mCityCodeCodePrefs.setSummary(gpsBean.getCityCode());
+        mCityCodePrefs.setSummary(gpsBean.getCity());
+        mDistrictPrefs.setSummary(gpsBean.getDistrict());
+        mStreetPrefs.setSummary(gpsBean.getStreet());
+        mAddressPrefs.setSummary(gpsBean.getAddrStr());
+        mDescriptionPrefs.setSummary(gpsBean.getLocationDescribe());
     }
 
     @Override
@@ -123,8 +135,10 @@ public class GpsInformationActivity extends AppCompatPreferenceActivity implemen
     }
 
     private void loadPrefs() {
+        //载入布局文件
         addPreferencesFromResource(R.xml.pref_gps_infor);
 
+        //初始化Preferences
         mAddressPrefs = (Preference) findPreference(KEY_INFOR_ADDR);
         mTypePrefs = (Preference) findPreference(KEY_INFOR_TYPE);
         mCityCodeCodePrefs = (Preference) findPreference(KEY_INFOR_CITYCODE);

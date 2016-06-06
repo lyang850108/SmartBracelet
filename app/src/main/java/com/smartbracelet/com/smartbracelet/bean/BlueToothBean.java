@@ -1,5 +1,7 @@
 package com.smartbracelet.com.smartbracelet.bean;
 
+import com.smartbracelet.com.smartbracelet.util.LogUtil;
+
 /**
  * Created by Yang on 16/6/5.
  * 蓝牙设备存储数据载体
@@ -32,6 +34,7 @@ public class BlueToothBean {
     }
 
     public void setBatteryLevel(int batteryLevel) {
+        LogUtil.d("getBatteryLevel getBatteryLevel" + batteryLevel);
         this.batteryLevel = batteryLevel;
     }
 

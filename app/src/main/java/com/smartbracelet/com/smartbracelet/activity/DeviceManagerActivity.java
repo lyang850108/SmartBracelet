@@ -373,6 +373,7 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         /*Snackbar.make(view, "搜索设备中.......", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();*/
         LogUtil.d("onFabClick tag = " + view.getTag());
+        isBatteryAvailble();
         if (0 == view.getTag()) {
             sendMsg(MSG_SERCH_DONE, 0);
         }
@@ -841,6 +842,7 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
                 LogUtil.d("handleDeviceConnected SP_BIND_STATE" + bindState);
                 if (STATE_DEVICE_UNBIND == bindState) {
                     //这里没有绑定过，需检查各个性能指标再发送激活命令
+                    //这里有个问题 就是蓝牙读取电量太慢了 这里始终为0
                     if (isActivationSB()) {
                         if (View.GONE == floatingActionButton.getVisibility()) {
                             floatingActionButton.setVisibility(View.VISIBLE);
@@ -1205,16 +1207,28 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
             Toast.makeText(getApplicationContext(), "手环未连接", Toast.LENGTH_LONG).show();
             return false;
         }
+
+
+        if (false == NetworkUtil.isNetworkAvailable(pThis)) {
+            Toast.makeText(getApplicationContext(), "网络数据不可用", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isBatteryAvailble() {
+        if (null == mBlueToothBean) {
+            return false;
+        }
+
+
         LogUtil.d("getBatteryLevel:" + mBlueToothBean.getBatteryLevel());
         if (30 > mBlueToothBean.getBatteryLevel()) {
             Toast.makeText(getApplicationContext(), "电量太低", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if (false == NetworkUtil.isNetworkAvailable(pThis)) {
-            Toast.makeText(getApplicationContext(), "网络数据不可用", Toast.LENGTH_LONG).show();
-            return false;
-        }
+
         return true;
     }
 
