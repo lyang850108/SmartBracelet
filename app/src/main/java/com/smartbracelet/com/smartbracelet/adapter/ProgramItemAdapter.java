@@ -17,6 +17,7 @@ import java.util.List;
 
 /**
  * Created by Yang on 16/5/14.
+ * 103推送消息展示的数据适配器
  */
 public class ProgramItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     final LayoutInflater mLayoutInflater;
@@ -38,6 +39,7 @@ public class ProgramItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         mData = new ArrayList<BlogItem>();
         mLayoutInflater = layoutInflater;
         List<ProgramItem> list = new ArrayList<ProgramItem>();
+        //查询数据库里的推送消息
         list = LiteOrmDBUtil.getQueryAll(ProgramItem.class);
         LogUtil.d("list" + list.size());
         for (int i = 0; i < list.size(); i++) {

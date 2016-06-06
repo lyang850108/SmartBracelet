@@ -18,6 +18,8 @@ import java.util.List;
 
 /**
  * Created by Yangli on 16-03-24.
+ * HomeFragment的数据适配器
+ * 暂时不用
  */
 public class HomeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

@@ -3,7 +3,8 @@ package com.smartbracelet.com.smartbracelet.util;
 import android.util.Log;
 
 /**
- * Created by zengjinlong on 15-10-30.
+ * Created by Yangli on 15-10-30.
+ * 日志工具类
  */
 public class LogUtil {
     private static final String TEST_TAG = "zjltest";

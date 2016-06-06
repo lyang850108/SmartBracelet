@@ -46,6 +46,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * Created by Yang on 16/3/17.
+ * 第一个测试版本的主显示页面
+ * 暂时不用
+ */
 public class HomeFragment extends BaseFragment implements ConstDefine{
     private View mView;
     @Bind(R.id.timer_checkBox)

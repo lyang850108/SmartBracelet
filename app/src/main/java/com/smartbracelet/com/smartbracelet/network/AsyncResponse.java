@@ -1,5 +1,9 @@
 package com.smartbracelet.com.smartbracelet.network;
 
+/**
+ * Created by Yang on 16/3/17.
+ * 异步回调接口
+ */
 public interface AsyncResponse {
     void onDataReceivedSuccess(String type, String data);
     void onDataReceivedFailed();

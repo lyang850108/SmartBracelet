@@ -27,6 +27,11 @@ import com.smartbracelet.com.smartbracelet.view.AlertDialogCreator;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+/**
+ * Created by Yangli on 16-05-31.
+ * 应用第一次启动页面
+ * 后续可增加使用详情简介的Activity
+ */
 public class LaunchAnimActivity extends BaseActivity
 
 {

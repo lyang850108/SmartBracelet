@@ -11,6 +11,7 @@ import com.smartbracelet.com.smartbracelet.R;
 
 /**
  * Created by leo.yang on 2016/4/15.
+ * 弹出框单例
  */
 public class AlertDialogCreator {
     private static AlertDialogCreator instance;

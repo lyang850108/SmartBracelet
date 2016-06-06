@@ -24,6 +24,10 @@ import android.view.ViewPropertyAnimator;
 import android.view.animation.Interpolator;
 import android.view.animation.PathInterpolator;
 
+/**
+ * Created by leo.yang on 2016/5/9.
+ * 动画工具类
+ */
 public class AnimUtils {
     public static final int DEFAULT_DURATION = -1;
     public static final int NO_DELAY = 0;

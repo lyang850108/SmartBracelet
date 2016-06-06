@@ -19,6 +19,10 @@ import com.smartbracelet.com.smartbracelet.util.LogUtil;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+/**
+ * Created by Yangli on 16-04-30.
+ * 服务器推送消息页面，展示103协议下发的短消息
+ */
 public class ProgramItemActivity extends BaseActivity {
     private View mView;
 

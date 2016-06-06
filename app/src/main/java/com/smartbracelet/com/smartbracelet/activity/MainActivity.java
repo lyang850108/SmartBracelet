@@ -27,6 +27,9 @@ import butterknife.ButterKnife;
 
 /**
  * Created by Yangli on 16-03-20.
+ * 这个页面是用于以前调试的页面，是这个应用的最初的beta版本
+ * 有3个Fragment组成
+ * 不删，当做纪念吧
  */
 
 public class MainActivity extends AppCompatActivity {

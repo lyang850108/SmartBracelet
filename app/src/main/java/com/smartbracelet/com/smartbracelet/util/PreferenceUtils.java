@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 /**
  * Created by zengjinlong on 15-11-5.
+ * Preference工具类
  */
 public class PreferenceUtils {
 

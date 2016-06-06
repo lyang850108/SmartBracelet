@@ -5,6 +5,7 @@ import com.litesuits.orm.db.annotation.Table;
 
 /**
  * Created by Yangli on 16-05-06.
+ * 数据载体，用于103推送消息
  */
 @Table("msg")
 public class ProgramItem extends BaseModel {

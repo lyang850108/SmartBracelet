@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 /**
  * Tks:    ZhuWenWu
+ * String工具类
  */
 public class StringHelper {
     public static String getStr(String str) {

@@ -5,6 +5,8 @@ import java.util.TimerTask;
 
 /**
  * Created by Yang on 16/5/14.
+ * 反射机制
+ * 用于修改Timetask的周期
  */
 public abstract class ReschedulableTimerTask extends TimerTask {
     public void setPeriod(long period) {

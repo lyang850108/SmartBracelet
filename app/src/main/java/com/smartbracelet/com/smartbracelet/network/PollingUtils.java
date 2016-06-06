@@ -11,6 +11,12 @@ import com.smartbracelet.com.smartbracelet.util.ConstDefine;
 
 /**
  * Created by Yang on 16/5/18.
+ * 轮旬服务类
+ * 需求是手机在待机时也能在一定周期内上报
+ * 用AlarmManager替换Timstask的原因是由于
+ * Timetask在系统休眠时容易被CPU杀死，AM不会
+ * 但是由于每个厂家对功耗的优化，比如华为待机时会关闭掉数据业务
+ * 这个会对我们本身的策略有影响
  */
 public class PollingUtils implements ConstDefine{
 

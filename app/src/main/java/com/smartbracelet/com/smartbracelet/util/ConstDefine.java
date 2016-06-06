@@ -6,6 +6,7 @@ import static java.util.UUID.fromString;
 
 /**
  * Created by leo.yang on 2016/4/15.
+ * 常量定义
  */
 public interface ConstDefine {
 

@@ -21,6 +21,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
+/**
+ * Created by Yangli on 16-04-31.
+ * 服务器推送消息详情页面
+ */
 public class ProgramDetailActivity extends AppCompatActivity {
 
     @Bind(R.id.detail_title_id)

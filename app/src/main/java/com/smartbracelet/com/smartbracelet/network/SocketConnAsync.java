@@ -41,6 +41,10 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+/**
+ * Created by Yang on 16/5/20.
+ * 网络连接异步类
+ */
 public class SocketConnAsync extends AsyncTask<String, Void, String> implements ConstDefine {
     public AsyncResponse asyncResponse;
 

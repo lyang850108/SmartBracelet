@@ -95,7 +95,7 @@ import butterknife.OnClick;
 
 /**
  * Created by Yangli on 16-06-03.
- * 蓝牙手环管理页面
+ * 蓝牙手环管理页面,用于手环的连接，状态告警，拉起后台上报坐标服务等
  */
 public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
     private Activity pThis;
@@ -390,7 +390,8 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
             }
             String bindAddress = sharedPreferencesHelper.getString(BLE_ADDRESS_PREF);
             LogUtil.d("handleFoundDevice" + device.getAddress() + " name: " + device.getName());
-            if (bindAddress.equals(device.getAddress()) || (App.isFirstLuanched && TextUtils.isEmpty(bindAddress))) {
+            //if (bindAddress.equals(device.getAddress()) || (App.isFirstLuanched && TextUtils.isEmpty(bindAddress))) {
+            if (bindAddress.equals(device.getAddress()) || TextUtils.isEmpty(bindAddress)) {
                 if (!TextUtils.isEmpty(device.getName()) && device.getName().startsWith("utt")) {
                     //mTextView.append("\n数据库存储的地址" + bindAddress);
                     LogUtil.d("existAddress" + bindAddress);
@@ -987,9 +988,9 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
             //mTextView.append("\n 坐标数据服务器处理成功，没有越界");
             // 只保留最原始的蓝牙地址
             if (TextUtils.isEmpty(sharedPreferencesHelper.getString(BLE_ADDRESS_PREF))) {
-                if (App.isFirstLuanched) {
+                /*if (App.isFirstLuanched) {
                     App.isFirstLuanched = false;
-                }
+                }*/
                 LogUtil.d("handleGpsMsg getAddress" + mConnectedAddress);
                 if (!TextUtils.isEmpty(mConnectedAddress)) {
                     sharedPreferencesHelper.putString(BLE_ADDRESS_PREF, mConnectedAddress);
@@ -1003,9 +1004,9 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
             //mTextView.append("\n 坐标数据服务器处理成功，坐标越界");
             // 只保留最原始的蓝牙地址
             if (TextUtils.isEmpty(sharedPreferencesHelper.getString(BLE_ADDRESS_PREF))) {
-                if (App.isFirstLuanched) {
+                /*if (App.isFirstLuanched) {
                     App.isFirstLuanched = false;
-                }
+                }*/
                 LogUtil.d("handleGpsMsg getAddress" + mConnectedAddress);
                 if (!TextUtils.isEmpty(mConnectedAddress)) {
                     sharedPreferencesHelper.putString(BLE_ADDRESS_PREF, mConnectedAddress);
@@ -1115,7 +1116,8 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
             public void run() {
                 String bindAddress = sharedPreferencesHelper.getString(BLE_ADDRESS_PREF);
                 LogUtil.d("handleFoundDevice" + device.getAddress() + " name: " + device.getName());
-                if (App.isFirstLuanched && TextUtils.isEmpty(bindAddress)) {
+                //if (App.isFirstLuanched && TextUtils.isEmpty(bindAddress)) {
+                if (TextUtils.isEmpty(bindAddress)) {
                     if (!TextUtils.isEmpty(device.getName())&& device.getName().startsWith("utt")) {
                         //如果第一次搜索到设备，底部的文字View应该隐藏
                         if (null != mInforTx) {

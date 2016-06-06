@@ -30,6 +30,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * Created by Yangli on 16-05-31.
+ * 应用的主页面
+ * 包含了5个功能单元
+ * 拍照 位置 手环 消息 打卡
+ */
 public class MainMenuActivity extends AppCompatActivity implements ConstDefine {
     private Activity pThis;
 

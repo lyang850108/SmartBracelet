@@ -28,6 +28,8 @@ import com.smartbracelet.com.smartbracelet.util.SharedPreferencesHelper;
  * Android Design: Settings</a> for design guidelines and the <a
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
+ * 设置页面，用于设置一些常规的参数，比如连接手环的地址显示，是否打开通知等，目前把它作为二级页面
+ * By yangli
  */
 public class SettingsActivity extends AppCompatPreferenceActivity implements Preference.OnPreferenceChangeListener, ConstDefine {
 

@@ -47,6 +47,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * Created by Yang on 16/3/17.
+ * 第一个测试版本的蓝牙显示页面
+ * 暂时不用
+ */
 public class BlueToothFragment extends BaseFragment implements ConstDefine{
 
     @Bind(R.id.search_bt_button)

@@ -2,6 +2,9 @@ package com.smartbracelet.com.smartbracelet.network;
 
 /**
  * Created by leo.yang on 2016/5/9.
+ * 坐标工具类 暂时不用
+ * 可以在LocationClientOption直接设置，后续有需求可以用该类进行转换
+ * setCoorType("gcj02");//可选，默认gcj02，设置返回的定位结果坐标系，如果配合百度地图使用，建议设置为bd09ll;
  */
 public class PositionUtil {
     public static final String BAIDU_LBS_TYPE = "bd09ll";

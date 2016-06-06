@@ -80,6 +80,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * Created by Yangli on 16-04-23.
+ * 用于本地测试连接手环和服务器交互整个流程的页面
+ * 后续只需要在Manifest里将这个页面换作启动界面
+ * 可以用于快速调试
+ */
 public class TestFlowActivity extends AppCompatActivity implements ConstDefine {
 
     /*@Bind(R.id.test_device_list)

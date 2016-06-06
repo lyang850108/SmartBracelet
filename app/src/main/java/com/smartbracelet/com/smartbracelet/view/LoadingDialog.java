@@ -18,6 +18,7 @@ import com.smartbracelet.com.smartbracelet.R;
 
 /**
  * Created by Yang on 16/4/30.
+ * 载入框单例
  */
 public class LoadingDialog {
     private Context context;

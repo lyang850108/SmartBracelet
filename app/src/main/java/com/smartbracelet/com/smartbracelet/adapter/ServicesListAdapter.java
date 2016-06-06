@@ -14,7 +14,11 @@ import android.widget.TextView;
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleNamesResolver;
 
-/* display all services for particular device */
+/**
+ * Created by Yangli on 16-04-03.
+ * display all services for particular device
+ * 暂时没有用到
+ */
 public class ServicesListAdapter extends BaseAdapter {
 	private ArrayList<BluetoothGattService> mBTServices;
 	private LayoutInflater mInflater;

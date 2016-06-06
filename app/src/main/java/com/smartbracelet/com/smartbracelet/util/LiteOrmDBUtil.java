@@ -13,6 +13,11 @@ import com.smartbracelet.com.smartbracelet.model.ProgramItem;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by leo.yang on 2016/4/9.
+ * 轻量级的数据库工具类
+ * 超好用，具体用法可以网上搜索
+ */
 public class LiteOrmDBUtil {
 
     public static final String DB_NAME = "utt.db";

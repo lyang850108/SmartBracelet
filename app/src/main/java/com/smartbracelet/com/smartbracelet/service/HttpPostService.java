@@ -27,6 +27,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by leo.yang on 2016/5/9.
+ * Http推送服务类
+ * 用于发送后台服务（消息推送103 以及坐标上报101）
+ */
 public class HttpPostService extends Service implements ConstDefine{
 
     int recoidTimes = 0;

@@ -25,6 +25,11 @@ import com.smartbracelet.com.smartbracelet.bean.BlueToothBean;
 import com.smartbracelet.com.smartbracelet.util.ConstDefine;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
 
+/**
+ * Created by Yang on 16/5/17.
+ * Ble协议封装类控制器 非常重要
+ * 连接UI和数据部分，MVC模式中的C
+ */
 public class BleWrapper {
 	/* defines (in milliseconds) how often RSSI should be updated */
     private static final int RSSI_UPDATE_TIME_INTERVAL = 1500; // 1.5 seconds

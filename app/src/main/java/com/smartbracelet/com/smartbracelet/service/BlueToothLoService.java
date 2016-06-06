@@ -22,6 +22,12 @@ import com.smartbracelet.com.smartbracelet.util.LogUtil;
 
 import java.util.List;
 
+/**
+ * Created by Yang on 16/5/20.
+ * 蓝牙服务类
+ * 最开始想把蓝牙连接放到服务中去做的
+ * 后面采用了封装接口-回调的方式，这个服务暂时没用
+ */
 public class BlueToothLoService extends Service implements ConstDefine{
 
     private Context mContext;

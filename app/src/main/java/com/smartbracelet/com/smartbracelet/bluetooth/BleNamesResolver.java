@@ -4,6 +4,10 @@ import java.util.HashMap;
 
 import android.util.SparseArray;
 
+/**
+ * Created by Yang on 16/5/17.
+ * Ble名称解析器
+ */
 public class BleNamesResolver {
 	private static HashMap<String, String> mServices = new HashMap<String, String>();
 	private static HashMap<String, String> mCharacteristics = new HashMap<String, String>();

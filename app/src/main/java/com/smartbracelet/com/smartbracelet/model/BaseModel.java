@@ -7,7 +7,7 @@ import com.litesuits.orm.db.enums.AssignType;
 import java.io.Serializable;
 
 /**
- * Created by zengjinlong on 15-11-28.
+ * 模板类
  */
 public class BaseModel implements Serializable {
     @PrimaryKey(AssignType.AUTO_INCREMENT) @Column("_id") protected long id;

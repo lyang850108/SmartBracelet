@@ -2,6 +2,8 @@ package com.smartbracelet.com.smartbracelet.bean;
 
 /**
  * Created by Yang on 16/6/5.
+ * 蓝牙设备存储数据载体
+ * 采用单例模式
  */
 public class BlueToothBean {
 

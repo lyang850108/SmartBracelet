@@ -7,6 +7,10 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
+/**
+ * Created by Yang on 16/5/17.
+ * 蓝牙协议的界面回调类
+ */
 public interface BleWrapperUiCallbacks {
 
 	public void uiDeviceFound(final BluetoothDevice device, int rssi, byte[] record);

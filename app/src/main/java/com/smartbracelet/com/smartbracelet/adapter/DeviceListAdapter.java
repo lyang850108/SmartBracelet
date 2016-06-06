@@ -13,6 +13,11 @@ import android.widget.TextView;
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
 
+/**
+ * Created by Yangli on 16-05-03.
+ * 设备列表适配器
+ * 用于在DeviceManagerActivity第一次搜索周围设备时使用
+ */
 public class DeviceListAdapter extends BaseAdapter {
 	
 	private ArrayList<BluetoothDevice> mDevices;

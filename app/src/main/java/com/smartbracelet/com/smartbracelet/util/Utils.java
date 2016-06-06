@@ -39,6 +39,8 @@ import java.util.regex.Pattern;
 
 /**
  * Created by Yangli on 16-04-05.
+ * 常用工具类
+ * 将JSON数据打包，消息通知，数据解析等
  */
 public class Utils implements ConstDefine{
     public static final boolean DEBUG = true;

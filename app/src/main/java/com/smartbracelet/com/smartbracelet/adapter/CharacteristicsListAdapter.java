@@ -14,6 +14,11 @@ import android.widget.TextView;
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleNamesResolver;
 
+/**
+ * Created by Yangli on 16-04-03.
+ * 手环Charac列表展示的数据适配器--PeripheralActivity
+ * 暂时没有用到
+ */
 public class CharacteristicsListAdapter extends BaseAdapter {
     	private ArrayList<BluetoothGattCharacteristic> mCharacteristics;
     	private LayoutInflater mInflater;

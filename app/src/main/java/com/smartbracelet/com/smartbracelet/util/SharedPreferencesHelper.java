@@ -17,6 +17,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
+/**
+ * Created by Yang on 16/5/14.
+ * SharedPreferences工具类
+ * 这个相当好用 多用多用
+ */
 public class SharedPreferencesHelper {
     private static SharedPreferences sPreferences = null;
     private String DEFAULT_APP_IMAGE_DATA_DIRECTORY;

@@ -26,6 +26,14 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * Created by Yangli on 16-05-31.
+ * 用户输入本机号码页面
+ * 由于国内SIM卡的号码存储方式的差异，中国联通会将本机号码写入卡内
+ * 移动和电信会在大部分情况下不写入卡里的EF文件中，因此无法获取本机号码
+ * 在开机时如果无法获取本机号码，以及我们本地没有存储本机号码则拉起该页面
+ */
+
 public class InputTelNumActivity extends AppCompatActivity implements ConstDefine{
 
     private Activity pThis;

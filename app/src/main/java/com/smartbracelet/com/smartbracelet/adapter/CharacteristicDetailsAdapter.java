@@ -18,6 +18,11 @@ import com.smartbracelet.com.smartbracelet.activity.PeripheralActivity;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleNamesResolver;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapper;
 
+/**
+ * Created by Yangli on 16-04-03.
+ * 手环Charac详情展示的数据适配器
+ * 暂时没有用到
+ */
 public class CharacteristicDetailsAdapter extends BaseAdapter {
    	
 	private BluetoothGattCharacteristic mCharacteristic = null;

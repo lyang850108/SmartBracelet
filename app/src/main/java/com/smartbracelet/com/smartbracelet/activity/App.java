@@ -61,7 +61,7 @@ public class App extends Application {
 
     public static int timesJudgeGps;
 
-    public static boolean isFirstLuanched = true;
+    //public static boolean isFirstLuanched = true;
 
     //Timetask是否运行
     public static boolean isScanningDevice = false;

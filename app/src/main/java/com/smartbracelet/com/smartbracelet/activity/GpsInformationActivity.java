@@ -20,6 +20,11 @@ import com.smartbracelet.com.smartbracelet.util.SharedPreferencesHelper;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+/**
+ * Created by Yangli on 16-06-03.
+ * 显示当前地理位置的相关信息
+ */
+
 public class GpsInformationActivity extends AppCompatPreferenceActivity implements ConstDefine{
     private Preference mTypePrefs;
     private Preference mLongtitudePrefs;

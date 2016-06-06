@@ -25,6 +25,11 @@ import com.smartbracelet.com.smartbracelet.bluetooth.BleNamesResolver;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapper;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapperUiCallbacks;
 
+/**
+ * Created by Yangli on 16-04-31.
+ * 用于展示蓝牙手环的详情，用于之前的测试
+ * 已不用
+ */
 public class PeripheralActivity extends AppCompatActivity implements BleWrapperUiCallbacks {
     public static final String EXTRAS_DEVICE_NAME    = "BLE_DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "BLE_DEVICE_ADDRESS";

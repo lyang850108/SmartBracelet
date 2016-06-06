@@ -17,6 +17,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * Created by Yang on 16/3/17.
+ * 第一个测试版本的GPS显示页面
+ * 暂时不用,Textview做的很好看
+ */
 public class StatisFragment extends BaseFragment {
 
     // TODO: Rename and change types of parameters
