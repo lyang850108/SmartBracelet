@@ -34,6 +34,19 @@ public interface ConstDefine {
 
     String BLE_RSSI = "mRssi";
 
+    String KEY_INFOR_TYPE = "infor_type_key";
+    String KEY_INFOR_LONGTITUDE = "infor_longtitude_key";
+    String KEY_INFOR_LATITUDE = "infor_latitude_key";
+    String KEY_INFOR_RADIUS = "infor_radius_key";
+    String KEY_INFOR_COUNTRYCODE = "infor_countrycode_key";
+    String KEY_INFOR_COUNTRY = "infor_country_key";
+    String KEY_INFOR_CITYCODE = "infor_citycode_key";
+    String KEY_INFOR_CITY = "infor_city_key";
+    String KEY_INFOR_DISTRICT = "infor_district_key";
+    String KEY_INFOR_STREET = "infor_street_key";
+    String KEY_INFOR_ADDR = "infor_addr_key";
+    String KEY_INFOR_DES = "infor_description_key";
+
     int TYPE_GET_DEVICE_PARM = 0;
     int TYPE_GET_NUM_PARM = 1;
     int TYPE_UPLOAD_LOCATION = 2;
@@ -46,11 +59,10 @@ public interface ConstDefine {
 
     String TYPE_POST_TELNUM_PARM = "1";
     String TYPE_UPLOAD_LOCATION_PARM = "2";
-    String TYPE_UPLOAD_NOTIFY_PARM  = "3";
-    String TYPE_PUSH_MSG_PARM  = "4";
-    String TYPE_PARAMS_POST_PARM  = "5";
-    String TYPE_WARNING_NOTIFY_PARM  = "6";
-
+    String TYPE_UPLOAD_NOTIFY_PARM = "3";
+    String TYPE_PUSH_MSG_PARM = "4";
+    String TYPE_PARAMS_POST_PARM = "5";
+    String TYPE_WARNING_NOTIFY_PARM = "6";
 
 
     final int MSG_SEARCH_OUT = 0;
@@ -63,7 +75,7 @@ public interface ConstDefine {
 
     final int WARNING_TYPE_DEVCE_DISCONNECTED = 1;
 
-    final int DIALOG_TYPE_GPS =0;
+    final int DIALOG_TYPE_GPS = 0;
 
     final int STATE_DEVICE_UNBIND = 0;
     final int STATE_DEVICE_BIND = 1;
@@ -83,27 +95,29 @@ public interface ConstDefine {
     UUID UUID_WRITE_SERVICE_CHARACTER = fromString("000033f2-0000-1000-8000-00805f9b34fb");
 
     public static class Service {
-        final static public UUID HEART_RATE               = UUID.fromString("0000180d-0000-1000-8000-00805f9b34fb");
-        final static public UUID BATTERY_SERVICE               = UUID.fromString("0000180f-0000-1000-8000-00805f9b34fb");
-        final static public UUID UNKNOWN_SERVICE               = UUID.fromString("328b1cd1-f643-f7b5-a243-0c51cd3deeaa");
-        final static public UUID UNKNOWN_SERVICE2               = UUID.fromString("51f6d338-f274-b387-1949-47705f0ab335");
-    };
+        final static public UUID HEART_RATE = UUID.fromString("0000180d-0000-1000-8000-00805f9b34fb");
+        final static public UUID BATTERY_SERVICE = UUID.fromString("0000180f-0000-1000-8000-00805f9b34fb");
+        final static public UUID UNKNOWN_SERVICE = UUID.fromString("328b1cd1-f643-f7b5-a243-0c51cd3deeaa");
+        final static public UUID UNKNOWN_SERVICE2 = UUID.fromString("51f6d338-f274-b387-1949-47705f0ab335");
+    }
+
+    ;
 
     public static class Characteristic {
-        final static public UUID HEART_RATE_MEASUREMENT   = UUID.fromString("00002a37-0000-1000-8000-00805f9b34fb");
-        final static public UUID MANUFACTURER_STRING      = UUID.fromString("00002a29-0000-1000-8000-00805f9b34fb");
-        final static public UUID MODEL_NUMBER_STRING      = UUID.fromString("00002a24-0000-1000-8000-00805f9b34fb");
+        final static public UUID HEART_RATE_MEASUREMENT = UUID.fromString("00002a37-0000-1000-8000-00805f9b34fb");
+        final static public UUID MANUFACTURER_STRING = UUID.fromString("00002a29-0000-1000-8000-00805f9b34fb");
+        final static public UUID MODEL_NUMBER_STRING = UUID.fromString("00002a24-0000-1000-8000-00805f9b34fb");
         final static public UUID FIRMWARE_REVISION_STRING = UUID.fromString("00002a26-0000-1000-8000-00805f9b34fb");
-        final static public UUID APPEARANCE               = UUID.fromString("00002a01-0000-1000-8000-00805f9b34fb");
-        final static public UUID BODY_SENSOR_LOCATION     = UUID.fromString("00002a38-0000-1000-8000-00805f9b34fb");
-        final static public UUID BATTERY_LEVEL            = UUID.fromString("00002a19-0000-1000-8000-00805f9b34fb");
-        final static public UUID CHAR01_LEVEL            = UUID.fromString("ef716109-4f4d-1882-9842-7d95e5b7df71");
-        final static public UUID CHAR02_LEVEL            = UUID.fromString("5860dc9a-0ea0-4ebc-9045-f980f732932c");
-        final static public UUID CHAR01_LEVEL2            = UUID.fromString("e54d1a53-e9ae-2ea1-6648-5d82466c884e");
-        final static public UUID CHAR02_LEVEL2            = UUID.fromString("c8a46bff-fee2-1ca3-0c4f-be76d5afd803");
+        final static public UUID APPEARANCE = UUID.fromString("00002a01-0000-1000-8000-00805f9b34fb");
+        final static public UUID BODY_SENSOR_LOCATION = UUID.fromString("00002a38-0000-1000-8000-00805f9b34fb");
+        final static public UUID BATTERY_LEVEL = UUID.fromString("00002a19-0000-1000-8000-00805f9b34fb");
+        final static public UUID CHAR01_LEVEL = UUID.fromString("ef716109-4f4d-1882-9842-7d95e5b7df71");
+        final static public UUID CHAR02_LEVEL = UUID.fromString("5860dc9a-0ea0-4ebc-9045-f980f732932c");
+        final static public UUID CHAR01_LEVEL2 = UUID.fromString("e54d1a53-e9ae-2ea1-6648-5d82466c884e");
+        final static public UUID CHAR02_LEVEL2 = UUID.fromString("c8a46bff-fee2-1ca3-0c4f-be76d5afd803");
     }
 
     public static class Descriptor {
-        final static public UUID CHAR_CLIENT_CONFIG       = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
+        final static public UUID CHAR_CLIENT_CONFIG = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
     }
 }

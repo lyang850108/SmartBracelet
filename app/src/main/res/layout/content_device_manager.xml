@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,45 +9,88 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:orientation="vertical"
     tools:context="com.smartbracelet.com.smartbracelet.activity.DeviceManagerActivity"
     tools:showIn="@layout/activity_device_manager">
 
-    <ListView
-        android:id="@+id/device_list_mm"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        android:layout_height="wrap_content">
+
+        <ListView
+            android:id="@+id/device_list_mm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></ListView>
+
+        <LinearLayout
+            android:id="@+id/device_battery_ll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|top"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/device_battery_im"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@mipmap/ic_startup"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="right" />
+
+            <TextView
+                android:id="@+id/device_battery_tx"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center"
+                android:text="电量"
+                android:textSize="10sp"
+                android:textStyle="normal"
+                android:textColor="@color/color_theme" />
+
+        </LinearLayout>
+    </FrameLayout>
+
+
 
     <ImageView
         android:id="@+id/device_im_mm"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:src="@mipmap/main_menu_sb"
-        android:layout_below="@+id/detail_title_id"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="130dp"/>
+        android:layout_marginTop="80dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_marginTop="120dp"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
 
     <TextView
         android:id="@+id/device_tx_mm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/device_im_mm"
-        android:gravity="center"
         android:layout_marginTop="20dp"
-        android:text="UTT矫正客户端"
+        android:gravity="center_horizontal"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/grey_500" />
+        android:textStyle="normal"
+        android:textColor="@color/color_theme" />
 
     <Button
         android:id="@+id/fab"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:background="@color/color_theme"
-        android:layout_below="@+id/device_tx_mm"
-        android:layout_centerHorizontal="true"
-        android:text="手环设备绑定"
         android:textStyle="bold"
         android:textColor="@android:color/white"
-        android:layout_marginTop="20dp"/>
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"/>
 
-</RelativeLayout>
+</LinearLayout>

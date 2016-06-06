@@ -52,19 +52,25 @@
     </style>
 
     <style name="CheckInTitleTextStyle">
-        <item name="android:textColor">@color/grey_400</item>
+        <item name="android:textColor">@color/color_theme</item>
         <item name="android:textSize">@dimen/title_text_size</item>
         <item name="android:textStyle">normal</item>
     </style>
 
     <style name="ItemDecripTextStyle">
-        <item name="android:textColor">@color/grey_400</item>
+        <item name="android:textColor">@color/color_theme</item>
         <item name="android:textSize">@dimen/descrip_text_size</item>
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="ItemDecripTextNormalStyle">
+        <item name="android:textColor">@color/color_theme</item>
+        <item name="android:textSize">@dimen/descrip_text_size</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
     <style name="MainMenuButtonTextStyle">
-        <item name="android:textColor">@color/grey_600</item>
+        <item name="android:textColor">@color/color_theme</item>
         <item name="android:textSize">@dimen/tab_text_size</item>
         <item name="android:textStyle">bold</item>
     </style>

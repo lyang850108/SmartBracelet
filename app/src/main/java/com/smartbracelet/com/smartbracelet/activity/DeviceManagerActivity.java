@@ -36,7 +36,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,11 +46,13 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.adapter.DeviceListAdapter;
+import com.smartbracelet.com.smartbracelet.bean.BlueToothBean;
 import com.smartbracelet.com.smartbracelet.bean.GpsBean;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleNamesResolver;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapper;
 import com.smartbracelet.com.smartbracelet.bluetooth.BleWrapperUiCallbacks;
 import com.smartbracelet.com.smartbracelet.model.ProgramItem;
+import com.smartbracelet.com.smartbracelet.network.NetworkUtil;
 import com.smartbracelet.com.smartbracelet.network.PollingUtils;
 import com.smartbracelet.com.smartbracelet.network.SocketConnAsync;
 import com.smartbracelet.com.smartbracelet.service.HttpPostService;
@@ -98,10 +102,19 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
     ListView listView;
 
     @Bind(R.id.device_im_mm)
-    ImageView imageView;
+    ImageView mDeviceIg;
 
     @Bind(R.id.device_tx_mm)
-    TextView textView;
+    TextView mInforTx;
+
+    @Bind(R.id.progressBar)
+    ProgressBar progressBar;
+
+    @Bind(R.id.device_battery_ll)
+    LinearLayout linearLayout;
+
+    @Bind(R.id.device_battery_tx)
+    TextView mBatteryTx;
 
     private DeviceListAdapter mDeviceListAdapter = null;
 
@@ -174,6 +187,8 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
 
     private BluetoothGattCharacteristic charac02;
 
+    private BlueToothBean mBlueToothBean;
+
     private class BTHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -217,15 +232,20 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
 
 
                 case MSG_SERCH_DONE:
-                    mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOTelTest(bleAddress).toString(), TYPE_GET_NUM_PARM);
+                    mPostDataTask = new PostDataTask(UTT_SETVER_URL, Utils.bindJOTelTest(bleAddress).toString(), TYPE_GET_NUM_PARM);
                     mPostDataTask.execute(0);
-                    loadingDialog.show();
+                    try {
+                        loadingDialog.show();
+                    } catch (Exception e) {
+                        LogUtil.d(e.toString());
+                    }
+
 
                     break;
 
 
                 case MSG_CHA_SEND_LOCATION:
-                    mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOGps(GpsBean.getInstance().getLatitude() , GpsBean.getInstance().getLongitude(), bleAddress).toString(), TYPE_UPLOAD_LOCATION);
+                    mPostDataTask = new PostDataTask(UTT_SETVER_URL, Utils.bindJOGps(GpsBean.getInstance().getLatitude() , GpsBean.getInstance().getLongitude(), bleAddress).toString(), TYPE_UPLOAD_LOCATION);
                     mPostDataTask.execute(0);
                     break;
 
@@ -239,7 +259,7 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
                     if (null != mBleWrapper && !mBleWrapper.isConnected()) {
                         LogUtil.d("*********MSG_STATE_WARNING");
                         int warningType = msg.arg1;
-                        mPostDataTask = new PostDataTask("120.25.89.222/main.cgi", Utils.bindJOWarningTest(bleAddress, warningType).toString(), TYPE_WARNING_NOTIFY);
+                        mPostDataTask = new PostDataTask(UTT_SETVER_URL, Utils.bindJOWarningTest(bleAddress, warningType).toString(), TYPE_WARNING_NOTIFY);
                         mPostDataTask.execute(0);
                     }
 
@@ -258,6 +278,8 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
         pThis= this;
         ButterKnife.bind(this);
         mBTHandler = new BTHandler();
+
+        mBlueToothBean = BlueToothBean.getInstance();
 
         initBle(pThis);
 
@@ -308,6 +330,24 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
         // initialize BleWrapper object
         mBleWrapper.initialize();
 
+        //进度条展示
+        setProgressBarIndeterminate(true);
+        if (View.GONE == mInforTx.getVisibility()) {
+            mInforTx.setVisibility(View.VISIBLE);
+        }
+        mInforTx.setText("请激活手环 搜索设备中.......");
+
+
+
+        if (null != mBleWrapper && mBleWrapper.isConnected()) {
+            return;
+        }
+
+        mScanning = true;
+        // remember to add timeout for scanning to not run it forever and drain the battery
+        addScanningTimeout();
+        mBleWrapper.startScanning();
+
     }
 
     @Override
@@ -347,17 +387,13 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
 
     @OnClick(R.id.fab)
     public void onFabClick (View view) {
-        Snackbar.make(view, "搜索设备中.......", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-
-        if (null != mBleWrapper && mBleWrapper.isConnected()) {
-            return;
+        /*Snackbar.make(view, "搜索设备中.......", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();*/
+        LogUtil.d("onFabClick tag = " + view.getTag());
+        if (0 == view.getTag()) {
+            sendMsg(MSG_SERCH_DONE, 0);
         }
 
-        mScanning = true;
-        // remember to add timeout for scanning to not run it forever and drain the battery
-        addScanningTimeout();
-        mBleWrapper.startScanning();
     }
 
     AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
@@ -467,6 +503,8 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
                     @Override
                     public void run() {
                         //mBatteryLevelTx.setText(mBatterymValue);
+                        linearLayout.setVisibility(View.VISIBLE);
+                        mBatteryTx.setText(mBatterymValue.substring(0, mBatterymValue.indexOf("bat")));
                     }
                 });
 
@@ -624,7 +662,12 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
         //mTextView.append("\n http 后台结果  " + postRTR);
         //mTextView.append("\n http 后台返回数据    " + postDetailRTR);
         //mPostDetailsRtrTx.setText(postDetailRTR);
-        loadingDialog.dismiss();
+        try {
+            loadingDialog.dismiss();
+        } catch (IllegalArgumentException e) {
+            LogUtil.d(e.toString());
+        }
+
         if (postRTR.contains("请求成功") && 0 == Utils.parseJsonResult(postDetailRTR)) {
             //mTextView.append("\n 服务器处理成功 ");
 
@@ -645,6 +688,7 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
 
         } else if (postRTR.contains("请求成功") && 1 == Utils.parseJsonResult(postDetailRTR)) {
             //mTextView.append("\n 该手环已被绑定过 请换个手环");
+            Toast.makeText(getApplicationContext(), "该手环已被绑定过 请换个手环", Toast.LENGTH_LONG).show();
 
         } else {
             //if (STATE_DEVICE_UNBIND == sharedPreferencesHelper.getInt(SP_BIND_STATE)) {
@@ -782,7 +826,9 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
 
     private String mConnectedAddress;
 
-    private void handleDeviceConnected(final BluetoothGatt gatt, final BluetoothDevice device) {
+    private void
+
+    handleDeviceConnected(final BluetoothGatt gatt, final BluetoothDevice device) {
 
         pThis.runOnUiThread(new Runnable() {
             @Override
@@ -792,15 +838,33 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
                     mConnectedAddTx.setText(device.getName() + "\n" + device.getAddress() + "\n" + " Connected");
                 }*/
                 //连接成功后设备列表消失
-                listView.setVisibility(View.GONE);
-                //设备连接图标显示
-                imageView.setVisibility(View.VISIBLE);
-                textView.setVisibility(View.VISIBLE);
+                if (null != listView) {
+                    listView.setVisibility(View.GONE);
+                }
+
+                if (null != mDeviceIg) {
+                    //设备连接图标显示
+                    mDeviceIg.setVisibility(View.VISIBLE);
+                }
+
+                if (null != mInforTx) {
+                    mInforTx.setVisibility(View.VISIBLE);
+                    mInforTx.setText("连接成功");
+                }
+
 
                 int bindState = sharedPreferencesHelper.getInt(SP_BIND_STATE);
                 LogUtil.d("handleDeviceConnected SP_BIND_STATE" + bindState);
                 if (STATE_DEVICE_UNBIND == bindState) {
-                    sendMsg(MSG_SERCH_DONE, 0);
+                    //这里没有绑定过，需检查各个性能指标再发送激活命令
+                    if (isActivationSB()) {
+                        if (View.GONE == floatingActionButton.getVisibility()) {
+                            floatingActionButton.setVisibility(View.VISIBLE);
+                        }
+                        floatingActionButton.setText(R.string.activation);
+                        floatingActionButton.setTag(0);
+                    }
+
                 } else if (STATE_DEVICE_BIND == bindState) {
                     //mTextView.append("\n 该手环已被绑定过 ");
                     //STOP FIRST
@@ -823,6 +887,15 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
         pThis.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (null != mInforTx && null != linearLayout) {
+                    mInforTx.setText("连接断开");
+
+                    //电量提醒消失
+                    linearLayout.setVisibility(View.GONE);
+                }
+
+
+
                 //mConnectedAddTx.setText(device.getName() + "\n" + device.getAddress() + "\n" + " Disconnected");
             }
         });
@@ -831,6 +904,11 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
         /*if (!App.isScanningDevice) {
             startScanningTask();
         }*/
+
+        mScanning = true;
+        // remember to add timeout for scanning to not run it forever and drain the battery
+        addScanningTimeout();
+        mBleWrapper.startScanning();
 
 
         //Notify the server in 120s
@@ -1056,12 +1134,19 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
                 LogUtil.d("handleFoundDevice" + device.getAddress() + " name: " + device.getName());
                 if (App.isFirstLuanched && TextUtils.isEmpty(bindAddress)) {
                     if (!TextUtils.isEmpty(device.getName())&& device.getName().startsWith("utt")) {
+                        //如果第一次搜索到设备，底部的文字View应该隐藏
+                        if (null != mInforTx) {
+                            mInforTx.setVisibility(View.GONE);
+                        }
                         mDeviceListAdapter.addDevice(device, rssi, scanRecord);
                         mDeviceListAdapter.notifyDataSetChanged();
+                        inVisibleProgress();
+
                     }
                 } else {
                     if (bindAddress.equals(device.getAddress())) {
                         if (!TextUtils.isEmpty(device.getName()) && device.getName().startsWith("utt")) {
+                            inVisibleProgress();
                             //mTextView.append("\n数据库存储的地址" + bindAddress);
                             LogUtil.d("existAddress" + bindAddress);
                             String mName = device.getName();
@@ -1117,6 +1202,35 @@ public class DeviceManagerActivity extends AppCompatActivity implements ConstDef
 
             }
         });
+    }
+
+    private void inVisibleProgress() {
+        if (null != progressBar) {
+            setProgressBarIndeterminate(false);
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private boolean isActivationSB() {
+        if (null == mBlueToothBean) {
+            return false;
+        }
+
+        if (!mBleWrapper.isConnected()) {
+            Toast.makeText(getApplicationContext(), "手环未连接", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        LogUtil.d("getBatteryLevel:" + mBlueToothBean.getBatteryLevel());
+        if (30 > mBlueToothBean.getBatteryLevel()) {
+            Toast.makeText(getApplicationContext(), "电量太低", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        if (false == NetworkUtil.isNetworkAvailable(pThis)) {
+            Toast.makeText(getApplicationContext(), "网络数据不可用", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
 
 }

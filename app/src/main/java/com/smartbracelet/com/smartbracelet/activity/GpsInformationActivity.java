@@ -1,6 +1,10 @@
 package com.smartbracelet.com.smartbracelet.activity;
 
 import android.content.Intent;
+import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.RingtonePreference;
+import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,21 +13,33 @@ import android.widget.TextView;
 
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.bean.GpsBean;
+import com.smartbracelet.com.smartbracelet.util.ConstDefine;
+import com.smartbracelet.com.smartbracelet.util.LogUtil;
+import com.smartbracelet.com.smartbracelet.util.SharedPreferencesHelper;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class GpsInformationActivity extends AppCompatActivity {
-    @Bind(R.id.gps_infor_tx)
-    TextView gpsInforTx;
+public class GpsInformationActivity extends AppCompatPreferenceActivity implements ConstDefine{
+    private Preference mTypePrefs;
+    private Preference mLongtitudePrefs;
+    private Preference mLatitudePrefs;
+    private Preference mRadiusPrefs;
+    private Preference mCountryCodePrefs;
+    private Preference mCountryPrefs;
+    private Preference mCityCodeCodePrefs;
+    private Preference mCityCodePrefs;
+    private Preference mDistrictPrefs;
+    private Preference mStreetPrefs;
+    private Preference mAddressPrefs;
+    private Preference mDescriptionPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gps_information);
-        ButterKnife.bind(this);
         setTitle("实时定位信息");
         setupActionBar();
+        loadPrefs();
         readInfor();
     }
 
@@ -34,40 +50,50 @@ public class GpsInformationActivity extends AppCompatActivity {
          * location.getTime() 是指服务端出本次结果的时间，如果位置不发生变化，则时间不变
          */
         GpsBean gpsBean = GpsBean.getInstance();
-        sb.append("\nLocType : ");
+        sb.append("\n类型 : ");
+        mTypePrefs.setSummary(Integer.toString(gpsBean.getLocType()));
         sb.append(gpsBean.getLocType());
-        sb.append("\nlatitude : ");
+        sb.append("\n纬度 : ");
+        mLatitudePrefs.setSummary(gpsBean.getLatitude() + "");
         sb.append(gpsBean.getLatitude());
-        sb.append("\nlontitude : ");
+        sb.append("\n经度 : ");
+        mLongtitudePrefs.setSummary(gpsBean.getLongitude() + "");
         sb.append(gpsBean.getLongitude());
-        sb.append("\nradius : ");
+        sb.append("\n半径 : ");
+        mRadiusPrefs.setSummary(gpsBean.getRadius() + "");
         sb.append(gpsBean.getRadius());
-        sb.append("\nCountryCode : ");
+        sb.append("\n国家码 : ");
+        mCountryCodePrefs.setSummary(gpsBean.getCountryCode());
         sb.append(gpsBean.getCountryCode());
-        sb.append("\nCountry : ");
+        sb.append("\n国家 : ");
+        mCountryPrefs.setSummary(gpsBean.getCountry());
         sb.append(gpsBean.getCountry());
-        sb.append("\ncitycode : ");
+        sb.append("\n城市码 : ");
+        mCityCodeCodePrefs.setSummary(gpsBean.getCityCode());
         sb.append(gpsBean.getCityCode());
-        sb.append("\ncity : ");
+        sb.append("\n城市 : ");
+        mCityCodePrefs.setSummary(gpsBean.getCity());
         sb.append(gpsBean.getCity());
-        sb.append("\nDistrict : ");
+        sb.append("\n地区 : ");
+        mDistrictPrefs.setSummary(gpsBean.getDistrict());
         sb.append(gpsBean.getDistrict());
-        sb.append("\nStreet : ");
+        sb.append("\n街道 : ");
+        mAddressPrefs.setSummary(gpsBean.getStreet());
         sb.append(gpsBean.getStreet());
-        sb.append("\naddr : ");
+        sb.append("\n地址 : ");
+        mAddressPrefs.setSummary(gpsBean.getAddrStr());
         sb.append(gpsBean.getAddrStr());
-        sb.append("\nDescribe: ");
+        mDescriptionPrefs.setSummary(gpsBean.getLocationDescribe());
+        sb.append("\n概况: ");
         sb.append(gpsBean.getLocationDescribe());
-        sb.append("\nDirection(not all devices have value): ");
-        sb.append(gpsBean.getDirection());
+        /*sb.append("\nDirection(not all devices have value): ");
+        sb.append(gpsBean.getDirection());*/
 
-        gpsInforTx.setText(sb);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ButterKnife.unbind(this);
     }
 
     /**
@@ -89,5 +115,22 @@ public class GpsInformationActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void loadPrefs() {
+        addPreferencesFromResource(R.xml.pref_gps_infor);
+
+        mAddressPrefs = (Preference) findPreference(KEY_INFOR_ADDR);
+        mTypePrefs = (Preference) findPreference(KEY_INFOR_TYPE);
+        mCityCodeCodePrefs = (Preference) findPreference(KEY_INFOR_CITYCODE);
+        mCityCodePrefs = (Preference) findPreference(KEY_INFOR_CITY);
+        mCountryCodePrefs = (Preference) findPreference(KEY_INFOR_COUNTRYCODE);
+        mCountryPrefs = (Preference) findPreference(KEY_INFOR_COUNTRY);
+        mLatitudePrefs = (Preference) findPreference(KEY_INFOR_LATITUDE);
+        mLongtitudePrefs = (Preference) findPreference(KEY_INFOR_LONGTITUDE);
+        mRadiusPrefs = (Preference) findPreference(KEY_INFOR_RADIUS);
+        mDescriptionPrefs = (Preference) findPreference(KEY_INFOR_DES);
+        mDistrictPrefs = (Preference) findPreference(KEY_INFOR_DISTRICT);
+        mStreetPrefs = (Preference) findPreference(KEY_INFOR_STREET);
     }
 }

@@ -21,6 +21,7 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.util.Log;
 
+import com.smartbracelet.com.smartbracelet.bean.BlueToothBean;
 import com.smartbracelet.com.smartbracelet.util.ConstDefine;
 import com.smartbracelet.com.smartbracelet.util.LogUtil;
 
@@ -47,6 +48,8 @@ public class BleWrapper {
     public BluetoothGattService       getCachedService() { return mBluetoothSelectedService; }
     public List<BluetoothGattService> getCachedServices() { return mBluetoothGattServices; }
     public boolean                    isConnected() { return mConnected; }
+
+    private BlueToothBean blueToothBean;
 
 	/* run test and check if this device has BT and BLE hardware available */
 	public boolean checkBleHardwareAvailable() {
@@ -80,12 +83,18 @@ public class BleWrapper {
 	/* start scanning for BT LE devices around */
 	public void startScanning() {
         LogUtil.d("mBluetoothAdapter" + mBluetoothAdapter);
-        mBluetoothAdapter.startLeScan(mDeviceFoundCallback);
+        if (null != mBluetoothAdapter) {
+            mBluetoothAdapter.startLeScan(mDeviceFoundCallback);
+        }
+
 	}
 	
 	/* stops current scanning */
 	public void stopScanning() {
-		mBluetoothAdapter.stopLeScan(mDeviceFoundCallback);	
+        if (null != mBluetoothAdapter) {
+            mBluetoothAdapter.stopLeScan(mDeviceFoundCallback);
+        }
+
 	}
 	
     /* initialize BLE and get BT Manager & Adapter */
@@ -93,14 +102,23 @@ public class BleWrapper {
         if (mBluetoothManager == null) {
             mBluetoothManager = (BluetoothManager) mParent.getSystemService(Context.BLUETOOTH_SERVICE);
             if (mBluetoothManager == null) {
+                LogUtil.d("initialize mBluetoothManager == null");
                 return false;
             }
         }
 
         if(mBluetoothAdapter == null) mBluetoothAdapter = mBluetoothManager.getAdapter();
         if (mBluetoothAdapter == null) {
+            LogUtil.d("initialize mBluetoothAdapter == null");
             return false;
         }
+
+        blueToothBean = BlueToothBean.getInstance();
+        if (null != blueToothBean) {
+            LogUtil.d("initialize blueToothBean == null");
+            return false;
+        }
+
         return true;    	
     }
 
@@ -259,7 +277,10 @@ public class BleWrapper {
         }
         else if(uuid.equals(ConstDefine.Characteristic.BATTERY_LEVEL)) { // battery level
         	// follow: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.battery_level.xml
-        	intValue = rawValue[0];
+        	LogUtil.d("Characteristic BATTERY_LEVEL");
+            intValue = rawValue[0];
+            //Setup the battery level
+            blueToothBean.setBatteryLevel(intValue);
         	strValue = "" + intValue + "% battery level";
             mUiCallback.uiBatteryValueRead(strValue);
         }

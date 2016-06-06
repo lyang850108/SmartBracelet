@@ -31,6 +31,9 @@
     <string name="check_in_study">学习教育</string>
     <string name="check_in_labor">劳动</string>
 
+    <string name="scanning_list_name">名称：</string>
+    <string name="scanning_list_address">地址：</string>
+
     <string name="restore_default">"还原默认设置"</string>
 
     <string name="open_gps">"请打开GPS"</string>
@@ -42,7 +45,8 @@
 
     <!-- Example General settings -->
     <string name="pref_header_general">通用</string>
-
+    <string name="activation">激活</string>
+    <string name="bind">绑定</string>
     <string name="pref_title_social_recommendations">自动连接</string>
     <string name="pref_description_social_recommendations">打开此选项，设备靠近时会自动连接
     </string>
@@ -53,6 +57,19 @@
     <string name="pref_title_add_friends_to_messages">手动添加设备</string>
     <string name="pref_title_add_friends_to_messages_detail">主页面会显示设备列表，点击添加</string>
 
+    <string name="pref_title_type">类型</string>
+    <string name="pref_title_longtitude">经度</string>
+    <string name="pref_title_latitude">纬度</string>
+    <string name="pref_title_radius">半径</string>
+    <string name="pref_title_countrycode">国家码</string>
+    <string name="pref_title_country">国家</string>
+    <string name="pref_title_citycode">城市码</string>
+    <string name="pref_title_city">城市</string>
+
+    <string name="pref_title_district">城市码</string>
+    <string name="pref_title_street">城市</string>
+    <string name="pref_title_address">城市</string>
+    <string name="pref_title_description">描述</string>
     <string name="confirm">确定</string>
     <string-array name="pref_example_list_titles">
         <item>Always</item>
