@@ -15,7 +15,7 @@ limitations under the License.
 -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@mipmap/main_menu_inbox" android:state_pressed="true"/>
+    <item android:drawable="@mipmap/main_menu_inbox_pressed" android:state_pressed="true"/>
     <item android:drawable="@mipmap/main_menu_inbox"/>
 
 </selector>

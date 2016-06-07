@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context=".activity.PersonalInforActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="90dp"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/personal_avatar_tx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/personal_avatar_im"
+            android:text="@string/avatar_im"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:textAppearance="@style/ItemDecripTextStyle"/>
+
+        <ImageView
+            android:id="@+id/personal_avatar_im"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/ic_avatar"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/personal_name_tx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/personal_avatar_im"
+            android:text="@string/avatar_name"
+            android:layout_gravity="center_vertical"
+            android:layout_centerHorizontal="true"
+            android:textAppearance="@style/ItemDecripTextStyle"/>
+
+        <EditText
+            android:id="@+id/personal_name_et"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/ic_avatar"/>
+
+        <TextView
+            android:id="@+id/personal_nameval_tx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/ItemDecripTextStyle"
+            android:layout_marginLeft="15dp"
+            android:layout_gravity="center_vertical"
+            android:visibility="gone"
+            />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/personal_save_bt"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:background="@color/color_theme"
+        android:text="@string/save"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="50dp"
+        android:visibility="visible"/>
+
+
+
+</LinearLayout>

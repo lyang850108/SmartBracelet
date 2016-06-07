@@ -338,7 +338,7 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         if (View.GONE == mInforTx.getVisibility()) {
             mInforTx.setVisibility(View.VISIBLE);
         }
-        mInforTx.setText("请激活手环 搜索设备中.......");
+        mInforTx.setText(getString(R.string.active_search));
 
 
 
@@ -420,6 +420,11 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
     };
 
     public static PendingIntent pendingIntent;
+
+    /**
+     * 初始化蓝牙协议部分，重写回调函数
+     * @param pThis
+     */
     private void initBle(final Activity pThis) {
         mBleWrapper = new BleWrapper(pThis, new BleWrapperUiCallbacks.Null() {
             @Override
@@ -431,7 +436,7 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
             public void uiDeviceConnected(BluetoothGatt gatt, BluetoothDevice device) {
 
                 LogUtil.d("uiDeviceConnected");
-                mBindResult = "0x00010002";
+                mBindResult = STATE_BIND;
                 handleDeviceConnected(gatt, device);
 
             }
@@ -439,7 +444,7 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
             @Override
             public void uiDeviceDisconnected(BluetoothGatt gatt, BluetoothDevice device) {
                 LogUtil.d("uiDeviceDisconnected");
-                mBindResult = "0x00000003";
+                mBindResult = STATE_UNBIND;
                 handleDeviceDisconnected(gatt, device);
             }
 
@@ -551,6 +556,9 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         pThis.finish();
     }
 
+    /**
+     * 检查蓝牙是否打开
+     */
     private void checkBTAvail() {
         if (null == mBtAdapter) {
             mBtAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -581,6 +589,9 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
     public PostDataTask mPostDataTask;
     private AlertDialog mAlertDialog;
 
+    /**
+     * 数据后台服务，后续可在HttpPostService处理
+     */
     private class PostDataTask extends AsyncTask<Integer, Void, Void> {
 
         private String mPostWord;
@@ -633,6 +644,9 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         }
     }
 
+    /**
+     * 处理服务器返回的告警信息
+     */
     private void handleWarningMsg() {
         if (-1 == Utils.parseJsonResult(postDetailRTR)) {
             //mTextView.append("\n 服务器处理失败，要求app重新上报");
@@ -643,6 +657,9 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         }
     }
 
+    /**
+     * 处理后台返回的106协议信息
+     */
     private void handleUploadTelMsg() {
         //mTextView.append("\n http 后台结果  " + postRTR);
         //mTextView.append("\n http 后台返回数据    " + postDetailRTR);
@@ -727,6 +744,9 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         }
     };
 
+    /**
+     * 发送定位消息
+     */
     private void sendGPS() {
 
         Message msg2 = new Message();
@@ -811,6 +831,11 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
 
     private String mConnectedAddress;
 
+    /**
+     * 设备连接成功的处理方法
+     * @param gatt
+     * @param device
+     */
     private void
 
     handleDeviceConnected(final BluetoothGatt gatt, final BluetoothDevice device) {
@@ -869,6 +894,11 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         }*/
     }
 
+    /**
+     * 设备断开后的处理方法
+     * @param gatt
+     * @param device
+     */
     private void handleDeviceDisconnected(final BluetoothGatt gatt, final BluetoothDevice device) {
         pThis.runOnUiThread(new Runnable() {
             @Override
@@ -901,6 +931,9 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         sendWarningDelayed(WARNING_TYPE_DEVCE_DISCONNECTED);
     }
 
+    /**
+     * 扫描Ble设备
+     */
     private void startScanningTask() {
         App.isScanningDevice = true;
         int times = 8000;
@@ -918,6 +951,9 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         App.timer.schedule(App.timerTask, 0, times);
     }
 
+    /**
+     * 停止扫描Ble设备
+     */
     private void stopScanningTask() {
         App.isScanningDevice = false;
         if (null != App.timerTask) {
@@ -926,6 +962,9 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         }
     }
 
+    /**
+     * 增加扫描超时处理
+     */
     /* make sure that potential scanning will take no longer
      * than <SCANNING_TIMEOUT> seconds from now on */
     private void addScanningTimeout() {
@@ -944,6 +983,9 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
 
     }
 
+    /**
+     * 开始轮询服务（用于后台发送坐标和推送消息）
+     */
     private void startPollService() {
 
         /*if (null != App.timerTask) {
@@ -968,6 +1010,10 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         }
     }
 
+    /**
+     * 延迟发送警告消息
+     * @param type
+     */
     private void sendWarningDelayed(final int type) {
 
         long times = 120000;
@@ -983,6 +1029,9 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
 
     }
 
+    /**
+     * 处理坐标返回消息
+     */
     private void handleGpsMsg() {
         if (-1 == Utils.parseJsonResult(postDetailRTR)) {
             //mTextView.append("\n 坐标数据服务器处理失败");
@@ -1041,6 +1090,9 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
 
     private List<ProgramItem> list = new ArrayList<ProgramItem>();
 
+    /**
+     * 处理消息推送返回消息
+     */
     private void handlePushMsg() {
         try {
             JSONObject jsonObject = new JSONObject(postDetailRTR);
@@ -1191,6 +1243,9 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         });
     }
 
+    /**
+     * 不可见进度条
+     */
     private void inVisibleProgress() {
         if (null != progressBar) {
             setProgressBarIndeterminate(false);
@@ -1198,6 +1253,10 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         }
     }
 
+    /**
+     *  是否应该激活设备
+     *  @return
+     */
     private boolean isActivationSB() {
         if (null == mBlueToothBean) {
             return false;
@@ -1216,6 +1275,10 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         return true;
     }
 
+    /**
+     * 低电量判断
+     * @return
+     */
     private boolean isBatteryAvailble() {
         if (null == mBlueToothBean) {
             return false;

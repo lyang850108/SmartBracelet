@@ -526,4 +526,8 @@
     <color name="blog_text_button">#68B9CC</color>
 
     <color name="color_theme">#16B7A8</color>
+
+    <color name="primary">#FF03A9F4</color>
+    <color name="primary_dark">#FF0288D1</color>
+    <color name="status_bar_color">@color/color_theme</color>
 </resources>

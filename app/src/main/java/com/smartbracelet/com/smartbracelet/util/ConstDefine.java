@@ -87,6 +87,14 @@ public interface ConstDefine {
 
     String SP_POST_INTERNAL = "post_internal_value_prefs";
 
+    String SP_AVATAR_PATH = "personal_avatar_path";
+
+    String SP_AVATAR_NAME = "personal_avatar_name";
+
+    String STATE_BIND = "0x00010002";
+
+    String STATE_UNBIND = "0x00000003";
+
     UUID UUID_READ_SERVICE = fromString("328B1CD1-F643-F7B5-A243-0C51CD3DEEAA");
 
     UUID UUID_READ_SERVICE_CHARACTER = fromString("EF716109-4F4D-1882-9842-7D95E5B7DF71");

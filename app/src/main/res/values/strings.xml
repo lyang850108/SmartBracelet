@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SmartBracelet</string>
+    <string name="app_name">UTT</string>
     <string name="home">Home</string>
     <string name="statisc">Statisc</string>
     <string name="setting">Setting</string>
@@ -46,7 +46,12 @@
     <!-- Example General settings -->
     <string name="pref_header_general">通用</string>
     <string name="activation">激活</string>
+    <string name="add_avatar">请点击添加头像照片</string>
+    <string name="avatar_im">头像</string>
+    <string name="avatar_name">名称</string>
     <string name="bind">绑定</string>
+    <string name="save">保存</string>
+    <string name="save_successful">保存成功</string>
     <string name="pref_title_social_recommendations">自动连接</string>
     <string name="pref_description_social_recommendations">打开此选项，设备靠近时会自动连接
     </string>
@@ -56,6 +61,9 @@
 
     <string name="pref_title_add_friends_to_messages">手动添加设备</string>
     <string name="pref_title_add_friends_to_messages_detail">主页面会显示设备列表，点击添加</string>
+
+
+    <string name="active_search">请激活手环 搜索设备中.......</string>
 
     <string name="pref_title_type">类型</string>
     <string name="pref_title_longtitude">经度</string>

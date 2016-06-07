@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.NotificationCompat;
@@ -59,6 +61,11 @@ public class Utils implements ConstDefine{
         }
     }
 
+    /**
+     * 隐藏输入法
+     * @param view
+     * @return void
+     */
     public static void hideInputMethod(View view) {
         final InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(
                 Context.INPUT_METHOD_SERVICE);
@@ -68,6 +75,13 @@ public class Utils implements ConstDefine{
     }
 
 
+    /**
+     * 生成坐标JSON包
+     * @param latitude 纬度
+     * @param longtitude 经度
+     * @param address 地址
+     * @return JSONObject
+     */
     public static JSONObject bindJOGps(double latitude, double longtitude, String address) {
         JSONObject subJsonObject = new JSONObject();
         JSONObject jsonObject = new JSONObject();
@@ -76,7 +90,7 @@ public class Utils implements ConstDefine{
             subJsonObject.put("DeviceID", address);
             subJsonObject.put("Longitude", "" + longtitude);
             subJsonObject.put("Latitude", "" + latitude);
-            subJsonObject.put("Mac", "9E:33:44:12:90:66");
+            subJsonObject.put("Mac", getMacAddress());
             subJsonObject.put("IMEI", getImei());
             subJsonObject.put("PhoneNumber", getTelNumber());
             subJsonObject.put("CreateTime", getTime());
@@ -87,13 +101,17 @@ public class Utils implements ConstDefine{
         return jsonObject;
     }
 
+    /**
+     * 106Json包生成（停用）
+     * @return
+     */
     public static JSONObject bindJOTel() {
         JSONObject subJsonObject = new JSONObject();
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("method", Integer.toString(106));
             subJsonObject.put("DeviceID", "");
-            subJsonObject.put("Mac", "9E:33:44:12:90:66");
+            subJsonObject.put("Mac", getMacAddress());
             subJsonObject.put("IMEI", getImei());
             subJsonObject.put("PhoneNumber", getTelNumber());
             subJsonObject.put("CreateTime", getTime());
@@ -104,13 +122,18 @@ public class Utils implements ConstDefine{
         return jsonObject;
     }
 
+    /**
+     * 106Json包生成（使用）
+     * @param macAddress
+     * @return
+     */
     public static JSONObject bindJOTelTest(String macAddress) {
         JSONObject subJsonObject = new JSONObject();
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("method", Integer.toString(106));
             subJsonObject.put("DeviceID", macAddress);
-            subJsonObject.put("Mac", "9E:33:44:12:90:66");
+            subJsonObject.put("Mac", getMacAddress());
             subJsonObject.put("IMEI", getImei());
             LogUtil.d("bindJOTelTest telNumer: " + getTelNumber());
             subJsonObject.put("PhoneNumber", getTelNumber());
@@ -122,13 +145,17 @@ public class Utils implements ConstDefine{
         return jsonObject;
     }
 
+    /**
+     * 全新手环ID获取（已废弃）
+     * @return
+     */
     public static JSONObject bindJOGetId() {
         JSONObject subJsonObject = new JSONObject();
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("method", Integer.toString(104));
             subJsonObject.put("DeviceID", "");
-            subJsonObject.put("Mac", "9E:33:44:12:90:66");
+            subJsonObject.put("Mac", getMacAddress());
             subJsonObject.put("IMEI", getImei());
             subJsonObject.put("PhoneNumber", getTelNumber());
             subJsonObject.put("CreateTime", getTime());
@@ -140,6 +167,10 @@ public class Utils implements ConstDefine{
     }
 
 
+    /**
+     * 告警JSON包生成（废弃）
+     * @return
+     */
     public static JSONObject bindJOWarning() {
         JSONObject subJsonObject = new JSONObject();
         JSONObject jsonObject = new JSONObject();
@@ -155,6 +186,12 @@ public class Utils implements ConstDefine{
         return jsonObject;
     }
 
+    /**
+     * 告警JSON包生成（使用）
+     * @param macAddress
+     * @param warningType
+     * @return
+     */
     public static JSONObject bindJOWarningTest(String macAddress, int warningType) {
         JSONObject subJsonObject = new JSONObject();
         JSONObject jsonObject = new JSONObject();
@@ -170,6 +207,10 @@ public class Utils implements ConstDefine{
         return jsonObject;
     }
 
+    /**
+     * 103协议（废弃）
+     * @return
+     */
     public static JSONObject bindJOMsgPush() {
         JSONObject subJsonObject = new JSONObject();
         JSONObject jsonObject = new JSONObject();
@@ -183,6 +224,11 @@ public class Utils implements ConstDefine{
         return jsonObject;
     }
 
+    /**
+     * 103协议（使用）
+     * @param address
+     * @return
+     */
     public static JSONObject bindJOMsgPushTest(String address) {
         JSONObject subJsonObject = new JSONObject();
         JSONObject jsonObject = new JSONObject();
@@ -196,6 +242,11 @@ public class Utils implements ConstDefine{
         return jsonObject;
     }
 
+    /**
+     * 获取本机号码
+     * @param sharedPreferencesHelper
+     * @return
+     */
     public static String getTelNum(SharedPreferencesHelper sharedPreferencesHelper) {
         TelephonyManager telephonyManager = (TelephonyManager) App.getsContext().getSystemService(Context.TELEPHONY_SERVICE);
         String num = telephonyManager.getLine1Number();
@@ -222,6 +273,10 @@ public class Utils implements ConstDefine{
     }
 
 
+    /**
+     * 获取IMEI
+     * @return
+     */
     public static String getImei() {
         TelephonyManager telephonyManager = (TelephonyManager) App.getsContext().getSystemService(Context.TELEPHONY_SERVICE);
         //GSM IMEI; CDMA MEID
@@ -238,6 +293,11 @@ public class Utils implements ConstDefine{
         return time;
     }*/
 
+    /**
+     * 转换URL使用UTF-8格式
+     * @param url
+     * @return
+     */
     public static String convertUrl (String url) {
         String rtn = null;
         try {
@@ -250,6 +310,10 @@ public class Utils implements ConstDefine{
         return rtn;
     }
 
+    /**
+     * 获取指定格式时间"yyyy-MM-dd HH:mm:ss"
+     * @return
+     */
     public static String getTime() {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -257,6 +321,11 @@ public class Utils implements ConstDefine{
         return timeFotmat;
     }
 
+    /**
+     * 解析网络侧返回的JSON数据包结果
+     * @param json
+     * @return
+     */
     public  static int parseJsonResult (String json) {
         if (null == json) {
             return -1;
@@ -274,6 +343,11 @@ public class Utils implements ConstDefine{
         }
     }
 
+    /**
+     * 解析103协议的返回值MsgTypeID
+     * @param json
+     * @return
+     */
     public  static int parseMsgTypeResult (String json) {
         int result = 0;
         try {
@@ -314,6 +388,10 @@ public class Utils implements ConstDefine{
         mPhoneAddress =  address;
     }
 
+    /**
+     * @param hex
+     * @return
+     */
     public static byte[] parseHexStringToBytes(final String hex) {
         String tmp = hex.substring(2).replaceAll("[^[0-9][a-f]]", "");
         byte[] bytes = new byte[tmp.length() / 2]; // every two letters in the string are one byte finally
@@ -326,6 +404,24 @@ public class Utils implements ConstDefine{
         }
 
         return bytes;
+    }
+
+    /**
+     * 获得Mac地址
+     * @return
+     */
+    public static String getMacAddress() {
+        WifiManager wifi = (WifiManager) App.getsContext().getSystemService(Context.WIFI_SERVICE);
+
+        WifiInfo info = wifi.getConnectionInfo();
+
+        String address = info.getMacAddress();
+
+        if (TextUtils.isEmpty(address)) {
+            address = "9E:33:44:12:90:66";
+        }
+
+        return address;
     }
 
     public static void notifyMessageComing(Context context, String title, String body) {

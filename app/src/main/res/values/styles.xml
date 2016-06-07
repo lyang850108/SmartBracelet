@@ -7,7 +7,9 @@
         <item name="windowActionBarOverlay">true</item>
     </style>
     <!-- Base application theme. -->
-    <style name="Theme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar"></style>
+    <style name="Theme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
 
     <!--
         Base application theme, dependent on API level. This theme is replaced

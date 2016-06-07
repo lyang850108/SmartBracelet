@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/menu_program" android:title="消息" android:icon="@mipmap/ic_message" app:showAsAction="always"></item>
+    <item android:id="@+id/menu_program" android:title="电话" android:icon="@mipmap/ic_phone" app:showAsAction="always"></item>
     <item android:id="@+id/menu_setting" android:title="设置" android:icon="@mipmap/ic_setting" app:showAsAction="always"></item>
 </menu>

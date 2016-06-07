@@ -47,6 +47,13 @@ public class LaunchAnimActivity extends BaseActivity
         setContentView(R.layout.activity_launch_anim);
         ButterKnife.bind(this);
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            //透明状态栏
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            //透明导航栏
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
+
         //Logo的旋转动画
         Animation operatingAnim = AnimationUtils.loadAnimation(this, R.anim.luancher_img_repeat);
         imageView.setAnimation(operatingAnim);

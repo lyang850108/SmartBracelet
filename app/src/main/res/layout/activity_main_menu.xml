@@ -36,7 +36,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_menu_margin_gap"
@@ -47,10 +47,18 @@
                 android:id="@+id/func1"
                 android:layout_width="@dimen/main_menu_ima_size"
                 android:layout_height="@dimen/main_menu_ima_size"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
                 android:src="@drawable/image_camera_selector" />
-        </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="摄像头验证"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/func1"
+                android:textColor="@android:color/white"/>
+        </RelativeLayout>
 
 
         <LinearLayout
@@ -61,13 +69,31 @@
             android:background="@mipmap/bg_main_menu"
             android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/func2"
-                android:layout_width="@dimen/main_menu_ima_size"
-                android:layout_height="@dimen/main_menu_ima_size"
-                android:layout_gravity="center_vertical"
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/image_location_selector" />
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:id="@+id/func2"
+                    android:layout_width="@dimen/main_menu_ima_size"
+                    android:layout_height="@dimen/main_menu_ima_size"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/image_location_selector" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="实时定位"
+                    android:layout_marginTop="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/func2"
+                    android:textColor="@android:color/white"/>
+            </RelativeLayout>
+
+
 
             <View
                 android:layout_width="2dip"
@@ -76,14 +102,31 @@
                 android:layout_gravity="center_horizontal"
                 />
 
-            <ImageView
-                android:id="@+id/func3"
-                android:layout_width="@dimen/main_menu_ima_size"
-                android:layout_height="@dimen/main_menu_ima_size"
-                android:layout_marginLeft="@dimen/main_menu_margin_gap"
-                android:layout_gravity="center_vertical"
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/image_sb_selector" />
+                android:layout_gravity="center">
+                <ImageView
+                    android:id="@+id/func3"
+                    android:layout_width="@dimen/main_menu_ima_size"
+                    android:layout_height="@dimen/main_menu_ima_size"
+                    android:layout_marginLeft="@dimen/main_menu_margin_gap"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/image_sb_selector" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="智能手环"
+                    android:layout_marginTop="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/func3"
+                    android:textColor="@android:color/white"/>
+            </RelativeLayout>
+
+
         </LinearLayout>
 
         <LinearLayout
@@ -94,13 +137,31 @@
             android:background="@mipmap/bg_main_menu"
             android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/func4"
-                android:layout_width="@dimen/main_menu_ima_size"
-                android:layout_height="@dimen/main_menu_ima_size"
-                android:layout_gravity="center_vertical"
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/image_inbox_selector" />
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:id="@+id/func4"
+                    android:layout_width="@dimen/main_menu_ima_size"
+                    android:layout_height="@dimen/main_menu_ima_size"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/image_inbox_selector" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="收件箱"
+                    android:layout_marginTop="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/func4"
+                    android:textColor="@android:color/white"/>
+            </RelativeLayout>
+
+
 
             <View
                 android:layout_width="2dip"
@@ -109,15 +170,34 @@
                 android:layout_gravity="center_horizontal"
                 />
 
-            <ImageView
-                android:id="@+id/func5"
-                android:layout_width="@dimen/main_menu_ima_size"
-                android:layout_height="@dimen/main_menu_ima_size"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/main_menu_margin_gap"
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/image_checkin_selector" />
+                android:layout_gravity="center">
+                <ImageView
+                    android:id="@+id/func5"
+                    android:layout_width="@dimen/main_menu_ima_size"
+                    android:layout_height="@dimen/main_menu_ima_size"
+                    android:layout_marginLeft="@dimen/main_menu_margin_gap"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/image_checkin_selector" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="打卡"
+                    android:layout_marginTop="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/func5"
+                    android:textColor="@android:color/white"/>
+            </RelativeLayout>
+
+
         </LinearLayout>
+
+
     </LinearLayout>
 
 </LinearLayout>

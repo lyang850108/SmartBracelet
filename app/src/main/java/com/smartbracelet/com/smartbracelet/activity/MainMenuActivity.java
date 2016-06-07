@@ -1,22 +1,23 @@
 package com.smartbracelet.com.smartbracelet.activity;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.bean.GpsBean;
 import com.smartbracelet.com.smartbracelet.service.LocationService;
@@ -120,6 +121,7 @@ public class MainMenuActivity extends AppCompatActivity implements ConstDefine {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initWindow();
         setContentView(R.layout.activity_main_menu);
         pThis = this;
         ButterKnife.bind(pThis);
@@ -175,7 +177,7 @@ public class MainMenuActivity extends AppCompatActivity implements ConstDefine {
     @OnClick(R.id.func1)
     public void onFunc1Click(View view) {
 
-
+        startActivity(new Intent(this, PersonalInforActivity.class));
     }
 
     @OnClick(R.id.func2)
@@ -199,6 +201,10 @@ public class MainMenuActivity extends AppCompatActivity implements ConstDefine {
     }
 
 
+    /**
+     * 初始化GPS
+     * @param context
+     */
     private void initGPS(final Context context) {
         LocationManager locationManager = (LocationManager) context
                 .getSystemService(Context.LOCATION_SERVICE);
@@ -233,6 +239,9 @@ public class MainMenuActivity extends AppCompatActivity implements ConstDefine {
         }
     }
 
+    /**
+     * 对话框监听器
+     */
     private AlertDialogCreator.ButtonOnClickListener mDialogListener = new AlertDialogCreator.ButtonOnClickListener() {
         @Override
         public void buttonTrue() {
@@ -267,4 +276,18 @@ public class MainMenuActivity extends AppCompatActivity implements ConstDefine {
             //finish();
         }
     };
+
+    private SystemBarTintManager tintManager;
+    @TargetApi(19)
+    private void initWindow() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            tintManager = new SystemBarTintManager(this);
+            //int color = pThis.getColor(R.color.color_theme);
+            //tintManager.setStatusBarTintColor(color);
+            tintManager.setStatusBarTintDrawable(getDrawable(R.mipmap.bg_main_menu));
+            tintManager.setStatusBarTintEnabled(true);
+        }
+    }
 }

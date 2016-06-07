@@ -18,12 +18,18 @@ package com.smartbracelet.com.smartbracelet.model;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 
+import com.smartbracelet.com.smartbracelet.R;
 import com.smartbracelet.com.smartbracelet.activity.MainMenuActivity;
+import com.smartbracelet.com.smartbracelet.activity.ProgramItemActivity;
+import com.smartbracelet.com.smartbracelet.activity.SettingsActivity;
+import com.smartbracelet.com.smartbracelet.util.LogUtil;
 
 /**
  * A common superclass that keeps track of whether an {@link Activity} has saved its state yet or
@@ -58,16 +64,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         mIsSafeToCommitTransactions = false;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            startActivity(new Intent(this, MainMenuActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
      */
@@ -77,6 +73,38 @@ public abstract class BaseActivity extends AppCompatActivity {
             // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.option_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                startActivity(new Intent(this, MainMenuActivity.class));
+                break;
+            case R.id.menu_setting:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
+
+            case R.id.menu_program:
+                try {
+                    Intent intent = new Intent(Intent.ACTION_CALL);
+                    intent.setData(Uri.parse("tel:+10086"));
+                    startActivity(intent);
+                } catch (Exception e) {
+                    LogUtil.d( "Failed to invoke call");
+                }
+                break;
+        }
+        return true;
     }
 
 }
