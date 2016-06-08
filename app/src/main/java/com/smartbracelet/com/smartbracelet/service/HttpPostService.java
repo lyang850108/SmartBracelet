@@ -112,12 +112,13 @@ public class HttpPostService extends Service implements ConstDefine{
 
                 @Override
                 public void onDataReceivedSuccess(String type, String data) {
-                    recoidTimes ++;
+                    //用来记录上报次数 调试用的
+                    /*recoidTimes ++;
                     Message message = new Message();
                     message.what = MSG_SEARCH_OUT;
                     message.arg1 = recoidTimes;
                     message.arg2 = 0;
-                    TestFlowActivity.mBTHandler.sendMessage(message);
+                    TestFlowActivity.mBTHandler.sendMessage(message);*/
                     if (type.equals(TYPE_UPLOAD_LOCATION_PARM)) {
 
                     } else if (type.equals(TYPE_PUSH_MSG_PARM)) {
@@ -129,11 +130,12 @@ public class HttpPostService extends Service implements ConstDefine{
 
                 @Override
                 public void onDataReceivedFailed() {
-                    Message message = new Message();
+                    //用来记录上报次数 调试用的
+                   /* Message message = new Message();
                     message.what = MSG_SEARCH_OUT;
                     message.arg1 = recoidTimes;
                     message.arg2 = 1;
-                    TestFlowActivity.mBTHandler.sendMessage(message);
+                    TestFlowActivity.mBTHandler.sendMessage(message);*/
 
                 }
             });

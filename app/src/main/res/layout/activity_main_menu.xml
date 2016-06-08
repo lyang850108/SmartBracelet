@@ -11,7 +11,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:layout_marginTop="@dimen/main_menu_margin_gap"
+
+
         android:background="@mipmap/bg_main_menu"
         android:orientation="horizontal">
 

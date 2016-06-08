@@ -375,6 +375,8 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
         LogUtil.d("onFabClick tag = " + view.getTag());
         isBatteryAvailble();
         if (0 == view.getTag()) {
+            //后台发送106协议 激活按钮消失
+            floatingActionButton.setVisibility(View.GONE);
             sendMsg(MSG_SERCH_DONE, 0);
         }
 
@@ -905,6 +907,10 @@ public class DeviceManagerActivity extends BaseActivity implements ConstDefine{
             public void run() {
                 if (null != mInforTx && null != linearLayout) {
                     mInforTx.setText("连接断开");
+
+                    if (null != floatingActionButton) {
+                        floatingActionButton.setVisibility(View.GONE);
+                    }
 
                     //电量提醒消失
                     linearLayout.setVisibility(View.GONE);

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -281,12 +282,13 @@ public class MainMenuActivity extends AppCompatActivity implements ConstDefine {
     @TargetApi(19)
     private void initWindow() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+
+
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             tintManager = new SystemBarTintManager(this);
-            //int color = pThis.getColor(R.color.color_theme);
-            //tintManager.setStatusBarTintColor(color);
-            tintManager.setStatusBarTintDrawable(getDrawable(R.mipmap.bg_main_menu));
+            tintManager.setStatusBarTintColor(ContextCompat.getColor(getApplicationContext(), R.color.color_theme));
+            //tintManager.setStatusBarTintDrawable(getDrawable(R.mipmap.bg_main_menu));
             tintManager.setStatusBarTintEnabled(true);
         }
     }
