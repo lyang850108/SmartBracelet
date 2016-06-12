@@ -57,6 +57,10 @@
     </string>
 
     <string name="pref_title_display_name">设备地址</string>
+    <string name="upgrade_version">版本升级</string>
+    <string name="defaultt_version_description">请点击确定升级到最新的版本</string>
+    <string name="upgrade_info_get_error">获取服务器更新信息失败</string>
+    <string name="download_apk_failed">下载新版本失败</string>
     <string name="pref_default_display_name">John Smith</string>
 
     <string name="pref_title_add_friends_to_messages">手动添加设备</string>

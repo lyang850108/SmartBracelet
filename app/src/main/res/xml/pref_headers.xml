@@ -71,4 +71,11 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_sync_frequency" />
 
+    <Preference
+        android:key="upgrade_version_key"
+        android:maxLines="1"
+        android:title="@string/upgrade_version" />
+
+
+
 </PreferenceScreen>

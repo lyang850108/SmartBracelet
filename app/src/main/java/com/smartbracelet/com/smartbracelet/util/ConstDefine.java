@@ -31,7 +31,11 @@ public interface ConstDefine {
 
     String UTT_SETVER_URL = "120.25.89.222/main.cgi";
 
+    String UTT_UPGARADE_SETVER_URL = "120.25.89.222/main.cgi";
+
     String LATITUDE_PREF = "latitude_prefs";
+
+    String UPGRADE_VERSION_PREF = "upgrade_version_key";
 
     String BLE_RSSI = "mRssi";
 
@@ -73,6 +77,12 @@ public interface ConstDefine {
     final int MSG_PUSH_MSG = 4;
     final int MSG_CHA_WRITE = 5;
     final int MSG_STATE_WARNING = 6;
+
+    final int MSG_UPDATA_CLIENT = 7;
+    final int MSG_GET_UNDATAINFO_ERROR = 8;
+    final int MSG_DOWN_ERROR = 9;
+
+
 
     final int WARNING_TYPE_DEVCE_DISCONNECTED = 1;
 
